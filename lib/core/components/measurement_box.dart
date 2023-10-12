@@ -18,12 +18,12 @@ class MeasurementBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70.h,
+      height: 55.h,
       width: 158.w,
       decoration: BoxDecoration(
         // color: Color(0xfff6f6f6),
         color: Colors.white,
-        borderRadius: BorderRadius.circular(4.r),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           // color: Color(0xffc6c6c6),
           color: Colors.white,

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -41,11 +42,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[pageIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedIconTheme: IconThemeData(size: 35.sp, color: Colors.red),
-        unselectedIconTheme: IconThemeData(size: 35.sp),
+      bottomNavigationBar: CupertinoTabBar(
+        // showSelectedLabels: false,
+        // showUnselectedLabels: false,
+        // selectedIconTheme: IconThemeData(size: 35.sp, color: Colors.red),
+        // unselectedIconTheme: IconThemeData(size: 35.sp),
+        // iconSize: 35.sp,
+        activeColor: Colors.red,
         currentIndex: pageIndex,
         onTap: (value) {
           setState(() {
@@ -54,15 +57,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            label: 'Home',
+            // label: 'Home',
             icon: Icon(Icons.home_outlined),
           ),
           BottomNavigationBarItem(
-            label: "Data",
+            // label: "Data",
             icon: Icon(Icons.article_outlined),
           ),
           BottomNavigationBarItem(
-            label: 'Settings',
+            // label: 'Settings',
             icon: Icon(Icons.settings),
           ),
         ],

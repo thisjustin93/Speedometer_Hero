@@ -41,27 +41,30 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final pedometerProvider =
         Provider.of<PedoMeterSessionProvider>(context, listen: false);
     final pedometerSessions = pedometerProvider.pedometerSessions;
-    topMaxSpeedSession = pedometerSessions[0];
-    topAvgSpeedSession = pedometerSessions[0];
-    topDistanceSession = pedometerSessions[0];
-    topDurationSession = pedometerSessions[0];
-    for (var pedometerSession in pedometerSessions) {
-      if (topMaxSpeedSession!.maxSpeedInMS < pedometerSession.maxSpeedInMS) {
-        topMaxSpeedSession = pedometerSession;
-      }
-      if (topDistanceSession!.distanceInMeters <
-          pedometerSession.distanceInMeters) {
-        topDistanceSession = pedometerSession;
-      }
-      if (topDurationSession!.sessionDuration <
-          pedometerSession.sessionDuration) {
-        topDurationSession = pedometerSession;
-      }
-      if (topAvgSpeedSession!.averageSpeedInMS <
-          pedometerSession.averageSpeedInMS) {
-        topAvgSpeedSession = pedometerSession;
+    if (pedometerSessions.isNotEmpty) {
+      topMaxSpeedSession = pedometerSessions[0];
+      topAvgSpeedSession = pedometerSessions[0];
+      topDistanceSession = pedometerSessions[0];
+      topDurationSession = pedometerSessions[0];
+      for (var pedometerSession in pedometerSessions) {
+        if (topMaxSpeedSession!.maxSpeedInMS < pedometerSession.maxSpeedInMS) {
+          topMaxSpeedSession = pedometerSession;
+        }
+        if (topDistanceSession!.distanceInMeters <
+            pedometerSession.distanceInMeters) {
+          topDistanceSession = pedometerSession;
+        }
+        if (topDurationSession!.sessionDuration <
+            pedometerSession.sessionDuration) {
+          topDurationSession = pedometerSession;
+        }
+        if (topAvgSpeedSession!.averageSpeedInMS <
+            pedometerSession.averageSpeedInMS) {
+          topAvgSpeedSession = pedometerSession;
+        }
       }
     }
+
     matchingActivity = [
       {
         'activityType': 'Top Max Speed',
@@ -101,7 +104,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     return Scaffold(
-      backgroundColor: Color(0xFFEBEBE3),
+      backgroundColor: Color(0xFFF5F6F7),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
@@ -142,10 +145,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: matchingActivity.length,
+                  itemCount: 4,
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
+                        if (matchingActivity[index]['session'] == null) {
+                          return;
+                        }
                         Navigator.of(context).push(PageRouteBuilder(
                           pageBuilder: (context, animation,
                                   secondaryAnimation) =>

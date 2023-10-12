@@ -105,7 +105,7 @@ shareBottomSheet(
                     ),
                   ),
                   Divider(
-                    color: Color(0xFFEBEBE3),
+                    color: Color(0xFFF5F6F7),
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -141,7 +141,7 @@ shareBottomSheet(
                     ),
                   ),
                   Divider(
-                    color: Color(0xFFEBEBE3),
+                    color: Color(0xFFF5F6F7),
                   ),
                   Container(
                     padding:

@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
                   // primarySwatch: Colors.deepPurple,
                   useMaterial3: true,
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                    backgroundColor: Color(0xFFEBEBE3),
+                    backgroundColor: Color(0xFFF5F6F7),
                     unselectedIconTheme: IconThemeData(color: Colors.grey),
                   ),
                   visualDensity: VisualDensity.defaultDensityForPlatform(

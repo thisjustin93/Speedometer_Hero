@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:intl/intl.dart';
+import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/features/history/widgets/matching_activity_tiles.dart';
 
 class SessionDetailsScreen extends StatefulWidget {
@@ -59,7 +60,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEBEBE3),
+      backgroundColor: Color(0xFFF5F6F7),
       appBar: AppBar(
         backgroundColor: Color(0xFFF7F7F7),
         leading: IconButton(
@@ -168,7 +169,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                       ? '  ${durationInMinutes(tileData[index]['value']).toStringAsFixed(1)}  ${tileData[index]['valueUnit']}'
                                       : tileData[index]['activityType'] ==
                                               'Top Distance'
-                                          ? '  ${tileData[index]['value'].toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
+                                          ? '  ${convertDistance(tileData[index]['value'], 'mi').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
                                           : tileData[index]['activityType'] ==
                                                   'Top Max Speed'
                                               ? '  ${tileData[index]['value'].toStringAsFixed(1)} ${tileData[index]['valueUnit']}'

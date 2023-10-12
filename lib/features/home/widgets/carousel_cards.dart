@@ -36,12 +36,12 @@ class FancyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return googleMapAPI.isEmpty
         ? Card(
-            color: Color(0xFFEBEBE3),
+            color: Color(0xFFF5F6F7),
             borderOnForeground: false,
             elevation: 0,
             margin: EdgeInsets.zero,
             child: Container(
-              color: Color(0xFFEBEBE3),
+              color: Color(0xFFF5F6F7),
               height: 310.h,
               width: 320.w,
               padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -126,8 +126,7 @@ class FancyCard extends StatelessWidget {
                           measurement: distanceCovered == 0 ||
                                   duration == Duration.zero
                               ? 0
-                              : convertSpeed(
-                                  distanceCovered / duration.inSeconds, 'mph'),
+                              : distanceCovered / (duration.inSeconds / 3600),
                           measurementUnit: 'MPH'),
                     ],
                   ),

@@ -179,9 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ? endTime != null
                   ? endTime!.difference(startTime!)
                   : pedometerSessionProvider.currentPedometerSession != null
-                      ? DateTime.now().difference(startTime!) -
-                          pedometerSessionProvider
-                              .currentPedometerSession!.pauseDuration
+                      ? DateTime.now()
+                          .subtract(pedometerSessionProvider
+                              .currentPedometerSession!.pauseDuration)
+                          .difference(startTime!)
                       : DateTime.now().difference(startTime!)
               : Duration.zero,
           distanceCovered: convertDistance(totalDistance, 'mi'),
@@ -209,37 +210,45 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xFFEBEBE3),
+      // backgroundColor: Color(0xFFF5F6F7     ),
+      backgroundColor: Color(0xFFF5F6F7),
+      // backgroundColor: Color.fromARGB(5, 0, (153 / 235).toInt(), 255),
       body: Container(
         child: Stack(
           children: [
             Positioned(
-              top: (MediaQuery.of(context).padding.top + 45).h,
+              top: (MediaQuery.of(context).padding.top).h,
               left: 0,
               right: 0,
-              child: Text(
-                'Jerico',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
+              child: SafeArea(
+                child: Text(
+                  'Jerico',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
             Positioned(
               left: 0,
               right: 0,
-              top: 15.h,
-              child: CompassWidget(
-                direction: direction,
+              // top: 15.h,
+              child: SafeArea(
+                child: CompassWidget(
+                  direction: direction,
+                ),
               ),
             ),
             Positioned(
-              top: 15.h,
+              // top: 15.h,
               left: 0,
               right: 0,
-              child: SpeedometerWidget(
-                speed: speed,
+              child: SafeArea(
+                child: SpeedometerWidget(
+                  speed: speed,
+                ),
               ),
             ),
             ListView.builder(
@@ -387,6 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 setState(() {});
               } else {
+                pedometerSessionProvider.currentPedometerSession = null;
                 startTime = null;
                 endTime = null;
                 startingPosition = null;

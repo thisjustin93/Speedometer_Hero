@@ -24,7 +24,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
     var currentPedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     return Scaffold(
-      backgroundColor: Color(0xFFEBEBE3),
+      backgroundColor: Color(0xFFF5F6F7),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 3.sp, vertical: 5.sp),
