@@ -21,9 +21,10 @@ class PausedTrackingScreen extends StatefulWidget {
 class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
   @override
   Widget build(BuildContext context) {
-    var currentPedometerSession =
-        Provider.of<PedoMeterSessionProvider>(context).currentPedometerSession;
+    var currentPedometerSessionProvider =
+        Provider.of<PedoMeterSessionProvider>(context);
     return Scaffold(
+      backgroundColor: Color(0xFFEBEBE3),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 3.sp, vertical: 5.sp),
@@ -47,23 +48,33 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                     MeasurementBox(
                         boxType: 'Max Speed',
                         measurement: convertSpeed(
-                            currentPedometerSession!.maxSpeedInMS, 'mph'),
+                            currentPedometerSessionProvider
+                                .currentPedometerSession!.maxSpeedInMS,
+                            'mph'),
                         measurementUnit: 'mph'),
                     SizedBox(
                       width: 5.sp,
                     ),
                     MeasurementBox(
                         boxType: 'Avg Speed',
-                        measurement:
-                            currentPedometerSession.distanceInMeters == 0 ||
-                                    currentPedometerSession.sessionDuration ==
-                                        Duration.zero
-                                ? 0
-                                : convertSpeed(
-                                    currentPedometerSession.distanceInMeters /
-                                        currentPedometerSession
-                                            .sessionDuration.inSeconds,
-                                    'mph'),
+                        measurement: currentPedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .distanceInMeters ==
+                                    0 ||
+                                currentPedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .sessionDuration ==
+                                    Duration.zero
+                            ? 0
+                            : convertSpeed(
+                                currentPedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .distanceInMeters /
+                                    currentPedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .sessionDuration
+                                        .inSeconds,
+                                'mph'),
                         measurementUnit: 'mph'),
                   ],
                 ),
@@ -76,15 +87,17 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                     MeasurementBox(
                         boxType: 'Distance',
                         measurement: convertDistance(
-                            currentPedometerSession.distanceInMeters, 'mi'),
+                            currentPedometerSessionProvider
+                                .currentPedometerSession!.distanceInMeters,
+                            'mi'),
                         measurementUnit: 'mi'),
                     SizedBox(
                       width: 5.sp,
                     ),
                     MeasurementBox(
                         boxType: 'Duration',
-                        measurement: currentPedometerSession
-                            .sessionDuration.inSeconds
+                        measurement: currentPedometerSessionProvider
+                            .currentPedometerSession!.sessionDuration.inSeconds
                             .toDouble(),
                         measurementUnit: 'min'),
                   ],
@@ -104,14 +117,17 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                         children: [
                           InkWell(
                             onTap: () async {
-                              await HiveDatabaseServices()
-                                  .addSession(currentPedometerSession, context);
-                              // showErrorMessage(
-                              //     context,
-                              //     successSnackbar(
-                              //         content: 'Session successfully saved!',
-                              //         context: context));
-
+                              await HiveDatabaseServices().addSession(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!,
+                                  context);
+                              currentPedometerSessionProvider.pedometerSessions
+                                  .add(currentPedometerSessionProvider
+                                      .currentPedometerSession!);
+                              currentPedometerSessionProvider
+                                  .updatePedometerSessionList(
+                                      currentPedometerSessionProvider
+                                          .pedometerSessions);
                               Navigator.of(context).pop();
                             },
                             child: Container(
@@ -167,7 +183,8 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                         children: [
                           InkWell(
                             onTap: () async {
-                              currentPedometerSession.pauseDuration +=
+                              currentPedometerSessionProvider
+                                      .currentPedometerSession!.pauseDuration +=
                                   DateTime.now().difference(widget.pauseTime);
                               Navigator.of(context).pop(true);
                             },

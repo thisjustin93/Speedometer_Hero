@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 
 class MatchingActivityTile extends StatefulWidget {
-  List<double> matchingActivityValues;
+  // List<double> matchingActivityValues;
   int tileIndex;
   int tilesLength;
   IconData icon;
   String activityType;
-  double topValue;
+  PedometerSession session;
   String valueUnit;
   MatchingActivityTile(
       {super.key,
       required this.activityType,
       required this.icon,
-      required this.matchingActivityValues,
+      // required this.matchingActivityValues,
       required this.tileIndex,
       required this.tilesLength,
-      required this.topValue,required this.valueUnit});
+      required this.session,
+      required this.valueUnit});
 
   @override
   State<MatchingActivityTile> createState() => _MatchingActivityTileState();
 }
 
 class _MatchingActivityTileState extends State<MatchingActivityTile> {
+  double durationInMinutes(Duration? duration) {
+    if (duration == null) {
+      return 0.0;
+    }
+
+    final seconds = duration.inSeconds;
+    return seconds / 60.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,7 +42,7 @@ class _MatchingActivityTileState extends State<MatchingActivityTile> {
       decoration: BoxDecoration(
         border: widget.tileIndex < widget.tilesLength - 1
             ? Border(
-                bottom: BorderSide(color: Colors.grey, width: 1.w),
+                bottom: BorderSide(color: Color(0xffB1B0B2), width: 1.w),
               )
             : null,
       ),
@@ -59,7 +70,13 @@ class _MatchingActivityTileState extends State<MatchingActivityTile> {
                 ],
               ),
               Text(
-                '  ${widget.topValue.toStringAsFixed(1)}',
+                widget.activityType == 'Top Duration'
+                    ? '  ${durationInMinutes(widget.session.sessionDuration).toStringAsFixed(1)}  ${widget.valueUnit}'
+                    : widget.activityType == 'Top Distance'
+                        ? '  ${widget.session.distanceInMeters.toStringAsFixed(1)} ${widget.valueUnit}'
+                        : widget.activityType == 'Top Max Speed'
+                            ? '  ${widget.session.maxSpeedInMS.toStringAsFixed(1)} ${widget.valueUnit}'
+                            : '  ${widget.session.averageSpeedInMS.toStringAsFixed(1)} ${widget.valueUnit}', // Top Average Speed
                 style: AppTextStyles().sRegular,
               )
             ],

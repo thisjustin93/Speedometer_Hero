@@ -18,6 +18,7 @@ class PedometerSessionAdapter extends TypeAdapter<PedometerSession> {
     };
     return PedometerSession(
       sessionId: fields[0] as String,
+      sessionTitle: fields[12] as String,
       sessionDuration: Duration(milliseconds: fields[3] as int),
       pauseDuration: Duration(milliseconds: fields[11] as int),
       distanceInMeters: fields[9] as double,
@@ -35,7 +36,7 @@ class PedometerSessionAdapter extends TypeAdapter<PedometerSession> {
   @override
   void write(BinaryWriter writer, PedometerSession obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.sessionId)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class PedometerSessionAdapter extends TypeAdapter<PedometerSession> {
       ..writeByte(10)
       ..write(_serializePolyline(obj.path))
       ..writeByte(11)
-      ..write(obj.pauseDuration.inMilliseconds);
+      ..write(obj.pauseDuration.inMilliseconds)
+      ..writeByte(12)
+      ..write(obj.sessionTitle);
   }
 
   LatLng? _deserializeLatLng(dynamic value) {

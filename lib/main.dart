@@ -16,7 +16,7 @@ void main() async {
   // Hive.initFlutter();
   // final sessionService = HiveDatabaseServices();
   // await sessionService.init();
-   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
+  final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
   Hive
     ..initFlutter(appDocumentDir.path)
@@ -40,8 +40,14 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
-                primarySwatch: Colors.deepPurple,
-              ),
+                  // primarySwatch: Colors.deepPurple,
+                  useMaterial3: true,
+                  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor: Color(0xFFEBEBE3),
+                    unselectedIconTheme: IconThemeData(color: Colors.grey),
+                  ),
+                  visualDensity: VisualDensity.defaultDensityForPlatform(
+                      TargetPlatform.iOS)),
               home: MainNavigationScreen(),
             );
           }),

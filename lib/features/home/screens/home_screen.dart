@@ -1,26 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/providers/pedometer_session.dart';
-import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/features/home/screens/paused_tracking_screen.dart';
-import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/features/home/widgets/carousel_cards.dart';
 import 'package:speedometer/features/home/widgets/compass_widget.dart';
 import 'package:speedometer/features/home/widgets/speedometer_widget.dart';
-import 'package:speedometer/features/settings/screens/settings_page.dart';
-import 'package:stacked_card_carousel/stacked_card_carousel.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
 import 'package:geolocator/geolocator.dart';
 
@@ -46,7 +41,26 @@ class _HomeScreenState extends State<HomeScreen> {
   bool startTracking = false;
   PedometerSession? pedometerSession;
   List<LatLng> pathPoints = [];
+  // setLastSession() async {
+  //   await Future.delayed(Duration(seconds: 3));
 
+  //   if (Provider.of<PedoMeterSessionProvider>(context, listen: false)
+  //       .pedometerSessions
+  //       .isNotEmpty) {
+  //     PedometerSession? lastPedometerSession =
+  //         Provider.of<PedoMeterSessionProvider>(context, listen: false)
+  //             .pedometerSessions
+  //             .last;
+  //     startTime = lastPedometerSession.startTime;
+  //     endTime = lastPedometerSession.endTime;
+  //     startingPosition = await Geolocator.getCurrentPosition();
+
+  //     maxSpeed = lastPedometerSession.maxSpeedInMS;
+  //     totalDistance = lastPedometerSession.distanceInMeters;
+  //     speed = lastPedometerSession.speedInMS;
+  //     setState(() {});
+  //   }
+  // }
 
   @override
   void initState() {
@@ -58,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
+    // setLastSession();
     super.initState();
   }
 
@@ -194,6 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Color(0xFFEBEBE3),
       body: Container(
         child: Stack(
           children: [
@@ -248,6 +264,9 @@ class _HomeScreenState extends State<HomeScreen> {
             pedometerSessionProvider.setCurrentPedometerSession(
               PedometerSession(
                 sessionId: sessionId,
+                sessionTitle: DateFormat('MM/dd/yy HH:mm')
+                    .format(DateTime.parse(sessionId))
+                    .toString(),
                 averageSpeedInMS:
                     totalDistance / endTime!.difference(startTime!).inSeconds,
                 distanceInMeters: totalDistance,
@@ -302,6 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
+                    backgroundColor: Color.fromARGB(247, 211, 211, 204),
                     titlePadding: EdgeInsets.only(top: 10.h),
                     contentPadding: EdgeInsets.zero,
                     insetPadding:
@@ -311,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 50.sp,
                       width: 50.sp,
                       decoration: BoxDecoration(
-                          color: Colors.red, shape: BoxShape.circle),
+                          color: Color(0xffF82929), shape: BoxShape.circle),
                       child: Icon(
                         Icons.shopping_cart,
                         color: Colors.white,
@@ -333,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: Color(0xffF82929),
                                 foregroundColor: Colors.white,
                                 fixedSize: Size(300.w, 40.h),
                                 shape: StadiumBorder()),
@@ -348,7 +368,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: Text(
                                 "Cancel",
-                                style: AppTextStyles().mRegular,
+                                style: AppTextStyles()
+                                    .mRegular
+                                    .copyWith(color: Colors.black),
                               ))
                         ],
                       ),
@@ -364,21 +386,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 _startTracking();
 
                 setState(() {});
+              } else {
+                startTime = null;
+                endTime = null;
+                startingPosition = null;
+                totalDistance = 0;
+                speed = 0;
+                maxSpeed = 0;
+                currentPosition = null;
+                pauseTime = null;
+                startTracking = false;
+                setState(() {});
               }
             });
-            // _stopTracking();
           } else {
-            // if (geolocatorStream == null || !(geolocatorStream!.isPaused)) {
             startTime = DateTime.now();
             speed = 0;
             maxSpeed = 0;
             totalDistance = 0;
             currentPosition = null;
-            pauseTime = null;
-            // }
-            // startTime = pauseTime != null
-            //     ? startTime!.add(DateTime.now().difference(pauseTime!))
-            //     : startTime;
             pauseTime = null;
             startTracking = true;
             endTime = null;
@@ -388,15 +414,15 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: CircleAvatar(
             radius: 24.r,
-            backgroundColor: startTime == null ||
-                    geolocatorStream != null && !(geolocatorStream!.isPaused)
-                ? Colors.red
-                : Colors.black,
+            backgroundColor: startTime != null && !startTracking
+                ? Colors.black
+                : Color(0xffF82929),
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 21.r,
               child: CircleAvatar(
-                backgroundColor: Colors.red,
+                backgroundColor:
+                    startTracking ? Color(0xffFD8282) : Color(0xffF82929),
                 radius: 18.r,
               ),
             )),

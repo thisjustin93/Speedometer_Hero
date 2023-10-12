@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
+import 'package:intl/intl.dart';
+import 'package:speedometer/core/utils/convert_distance.dart';
 
 class SessionActivityTile extends StatefulWidget {
   PedometerSession pedometerSession;
@@ -21,11 +23,11 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 5.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
       decoration: BoxDecoration(
         border: widget.tileIndex < widget.tilesLength - 1
             ? Border(
-                bottom: BorderSide(color: Colors.grey, width: 1.w),
+                bottom: BorderSide(color: Color(0xffB1B0B2), width: 1.w),
               )
             : null,
       ),
@@ -33,8 +35,8 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            height: 80.h,
-            width: 80.h,
+            height: 70.h,
+            width: 70.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),
               image: DecorationImage(
@@ -43,17 +45,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                   ),
                   fit: BoxFit.cover),
             ),
-            // child: Image.asset(
-            //   'assets/images/sessionpath.png',
-            //   fit: BoxFit.cover,
-            // ),
           ),
-          // Image.asset(
-          //   'assets/images/sessionpath.png',
-          //   height: 80.h,
-          //   width: 80.w,
-          //   fit: BoxFit.cover,
-          // ),
           SizedBox(
             width: 15.w,
           ),
@@ -62,15 +54,17 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Title",
+                  widget.pedometerSession.sessionTitle,
                   style: AppTextStyles().mRegular,
                 ),
                 Text(
-                  'Title',
+                  DateFormat("MMMM d',' y, h':'mm a")
+                      .format(DateTime.parse(widget.pedometerSession.sessionId))
+                      .toString(),
                   style: AppTextStyles().sRegular,
                 ),
                 Text(
-                  'Title',
+                  "${convertDistance(widget.pedometerSession.distanceInMeters, 'mi').toStringAsFixed(1)} miles \u2981 ${(widget.pedometerSession.sessionDuration.inSeconds / 60).toStringAsFixed(2)} minutes",
                   style: AppTextStyles().sRegular,
                 )
               ],

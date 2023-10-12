@@ -21,10 +21,14 @@ class MeasurementBox extends StatelessWidget {
       height: 70.h,
       width: 158.w,
       decoration: BoxDecoration(
-        color: Color.fromARGB(246, 238, 238, 255),
-        borderRadius: BorderRadius.circular(BorderRadiusSizes.xs),
-        border:
-            Border.all(color: Color.fromARGB(246, 222, 222, 255), width: 2.sp),
+        // color: Color(0xfff6f6f6),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4.r),
+        border: Border.all(
+          // color: Color(0xffc6c6c6),
+          color: Colors.white,
+          width: 2.sp,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

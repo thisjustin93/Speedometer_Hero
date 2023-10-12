@@ -20,6 +20,10 @@ class HiveDatabaseServices {
       _sessionBox = await Hive.openBox<PedometerSession>('sessions');
       await _sessionBox.add(session);
       print(_sessionBox.values.length);
+      showErrorMessage(
+          context,
+          successSnackbar(
+              content: "Session successfully added", context: context));
     } catch (e) {
       print(e.toString());
       showErrorMessage(

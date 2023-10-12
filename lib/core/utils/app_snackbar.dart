@@ -33,12 +33,13 @@ SnackBar successSnackbar({
       style: context.textStyles.sRegular.copyWith(color: Colors.white),
     ),
     backgroundColor: Colors.green,
-    behavior: SnackBarBehavior.floating,
+    // behavior: SnackBarBehavior.floating,
     dismissDirection: DismissDirection.none,
-    margin: EdgeInsets.only(
-        bottom: context.deviceSize.height - 50,
-        right: context.deviceSize.width * 0.35,
-        left: context.deviceSize.width * 0.35),
+    duration: Duration(seconds: 1),
+    // margin: EdgeInsets.only(
+    //     bottom: context.deviceSize.height - 50,
+    //     right: context.deviceSize.width * 0.35,
+    //     left: context.deviceSize.width * 0.35),
   );
 }
 

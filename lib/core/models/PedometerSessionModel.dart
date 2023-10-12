@@ -40,9 +40,12 @@ class PedometerSession extends HiveObject {
 
   @HiveField(11)
   late Duration pauseDuration;
+  @HiveField(12)
+  late String sessionTitle;
 
   PedometerSession({
     required this.sessionId,
+    required this.sessionTitle,
     this.sessionDuration = Duration.zero,
     this.distanceInMeters = 0,
     this.startTime,
@@ -59,6 +62,7 @@ class PedometerSession extends HiveObject {
   Map<String, dynamic> toMap() {
     return {
       'sessionId': sessionId,
+      'sessionTitle': sessionTitle,
       'sessionDuration':
           sessionDuration.inMilliseconds, // Convert to milliseconds
       'pauseDuration':
@@ -77,6 +81,7 @@ class PedometerSession extends HiveObject {
 
   PedometerSession.fromMap(Map<String, dynamic> map) {
     sessionId = map['sessionId'];
+    sessionTitle = map['sessionTitle'];
     sessionDuration = Duration(
         milliseconds: map['sessionDuration']); // Convert back to Duration
     pauseDuration = Duration(

@@ -36,12 +36,12 @@ class FancyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return googleMapAPI.isEmpty
         ? Card(
-            // color: Colors.transparent,
+            color: Color(0xFFEBEBE3),
             borderOnForeground: false,
             elevation: 0,
             margin: EdgeInsets.zero,
             child: Container(
-              color: Colors.white,
+              color: Color(0xFFEBEBE3),
               height: 310.h,
               width: 320.w,
               padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -50,10 +50,14 @@ class FancyCard extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(246, 238, 238, 255),
-                      borderRadius: BorderRadius.circular(BorderRadiusSizes.xs),
+                      // color: Color.fromARGB(111, 238, 238, 255),
+                      // color: Color(0xfff6f6f6),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                          color: Color.fromARGB(246, 222, 222, 255),
+                          // color: Color.fromARGB(117, 222, 222, 255),
+                          // color: Color(0xffc6c6c6),
+                          color: Colors.white,
                           width: 2.sp),
                     ),
                     height: 140.h,
@@ -75,10 +79,15 @@ class FancyCard extends StatelessWidget {
                               'MPH',
                               style: AppTextStyles().mRegular,
                             ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
                             Text(
                               speed.toStringAsFixed(0),
                               style: TextStyle(
-                                  fontWeight: FontWeight.w900, fontSize: 80.sp),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 110.sp,
+                                  height: 0.8),
                             )
                           ],
                         ),

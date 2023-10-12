@@ -59,7 +59,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           BottomNavigationBarItem(
             label: "Data",
-            icon: Icon(Icons.insert_chart),
+            icon: Icon(Icons.article_outlined),
           ),
           BottomNavigationBarItem(
             label: 'Settings',
