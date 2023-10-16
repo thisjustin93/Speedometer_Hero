@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
@@ -417,32 +418,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 50.h,
-                        padding: EdgeInsets.only(top: 5.h),
-                        // decoration: const BoxDecoration(
-                        //     border:
-                        //         Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.file_upload_outlined,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Share this app',
-                                style: context.textStyles.mRegular(),
+                      InkWell(
+                        onTap: () {
+                          void shareApp() {
+                            Share.share(
+                                'Check out this amazing app! https://yourappurl.com');
+                          }
+                        },
+                        child: Container(
+                          height: 50.h,
+                          padding: EdgeInsets.only(top: 5.h),
+                          // decoration: const BoxDecoration(
+                          //     border:
+                          //         Border(bottom: BorderSide(color: Colors.grey))),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.file_upload_outlined,
+                                color: Colors.red,
                               ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ],
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Share this app',
+                                  style: context.textStyles.mRegular(),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

@@ -343,7 +343,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                           primaryXAxis: DateTimeAxis(
                               majorGridLines: const MajorGridLines(width: 0),
                               minorGridLines: const MinorGridLines(width: 0),
-                              intervalType: DateTimeIntervalType.auto,
                               isVisible: true),
                           primaryYAxis: NumericAxis(
                               majorGridLines: const MajorGridLines(width: 0),
@@ -486,7 +485,10 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               xValueMapper: (geolocator.Position position, _) =>
                                   position.timestamp,
                               yValueMapper: (geolocator.Position position, _) =>
-                                  convertDistance(position.altitude,
+                                  convertDistance(
+                                      position.altitude -
+                                          widget.session.geoPositions![0]
+                                              .altitude,
                                       settings.elevationUnit),
                               // pointColorMapper:
                               //     (geolocator.Position position, _) {

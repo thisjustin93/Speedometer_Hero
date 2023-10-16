@@ -88,7 +88,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     var settings = Provider.of<UnitsProvider>(context).settings;
-    print(pedometerSessionProvider.pedometerSessions.length);
     matchingActivity = [
       {
         'activityType': 'Top Max Speed',

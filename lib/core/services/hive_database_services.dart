@@ -18,14 +18,12 @@ class HiveDatabaseServices {
       PedometerSession session, BuildContext context) async {
     try {
       _sessionBox = await Hive.openBox<PedometerSession>('sessions');
-      await _sessionBox.put(session.sessionId,session);
-      print(_sessionBox.values.length);
+      await _sessionBox.put(session.sessionId, session);
       showErrorMessage(
           context,
           successSnackbar(
               content: "Session successfully added", context: context));
     } catch (e) {
-      print(e.toString());
       showErrorMessage(
           context, errorSnackbar(content: e.toString(), context: context));
     }
@@ -38,7 +36,8 @@ class HiveDatabaseServices {
     return sessions;
   }
 
-  Future<void> updateSession(String key, PedometerSession updatedSession) async {
+  Future<void> updateSession(
+      String key, PedometerSession updatedSession) async {
     _sessionBox = await Hive.openBox<PedometerSession>('sessions');
 
     await _sessionBox.put(key, updatedSession);

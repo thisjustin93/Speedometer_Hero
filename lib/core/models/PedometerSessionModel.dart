@@ -122,6 +122,5 @@ class PedometerSession extends HiveObject {
           pointsJson!.map((point) => LatLng.fromJson(point)!).toList() ?? [],
     );
     geoPositions = map['geoPositions'];
-    
   }
 }

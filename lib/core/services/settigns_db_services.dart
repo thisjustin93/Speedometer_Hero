@@ -16,7 +16,7 @@ class HiveSettingsDB {
     if (settingsBox.isNotEmpty) {
       return settingsBox.getAt(0)!;
     } else {
-      await settingsBox.putAt(0, SettingsModel());
+      await settingsBox.add(SettingsModel());
     }
     return SettingsModel(); // Return default settings if none found
   }

@@ -54,6 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     checkAndRequestLocationPermission();
+    startTime = DateTime.now();
+    speed = 0;
+    maxSpeed = 0;
+    totalDistance = 0;
+    currentPosition = null;
+    pauseTime = null;
+    endTime = null;
+    startingAltitude = 0;
+    endingAltitude = 0;
+    _startTracking();
     compassSubscription = FlutterCompass.events?.listen((CompassEvent event) {
       if (mounted) {
         setState(() {
@@ -70,16 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     Provider.of<PedoMeterSessionProvider>(context, listen: false)
         .currentPedometerSession = null;
-    startTime = DateTime.now();
-    speed = 0;
-    maxSpeed = 0;
-    totalDistance = 0;
-    currentPosition = null;
-    pauseTime = null;
-    endTime = null;
-    startingAltitude = 0;
-    endingAltitude = 0;
-    _startTracking();
+
     setState(() {});
     super.initState();
   }
@@ -91,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Request for permissions
-  void checkAndRequestLocationPermission() async {
+  Future checkAndRequestLocationPermission() async {
     var status = await permission.Permission.location.status;
     if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
       await permission.Permission.location.request();
@@ -100,6 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Get Device Moving Speed
   void _startTracking() async {
+    var status = await permission.Permission.location.status;
+    if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
+      await permission.Permission.location.request();
+    }
     final geolocator = Geolocator();
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
@@ -113,11 +118,18 @@ class _HomeScreenState extends State<HomeScreen> {
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
       if (mounted) {
+        print('ifa');
         geoPostions.add(position);
         if (position.speed < 0) {
+          print('ifb');
+
           return;
         } else {
+          print('ifc');
+
           if (currentPosition != null) {
+            print('ifd');
+
             double distanceInMeters = Geolocator.distanceBetween(
               currentPosition!.latitude,
               currentPosition!.longitude,
@@ -133,6 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
           endingAltitude = position.altitude;
           pathPoints.add(LatLng(position.latitude, position.longitude));
           currentPosition = position;
+          print('iff');
+
+          print("${currentPosition == null}");
+          print('ife');
+
           speed = position.speed;
           if (speed > maxSpeed) {
             maxSpeed = speed;
@@ -142,15 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {});
       }
     });
+    print(geolocatorStream == null);
   }
 
   @override
   Widget build(BuildContext context) {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
-    if (pedometerSessionProvider.currentPedometerSession != null) {
-      print(pedometerSessionProvider.currentPedometerSession!.toMap());
-    }
+
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
@@ -318,6 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: InkWell(
         onTap: () async {
           Provider.of<AppStartProvider>(context, listen: false).changeState();
+
           if (startTracking && !(geolocatorStream!.isPaused)) {
             String sessionId = DateTime.now().toString();
             startTracking = false;
@@ -365,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 geoPositions: geoPostions,
               ),
             );
-
+            print("navigation top");
             Navigator.of(context)
                 .push(PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -410,8 +427,10 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             });
           } else {
+            print("else1");
             if (pedometerSessionProvider.pedometerSessions.length >= 4 &&
                 subscriptionStatus == SubscriptionStatus.notSubscribed) {
+              print('if2');
               showDialog(
                 context: context,
                 builder: (context) {
@@ -472,6 +491,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               );
             } else {
+              print('else 3');
               startTime = DateTime.now();
               speed = 0;
               maxSpeed = 0;
@@ -483,6 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _startTracking();
             }
           }
+          print("setstate");
           setState(() {});
         },
         child: CircleAvatar(
