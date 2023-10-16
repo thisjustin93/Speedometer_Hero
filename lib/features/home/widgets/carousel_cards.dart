@@ -6,11 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
-import 'package:speedometer/core/providers/pedometer_session.dart';
+import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/home/widgets/duration_counter.dart';
 
 class FancyCard extends StatelessWidget {
@@ -32,52 +34,72 @@ class FancyCard extends StatelessWidget {
   double distanceCovered = 0;
   var duration = Duration.zero;
   VoidCallback? onPressed = () {};
+
   @override
   Widget build(BuildContext context) {
+    var settings = Provider.of<UnitsProvider>(context).settings;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return googleMapAPI.isEmpty
         ? Card(
-            color: Color(0xFFF5F6F7),
+            color: Theme.of(context).colorScheme.background,
             borderOnForeground: false,
             elevation: 0,
             margin: EdgeInsets.zero,
             child: Container(
-              color: Color(0xFFF5F6F7),
-              height: 310.h,
-              width: 320.w,
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              color: Theme.of(context).colorScheme.background,
+              height: isPortrait ? 280.h : 230.h,
+              width: isPortrait
+                  ? 320.w
+                  : (MediaQuery.of(context).size.width * 0.26).w,
+              // padding: EdgeInsets.symmetric(
+              //     horizontal: isPortrait ? 15.w : 0.w,
+              //     vertical: isPortrait
+              //         ? 0
+              //         : (MediaQuery.of(context).size.height * 0.15).h),
+              padding: isPortrait
+                  ? EdgeInsets.symmetric(horizontal: 15.w)
+                  : EdgeInsets.only(
+                      top: (MediaQuery.of(context).size.height * 0.22).h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                      // color: Color.fromARGB(111, 238, 238, 255),
-                      // color: Color(0xfff6f6f6),
-                      color: Colors.white,
+                      // color: Color(0xFFF6F6F6),
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                          // color: Color.fromARGB(117, 222, 222, 255),
-                          // color: Color(0xffc6c6c6),
-                          color: Colors.white,
-                          width: 2.sp),
+                          color: settings.darkTheme
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
+                          width: isPortrait ? 2.sp : 1.sp),
                     ),
-                    height: 140.h,
-                    // width: 320.w,
+                    width: isPortrait ? null : 170.w,
+                    height: isPortrait ? 140.h : 280.h,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: isPortrait
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
                           width: 35.w,
                         ),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: PaddingSizes.sm,
+                              height: isPortrait ? 12.sp : 0.sp,
                             ),
                             Text(
-                              'MPH',
-                              style: AppTextStyles().mRegular,
+                              settings.speedUnit == 'mph'
+                                  ? 'MPH'
+                                  : settings.speedUnit == 'kmph'
+                                      ? "KMPH"
+                                      : "M/S",
+                              style: context.textStyles.mRegular().copyWith(
+                                  fontSize: isPortrait ? null : 10.sp),
                             ),
                             SizedBox(
                               height: 10.h,
@@ -85,9 +107,11 @@ class FancyCard extends StatelessWidget {
                             Text(
                               speed.toStringAsFixed(0),
                               style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 110.sp,
-                                  height: 0.8),
+                                  fontSize: isPortrait ? 120.sp : 50.sp,
+                                  height: 0.7),
                             )
                           ],
                         ),
@@ -101,7 +125,9 @@ class FancyCard extends StatelessWidget {
                                 angle: -0.4,
                                 child: Icon(
                                   Icons.replay,
-                                  size: 30.sp,
+                                  size: isPortrait ? 30.sp : 20.sp,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                             ),
@@ -112,7 +138,7 @@ class FancyCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    height: PaddingSizes.xxs.sp,
+                    height: isPortrait ? 4.sp : 2.sp,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -120,18 +146,28 @@ class FancyCard extends StatelessWidget {
                       MeasurementBox(
                           boxType: 'Max Speed',
                           measurement: maxSpeed,
-                          measurementUnit: 'MPH'),
+                          measurementUnit: settings.speedUnit == "mph"
+                              ? 'MPH'
+                              : settings.speedUnit == 'kmph'
+                                  ? 'KM/H'
+                                  : 'M/S'),
                       MeasurementBox(
                           boxType: 'Avg Speed',
                           measurement: distanceCovered == 0 ||
                                   duration == Duration.zero
                               ? 0
-                              : distanceCovered / (duration.inSeconds / 3600),
-                          measurementUnit: 'MPH'),
+                              : distanceCovered /
+                                  (duration.inSeconds /
+                                      (settings.speedUnit == 'mps' ? 1 : 3600)),
+                          measurementUnit: settings.speedUnit == "mph"
+                              ? 'MPH'
+                              : settings.speedUnit == 'kmph'
+                                  ? 'KM/H'
+                                  : 'M/S'),
                     ],
                   ),
                   SizedBox(
-                    height: PaddingSizes.xxs.sp,
+                    height: isPortrait ? 4.sp : 2.sp,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -139,7 +175,11 @@ class FancyCard extends StatelessWidget {
                       MeasurementBox(
                           boxType: 'Distance',
                           measurement: distanceCovered,
-                          measurementUnit: 'Mi'),
+                          measurementUnit: settings.speedUnit == "mph"
+                              ? 'Mi'
+                              : settings.speedUnit == 'kmph'
+                                  ? 'KM'
+                                  : 'M'),
                       MeasurementBox(
                           boxType: 'Duration',
                           measurement: duration.inSeconds.toDouble(),
@@ -151,13 +191,20 @@ class FancyCard extends StatelessWidget {
             ),
           )
         : Card(
-            margin: EdgeInsets.zero,
+            margin: isPortrait
+                ? EdgeInsets.zero
+                : EdgeInsets.only(
+                    top: (MediaQuery.of(context).size.height * 0.23).h,
+                    bottom: (MediaQuery.of(context).size.height * 0.15).h,
+                    right: 5.w),
 
             // elevation: 6.0,
             child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15.w),
-                height: 300.h,
-                width: 320.w,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isPortrait ? 15.w : 0.w,
+                ),
+                height: 260.h,
+                width: isPortrait ? 320.w : 180.w,
                 child: Image.asset(
                   googleMapAPI,
                   fit: BoxFit.cover,

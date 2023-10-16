@@ -6,21 +6,23 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
-import 'package:speedometer/core/providers/pedometer_session.dart';
+import 'package:speedometer/core/models/SettingsModel.dart';
+import 'package:speedometer/core/providers/app_start_session_provider.dart';
+import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Hive.initFlutter();
-  // final sessionService = HiveDatabaseServices();
-  // await sessionService.init();
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
   Hive
     ..initFlutter(appDocumentDir.path)
-    ..registerAdapter(PedometerSessionAdapter());
+    ..registerAdapter(PedometerSessionAdapter())
+    ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
@@ -32,18 +34,50 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => PedoMeterSessionProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SubscriptionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AppStartProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UnitsProvider(),
+        ),
       ],
       child: ScreenUtilInit(
           designSize: Size(360, 712),
           builder: (context, child) {
+            var settings = Provider.of<UnitsProvider>(context).settings;
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                  // primarySwatch: Colors.deepPurple,
+              themeMode: settings.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              darkTheme: ThemeData(
+                  colorScheme: ColorScheme.fromSwatch(
+                    cardColor: Colors.white,
+                    backgroundColor: Colors.black,
+                  ).copyWith(
+                    primary: Color(0xff1c1c1e),
+                    onPrimary: Color(0xffe5e5e5),
+                  ),
                   useMaterial3: true,
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                    backgroundColor: Color(0xFFF5F6F7),
+                    backgroundColor: Colors.white,
+                    unselectedIconTheme: IconThemeData(color: Colors.grey),
+                  ),
+                  visualDensity: VisualDensity.defaultDensityForPlatform(
+                      TargetPlatform.iOS)),
+              theme: ThemeData(
+                  colorScheme: ColorScheme.fromSwatch(
+                    cardColor: Colors.white,
+                    backgroundColor: Colors.white,
+                  ).copyWith(
+                    primary: Color(0xFFF6F6F6),
+                    onPrimary: Colors.black,
+                  ),
+                  useMaterial3: true,
+                  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor: Colors.white,
                     unselectedIconTheme: IconThemeData(color: Colors.grey),
                   ),
                   visualDensity: VisualDensity.defaultDensityForPlatform(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
+import 'package:speedometer/core/utils/convert_speed.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 
 class MatchingActivityTile extends StatefulWidget {
   // List<double> matchingActivityValues;
@@ -10,7 +14,7 @@ class MatchingActivityTile extends StatefulWidget {
   int tilesLength;
   IconData icon;
   String activityType;
-  PedometerSession? session;
+  PedometerSession session;
   String valueUnit;
   MatchingActivityTile(
       {super.key,
@@ -27,21 +31,6 @@ class MatchingActivityTile extends StatefulWidget {
 }
 
 class _MatchingActivityTileState extends State<MatchingActivityTile> {
-  @override
-  void initState() {
-    if (widget.session == null) {
-      widget.session = PedometerSession(
-          sessionId: 'null',
-          sessionTitle: 'null',
-          speedInMS: 0,
-          maxSpeedInMS: 0,
-          averageSpeedInMS: 0,
-          distanceInMeters: 0,
-          sessionDuration: Duration.zero);
-    }
-    super.initState();
-  }
-
   double durationInMinutes(Duration? duration) {
     if (duration == null) {
       return 0.0;
@@ -53,6 +42,8 @@ class _MatchingActivityTileState extends State<MatchingActivityTile> {
 
   @override
   Widget build(BuildContext context) {
+    var settings = Provider.of<UnitsProvider>(context).settings;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5.h),
       decoration: BoxDecoration(
@@ -81,19 +72,19 @@ class _MatchingActivityTileState extends State<MatchingActivityTile> {
                   ),
                   Text(
                     widget.activityType,
-                    style: AppTextStyles().mRegular,
+                    style: context.textStyles.mRegular(),
                   ),
                 ],
               ),
               Text(
                 widget.activityType == 'Top Duration'
-                    ? '  ${durationInMinutes(widget.session!.sessionDuration).toStringAsFixed(1)}  ${widget.valueUnit}'
+                    ? '  ${durationInMinutes(widget.session.sessionDuration).toStringAsFixed(1)}  ${widget.valueUnit}'
                     : widget.activityType == 'Top Distance'
-                        ? '  ${convertDistance(widget.session!.distanceInMeters, 'mi').toStringAsFixed(1)} ${widget.valueUnit}'
+                        ? '  ${convertDistance(widget.session.distanceInMeters, 'mi').toStringAsFixed(1)} ${widget.valueUnit}'
                         : widget.activityType == 'Top Max Speed'
-                            ? '  ${widget.session!.maxSpeedInMS.toStringAsFixed(1)} ${widget.valueUnit}'
-                            : '  ${widget.session!.averageSpeedInMS.toStringAsFixed(1)} ${widget.valueUnit}', // Top Average Speed
-                style: AppTextStyles().sRegular,
+                            ? '  ${convertSpeed(widget.session.maxSpeedInMS, widget.valueUnit).toStringAsFixed(1)} ${widget.valueUnit}'
+                            : '  ${convertSpeed(widget.session.averageSpeedInMS, widget.valueUnit).toStringAsFixed(1)} ${widget.valueUnit}', // Top Average Speed
+                style: context.textStyles.sRegular(),
               )
             ],
           ),

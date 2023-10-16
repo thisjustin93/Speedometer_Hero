@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,15 +8,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
-import 'package:speedometer/core/providers/pedometer_session.dart';
+import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/history/screens/session_details_screen.dart';
 import 'package:speedometer/features/history/widgets/matching_activity_tiles.dart';
 import 'package:speedometer/features/history/widgets/sessionActivity.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
+import 'package:speedometer/features/history/widgets/edit_bottomsheet.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -37,6 +37,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   PedometerSession? topDistanceSession;
   PedometerSession? topDurationSession;
   List matchingActivity = [];
+  bool selectSessions = false;
+  // List<int> selectedSessionsIndex = [];
   assignData() {
     final pedometerProvider =
         Provider.of<PedoMeterSessionProvider>(context, listen: false);
@@ -63,34 +65,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
           topAvgSpeedSession = pedometerSession;
         }
       }
+    } else {
+      topMaxSpeedList = [];
+      topAvgSpeedList = [];
+      topDistanceList = [];
+      topDurationList = [];
+      topMaxSpeedSession = null;
+      topAvgSpeedSession = null;
+      topDistanceSession = null;
+      topDurationSession = null;
     }
-
-    matchingActivity = [
-      {
-        'activityType': 'Top Max Speed',
-        'icon': Icons.local_fire_department,
-        'session': topMaxSpeedSession,
-        'valueUnit': 'mph'
-      },
-      {
-        'activityType': 'Top Avg Speed',
-        'icon': Icons.speed,
-        'session': topAvgSpeedSession,
-        'valueUnit': 'mph'
-      },
-      {
-        'activityType': 'Top Distance',
-        'icon': Icons.straighten,
-        'session': topDistanceSession,
-        'valueUnit': 'miles'
-      },
-      {
-        'activityType': 'Top Duration',
-        'icon': Icons.watch_later_outlined,
-        'session': topDurationSession,
-        'valueUnit': 'minutes'
-      },
-    ];
   }
 
   @override
@@ -103,21 +87,66 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
+    var settings = Provider.of<UnitsProvider>(context).settings;
+    print(pedometerSessionProvider.pedometerSessions.length);
+    matchingActivity = [
+      {
+        'activityType': 'Top Max Speed',
+        'icon': Icons.local_fire_department,
+        'session': topMaxSpeedSession,
+        'valueUnit': settings.speedUnit
+      },
+      {
+        'activityType': 'Top Avg Speed',
+        'icon': Icons.speed,
+        'session': topAvgSpeedSession,
+        'valueUnit': settings.speedUnit
+      },
+      {
+        'activityType': 'Top Distance',
+        'icon': Icons.straighten,
+        'session': topDistanceSession,
+        'valueUnit': settings.speedUnit == 'mph'
+            ? 'miles'
+            : settings.speedUnit == 'kmph'
+                ? 'kilometers'
+                : "meters"
+      },
+      {
+        'activityType': 'Top Duration',
+        'icon': Icons.watch_later_outlined,
+        'session': topDurationSession,
+        'valueUnit': 'minutes'
+      },
+    ];
     return Scaffold(
-      backgroundColor: Color(0xFFF5F6F7),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         toolbarHeight: 40.h,
         actions: [
           InkWell(
-            onLongPress: () {},
+            onTap: () {
+              setState(() {
+                selectSessions = false;
+              });
+            },
+            onLongPress: () {
+              setState(() {
+                selectSessions = true;
+              });
+            },
             child: Container(
-                width: 60.w,
-                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                width: 70.w,
+                alignment: Alignment.center,
                 child: Text(
-                  "Select",
-                  style: AppTextStyles().mRegular.copyWith(color: Colors.black),
+                  selectSessions ? "Done" : "Select",
+                  style: context.textStyles.mRegular().copyWith(
+                      color: selectSessions
+                          ? Colors.red
+                          : Theme.of(context).colorScheme.onPrimary),
                 )),
           )
         ],
@@ -130,7 +159,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               Text(
                 "History",
-                style: AppTextStyles().lMedium,
+                style: context.textStyles.lMedium(),
               ),
               SizedBox(
                 height: 10.h,
@@ -139,9 +168,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 width: double.maxFinite,
                 padding: EdgeInsets.only(left: 15.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.white, width: 2.sp),
+                  border: Border.all(
+                      color: settings.darkTheme
+                          ? Color(0xff1c1c1e)
+                          : Color(0xffc6c6c6),
+                      width: 2.sp),
                 ),
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -152,7 +185,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         if (matchingActivity[index]['session'] == null) {
                           return;
                         }
-                        Navigator.of(context).push(PageRouteBuilder(
+                        Navigator.of(context)
+                            .push(PageRouteBuilder(
                           pageBuilder: (context, animation,
                                   secondaryAnimation) =>
                               SessionDetailsScreen(
@@ -170,14 +204,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               child: child,
                             );
                           },
-                        ));
+                        ))
+                            .then((value) {
+                          assignData();
+                          setState(() {});
+                        });
                       },
                       child: MatchingActivityTile(
                         activityType: matchingActivity[index]['activityType'],
                         icon: matchingActivity[index]['icon'],
                         tileIndex: index,
                         tilesLength: matchingActivity.length,
-                        session: matchingActivity[index]['session'],
+                        session: matchingActivity[index]['session'] ??
+                            PedometerSession(
+                                sessionId: 'null',
+                                sessionTitle: 'null',
+                                speedInMS: 0,
+                                maxSpeedInMS: 0,
+                                averageSpeedInMS: 0,
+                                distanceInMeters: 0,
+                                sessionDuration: Duration.zero),
                         valueUnit: matchingActivity[index]['valueUnit'],
                       ),
                     );
@@ -192,16 +238,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 width: double.maxFinite,
                 padding: EdgeInsets.only(left: 15.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).primaryColor,
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8.r)),
-                  border: Border.all(color: Colors.white, width: 2.sp),
+                  border: Border.all(
+                      color: settings.darkTheme
+                          ? Color(0xff1c1c1e)
+                          : Color(0xffc6c6c6),
+                      width: 2.sp),
                 ),
                 child: pedometerSessionProvider.pedometerSessions.isEmpty
                     ? Center(
                         child: Text(
                           "No Session Saved yet.",
-                          style: AppTextStyles().mRegular,
+                          style: context.textStyles.mRegular(),
                         ),
                       )
                     : ListView.builder(
@@ -217,6 +267,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               children: [
                                 SlidableAction(
                                   onPressed: (context) async {
+                                    editBottomSheet(
+                                      context,
+                                      pedometerSessionProvider
+                                          .pedometerSessions[index],
+                                      () {},
+                                    );
                                     // await HiveDatabaseServices().updateSession(index, updatedSession)
                                   },
                                   backgroundColor: Color(0xFFC6C6C6),
@@ -230,8 +286,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     showDialog(
                                         context: context,
                                         builder: (context) => AlertDialog(
-                                              backgroundColor: Color.fromARGB(
-                                                  247, 211, 211, 204),
+                                              backgroundColor:
+                                                  settings.darkTheme
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Color.fromARGB(
+                                                          247, 211, 211, 204),
                                               titlePadding:
                                                   EdgeInsets.only(top: 10.h),
                                               contentPadding: EdgeInsets.zero,
@@ -261,8 +322,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                       'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                                                       textAlign:
                                                           TextAlign.center,
-                                                      style: AppTextStyles()
-                                                          .mRegular,
+                                                      style: context.textStyles
+                                                          .mRegular(),
                                                     ),
                                                     SizedBox(
                                                       height: 10.h,
@@ -272,7 +333,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                         final directory =
                                                             await getApplicationDocumentsDirectory();
                                                         final file = File(
-                                                            '${directory.path}/abc.txt');
+                                                            '${directory.path}/${pedometerSessionProvider.pedometerSessions[index].sessionTitle.replaceAll('/', '')}.text');
                                                         await file.writeAsString(
                                                             jsonEncode(
                                                                 pedometerSessionProvider
@@ -281,15 +342,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                                     .toMap()));
                                                         Navigator.of(context)
                                                             .pop();
-                                                        //Bottom sheet when click export data
                                                         Share.shareXFiles(
                                                             [XFile(file.path)]);
-                                                        // shareBottomSheet(
-                                                        //     context,
-                                                        //     pedometerSessionProvider
-                                                        //             .pedometerSessions[
-                                                        //         index],
-                                                        //     file);
                                                       },
                                                       style: ElevatedButton
                                                           .styleFrom(
@@ -304,8 +358,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                                   StadiumBorder()),
                                                       child: Text(
                                                         'Export Data',
-                                                        style: AppTextStyles()
-                                                            .mThick,
+                                                        style: context
+                                                            .textStyles
+                                                            .mThick()
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .white),
                                                       ),
                                                     ),
                                                     TextButton(
@@ -315,8 +373,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                         },
                                                         child: Text(
                                                           "Cancel",
-                                                          style: AppTextStyles()
-                                                              .mRegular
+                                                          style: context
+                                                              .textStyles
+                                                              .mRegular()
                                                               .copyWith(
                                                                   color: Colors
                                                                       .black),
@@ -334,7 +393,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   // label: 'Save',
                                 ),
                                 SlidableAction(
-                                  onPressed: (context) {},
+                                  onPressed: (context) async {
+                                    await HiveDatabaseServices().deleteSession(
+                                        pedometerSessionProvider
+                                            .pedometerSessions[index]
+                                            .sessionId);
+
+                                    List<PedometerSession> sessions =
+                                        await HiveDatabaseServices()
+                                            .getAllSessions();
+
+                                    Provider.of<PedoMeterSessionProvider>(
+                                            context,
+                                            listen: false)
+                                        .updatePedometerSessionList(sessions);
+
+                                    setState(() {});
+                                  },
                                   backgroundColor: Color(0xFFFF0000),
                                   foregroundColor: Colors.white,
                                   icon: Icons.delete_outline,
@@ -346,7 +421,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ),
                             child: InkWell(
                               onTap: () {
-                                Navigator.of(context).push(PageRouteBuilder(
+                                Navigator.of(context)
+                                    .push(PageRouteBuilder(
                                   pageBuilder: (context, animation,
                                           secondaryAnimation) =>
                                       SessionDetailsScreen(
@@ -365,14 +441,36 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       child: child,
                                     );
                                   },
-                                ));
+                                ))
+                                    .then((value) {
+                                  assignData();
+                                  setState(() {});
+                                });
                               },
                               child: SessionActivityTile(
-                                pedometerSession: pedometerSessionProvider
-                                    .pedometerSessions[index],
-                                tileIndex: index,
-                                tilesLength: matchingActivity.length,
-                              ),
+                                  pedometerSession: pedometerSessionProvider
+                                      .pedometerSessions[index],
+                                  tileIndex: index,
+                                  tilesLength: matchingActivity.length,
+                                  showCheckBox: selectSessions,
+                                  deleteSession: () async {
+                                    await HiveDatabaseServices().deleteSession(
+                                        pedometerSessionProvider
+                                            .pedometerSessions[index]
+                                            .sessionId);
+
+                                    List<PedometerSession> sessions =
+                                        await HiveDatabaseServices()
+                                            .getAllSessions();
+                                    Provider.of<PedoMeterSessionProvider>(
+                                            context,
+                                            listen: false)
+                                        .updatePedometerSessionList(sessions);
+                                    assignData();
+                                    setState(() {});
+                                  }
+                                  // selectedSessions: selectedSessionsIndex,
+                                  ),
                             ),
                           );
                         },

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
-import 'package:speedometer/core/providers/pedometer_session.dart';
+import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/app_snackbar.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 
 class PausedTrackingScreen extends StatefulWidget {
   final DateTime pauseTime;
@@ -23,8 +25,11 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
   Widget build(BuildContext context) {
     var currentPedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
+    var settings = Provider.of<UnitsProvider>(context).settings;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
-      backgroundColor: Color(0xFFF5F6F7),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 3.sp, vertical: 5.sp),
@@ -33,6 +38,8 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
               children: [
                 Container(
                   height: 390.h,
+                  color: Theme.of(context).colorScheme.background,
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   width: double.infinity,
                   child: Image.asset(
                     'assets/images/ad.png',
@@ -40,7 +47,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 15.sp,
+                  height: isPortrait ? 15.sp : 5.sp,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -50,8 +57,8 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                         measurement: convertSpeed(
                             currentPedometerSessionProvider
                                 .currentPedometerSession!.maxSpeedInMS,
-                            'mph'),
-                        measurementUnit: 'mph'),
+                            settings.speedUnit),
+                        measurementUnit: settings.speedUnit),
                     SizedBox(
                       width: 5.sp,
                     ),
@@ -74,8 +81,8 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                                         .currentPedometerSession!
                                         .sessionDuration
                                         .inSeconds,
-                                'mph'),
-                        measurementUnit: 'mph'),
+                                settings.speedUnit),
+                        measurementUnit: settings.speedUnit),
                   ],
                 ),
                 SizedBox(
@@ -89,8 +96,16 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                         measurement: convertDistance(
                             currentPedometerSessionProvider
                                 .currentPedometerSession!.distanceInMeters,
-                            'mi'),
-                        measurementUnit: 'mi'),
+                            settings.speedUnit == "mph"
+                                ? 'mi'
+                                : settings.speedUnit == 'kmph'
+                                    ? 'km'
+                                    : 'm'),
+                        measurementUnit: settings.speedUnit == "mph"
+                            ? 'mi'
+                            : settings.speedUnit == 'kmph'
+                                ? 'km'
+                                : 'm'),
                     SizedBox(
                       width: 5.sp,
                     ),
@@ -103,10 +118,10 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: 15.sp,
+                  height: isPortrait ? 15.sp : 5.sp,
                 ),
                 Container(
-                  height: 85.h,
+                  height: isPortrait ? 85.h : 180.h,
                   padding: EdgeInsets.symmetric(horizontal: 13.sp),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -131,20 +146,20 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              height: 60.h,
-                              width: 60.h,
+                              height: isPortrait ? 60.h : 120.h,
+                              width: isPortrait ? 60.h : 120.h,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.green),
                               child: Icon(
                                 Icons.folder,
                                 color: Colors.white,
-                                size: 50.sp,
+                                size: isPortrait ? 50.sp : 25.sp,
                               ),
                             ),
                           ),
                           Text(
                             'Save',
-                            style: AppTextStyles().mRegular,
+                            style: context.textStyles.mRegular(),
                           )
                         ],
                       ),
@@ -156,26 +171,26 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              height: 60.h,
-                              width: 60.h,
+                              height: isPortrait ? 60.h : 120.h,
+                              width: isPortrait ? 60.h : 120.h,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.yellow),
                               child: Icon(
                                 Icons.delete,
                                 color: Colors.white,
-                                size: 50.sp,
+                                size: isPortrait ? 50.sp : 25.sp,
                               ),
                             ),
                           ),
                           Text(
                             'Delete',
-                            style: AppTextStyles().mRegular,
+                            style: context.textStyles.mRegular(),
                           )
                         ],
                       ),
                       SizedBox(
-                        height: 60.h,
-                        width: 3.w,
+                        height: isPortrait ? 60.h : 180.h,
+                        width: isPortrait ? 3.w : 2.w,
                         child: Container(color: Colors.grey),
                       ),
                       Column(
@@ -189,20 +204,21 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop(true);
                             },
                             child: CircleAvatar(
-                                radius: 30.r,
-                                backgroundColor: Colors.black,
+                                radius: isPortrait ? 30.r : 60.r,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 child: CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  radius: 27.r,
+                                  radius: isPortrait ? 27.r : 54.r,
                                   child: CircleAvatar(
                                     backgroundColor: Colors.red,
-                                    radius: 23.r,
+                                    radius: isPortrait ? 23.r : 46.r,
                                   ),
                                 )),
                           ),
                           Text(
                             'Resume',
-                            style: AppTextStyles().mRegular,
+                            style: context.textStyles.mRegular(),
                           )
                         ],
                       ),

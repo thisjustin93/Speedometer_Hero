@@ -1,170 +1,84 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
-import 'package:clipboard/clipboard.dart';
-import 'package:speedometer/core/utils/app_snackbar.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 
-shareBottomSheet(
-    BuildContext context, PedometerSession pedometerSession, File file) {
-  return showCupertinoModalPopup(
-    context: context,
-    builder: (context) => CupertinoActionSheet(
-      title: Row(
-        children: [
-          Icon(
-            Icons.text_snippet_outlined,
-            size: 35.sp,
-          ),
-          SizedBox(
-            width: 10.w,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pedometerSession.sessionTitle,
-                  style: AppTextStyles().mThick.copyWith(color: Colors.black),
-                ),
-                Text(
-                    'Text Document   ${(file.lengthSync() / 1000).toStringAsFixed(2)} KB')
-              ],
-            ),
-          ),
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(Icons.cancel))
-        ],
-      ),
-      message: Container(
-        height: 400.h,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {},
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/messages_logo.png',
-                    height: 50.h,
-                    width: 50.h,
-                    fit: BoxFit.cover,
-                  ),
-                  Text(
-                    'Messages',
-                    style: AppTextStyles().sRegular.copyWith(fontSize: 10.sp),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 25.h,
-            ),
-            Container(
-              height: 145.h,
+shareBottomSheet(BuildContext context, PedometerSession session) {
+  return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            backgroundColor:
+                Provider.of<UnitsProvider>(context).settings.darkTheme
+                    ? Theme.of(context).colorScheme.primary
+                    : Color.fromARGB(247, 211, 211, 204),
+            titlePadding: EdgeInsets.only(top: 10.h),
+            contentPadding: EdgeInsets.zero,
+            insetPadding:
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 200.h),
+            title: Container(
+              alignment: Alignment.center,
+              height: 50.sp,
+              width: 50.sp,
               decoration: BoxDecoration(
+                  color: Color(0xffF82929), shape: BoxShape.circle),
+              child: Icon(
+                Icons.shopping_cart,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
+                size: 30.sp,
               ),
+            ),
+            content: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      Map<String, dynamic> jsonData =
-                          jsonDecode(file.readAsStringSync());
-                      print(jsonData);
-                      String textToCopy = jsonData.toString();
-                      await FlutterClipboard.copy(textToCopy);
+                  Text(
+                    'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
+                    textAlign: TextAlign.center,
+                    style: context.textStyles.mRegular(),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      final file = File(
+                          '${directory.path}/${session.sessionTitle.replaceAll('/', '')}.text');
+                      await file.writeAsString(jsonEncode(session.toMap()));
+                      Navigator.of(context).pop();
+                      Share.shareXFiles([XFile(file.path)]);
                     },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.sp, vertical: 5.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Copy',
-                            style: AppTextStyles()
-                                .mRegular
-                                .copyWith(color: Colors.black),
-                          ),
-                          Icon(Icons.file_copy_outlined),
-                        ],
-                      ),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xffF82929),
+                        foregroundColor: Colors.white,
+                        fixedSize: Size(300.w, 40.h),
+                        shape: StadiumBorder()),
+                    child: Text(
+                      'Export Data',
+                      style: context.textStyles
+                          .mThick()
+                          .copyWith(color: Colors.white),
                     ),
                   ),
-                  Divider(
-                    color: Color(0xFFF5F6F7),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      // final Directory directory =
-                      //     await getApplicationDocumentsDirectory();
-                      print('1111111111111');
-                      final File saveFile =
-                          await File('/storage/emulated/0/Download/abc.text')
-                              .create(recursive: true);
-                      print('a11111111111');
-                      print(saveFile.path);
-                      print('b11111111111');
-
-                      String text = await file.readAsString();
-                      await saveFile.writeAsString(text);
-                      print("Done");
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.sp, vertical: 5.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Save to Files',
-                            style: AppTextStyles()
-                                .mRegular
-                                .copyWith(color: Colors.black),
-                          ),
-                          Icon(Icons.folder_outlined),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    color: Color(0xFFF5F6F7),
-                  ),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'QR scan',
-                          style: AppTextStyles()
-                              .mRegular
-                              .copyWith(color: Colors.black),
-                        ),
-                        Icon(Icons.qr_code_scanner_outlined),
-                      ],
-                    ),
-                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        "Cancel",
+                        style: context.textStyles.mRegular(),
+                      ))
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    ),
-  );
+          ));
 }

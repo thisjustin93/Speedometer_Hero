@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -8,10 +9,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
-import 'package:speedometer/core/providers/pedometer_session.dart';
+import 'package:speedometer/core/providers/app_start_session_provider.dart';
+import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
+import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/home/screens/paused_tracking_screen.dart';
 import 'package:speedometer/features/home/widgets/carousel_cards.dart';
 import 'package:speedometer/features/home/widgets/compass_widget.dart';
@@ -30,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
   double speed = 0;
   double direction = 0;
   double maxSpeed = 0.0;
+  double startingAltitude = 0;
+  double endingAltitude = 0;
   StreamSubscription<CompassEvent>? compassSubscription;
   StreamSubscription<Position>? geolocatorStream;
   Position? currentPosition;
@@ -41,26 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool startTracking = false;
   PedometerSession? pedometerSession;
   List<LatLng> pathPoints = [];
-  // setLastSession() async {
-  //   await Future.delayed(Duration(seconds: 3));
-
-  //   if (Provider.of<PedoMeterSessionProvider>(context, listen: false)
-  //       .pedometerSessions
-  //       .isNotEmpty) {
-  //     PedometerSession? lastPedometerSession =
-  //         Provider.of<PedoMeterSessionProvider>(context, listen: false)
-  //             .pedometerSessions
-  //             .last;
-  //     startTime = lastPedometerSession.startTime;
-  //     endTime = lastPedometerSession.endTime;
-  //     startingPosition = await Geolocator.getCurrentPosition();
-
-  //     maxSpeed = lastPedometerSession.maxSpeedInMS;
-  //     totalDistance = lastPedometerSession.distanceInMeters;
-  //     speed = lastPedometerSession.speedInMS;
-  //     setState(() {});
-  //   }
-  // }
+  SubscriptionStatus? subscriptionStatus;
+  List<Position> geoPostions = [];
 
   @override
   void initState() {
@@ -72,7 +61,26 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
-    // setLastSession();
+    Future.delayed(
+      Duration(milliseconds: 500),
+      () {
+        subscriptionStatus =
+            Provider.of<SubscriptionProvider>(context, listen: false).status;
+      },
+    );
+    Provider.of<PedoMeterSessionProvider>(context, listen: false)
+        .currentPedometerSession = null;
+    startTime = DateTime.now();
+    speed = 0;
+    maxSpeed = 0;
+    totalDistance = 0;
+    currentPosition = null;
+    pauseTime = null;
+    endTime = null;
+    startingAltitude = 0;
+    endingAltitude = 0;
+    _startTracking();
+    setState(() {});
     super.initState();
   }
 
@@ -105,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
       if (mounted) {
+        geoPostions.add(position);
         if (position.speed < 0) {
           return;
         } else {
@@ -118,6 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
             totalDistance += distanceInMeters;
           }
+          if (startingAltitude == 0) {
+            startingAltitude = position.altitude;
+          }
+          endingAltitude = position.altitude;
           pathPoints.add(LatLng(position.latitude, position.longitude));
           currentPosition = position;
           speed = position.speed;
@@ -135,6 +148,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
+    if (pedometerSessionProvider.currentPedometerSession != null) {
+      print(pedometerSessionProvider.currentPedometerSession!.toMap());
+    }
+    var settings = Provider.of<UnitsProvider>(context).settings;
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     List<Widget> fancyCards() {
       return <Widget>[
         Card(
@@ -145,13 +164,15 @@ class _HomeScreenState extends State<HomeScreen> {
           shadowColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
           // elevation: 4.0,
-          child: Padding(
-            padding: EdgeInsets.all(16.0.sp),
+          child: Container(
+            // padding: EdgeInsets.all(16.0.sp),
             child: Column(
               children: <Widget>[
                 Container(
-                  width: 250.w,
-                  height: 200.h,
+                  width: isPortrait
+                      ? 250.w
+                      : (MediaQuery.of(context).size.width * 0.26).w,
+                  height: 240.h,
                   color: Colors.transparent,
                 ),
                 Text(
@@ -171,10 +192,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+        SizedBox(
+          height: 10.h,
+        ),
         FancyCard(
           cardIndex: 0,
-          speed: convertSpeed(speed, 'mph'), //Use "ft/s", "km/h", or "mph"
-          maxSpeed: convertSpeed(maxSpeed, 'mph'),
+          speed: convertSpeed(speed, settings.speedUnit),
+          maxSpeed: convertSpeed(maxSpeed, settings.speedUnit),
           duration: startTime != null
               ? endTime != null
                   ? endTime!.difference(startTime!)
@@ -185,7 +209,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           .difference(startTime!)
                       : DateTime.now().difference(startTime!)
               : Duration.zero,
-          distanceCovered: convertDistance(totalDistance, 'mi'),
+          distanceCovered: convertDistance(
+              totalDistance,
+              settings.speedUnit == 'mph'
+                  ? 'mi'
+                  : settings.speedUnit == 'kmph'
+                      ? 'km'
+                      : 'm'),
           onPressed: () {
             geolocatorStream?.cancel();
             geolocatorStream = null;
@@ -204,65 +234,90 @@ class _HomeScreenState extends State<HomeScreen> {
           googleMapAPI: 'assets/images/map.png',
         ),
         SizedBox(
-          height: 60.h,
+          height: 100.h,
         )
       ];
     }
 
     return Scaffold(
-      // backgroundColor: Color(0xFFF5F6F7     ),
-      backgroundColor: Color(0xFFF5F6F7),
+      // backgroundColor: Color(0xFFF6F6F6     ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       // backgroundColor: Color.fromARGB(5, 0, (153 / 235).toInt(), 255),
-      body: Container(
-        child: Stack(
-          children: [
-            Positioned(
-              top: (MediaQuery.of(context).padding.top).h,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                child: Text(
-                  'Jerico',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // final isPortrait = constraints.maxHeight > constraints.maxWidth;
+
+          return Stack(
+            children: [
+              if (settings.showCityName)
+                Positioned(
+                  top: isPortrait
+                      ? (MediaQuery.of(context).padding.top +
+                              MediaQuery.of(context).size.height * 0.05)
+                          .h
+                      : (MediaQuery.of(context).padding.top +
+                              MediaQuery.of(context).size.height * 0.3)
+                          .h,
+                  left: isPortrait
+                      ? 0
+                      : (MediaQuery.of(context).size.width * 0.12).w,
+                  right: isPortrait ? 0 : null,
+                  bottom: isPortrait ? null : 0,
+                  child: SafeArea(
+                    child: Text(
+                      'Jerico',
+                      style: context.textStyles.mRegular().copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: isPortrait ? 18.sp : 10.sp,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
+                ),
+              if (settings.showCompass)
+                Positioned(
+                  top: isPortrait ? null : 0,
+                  left: isPortrait ? 0 : 0,
+                  right: isPortrait ? 0 : null,
+                  bottom: isPortrait ? null : 0,
+                  child: SafeArea(
+                    child: CompassWidget(
+                      direction: direction,
+                    ),
+                  ),
+                ),
+              Positioned(
+                top: isPortrait ? null : 0,
+                left: isPortrait ? 0 : 0,
+                right: isPortrait ? 0 : null,
+                bottom: isPortrait ? null : 0,
+                child: SafeArea(
+                  child: SpeedometerWidget(
+                    altitude: convertDistance(endingAltitude - startingAltitude,
+                        settings.elevationUnit),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              // top: 15.h,
-              child: SafeArea(
-                child: CompassWidget(
-                  direction: direction,
-                ),
+              ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                itemCount: fancyCards().length,
+                itemBuilder: (context, index) {
+                  return fancyCards()[index];
+                },
               ),
-            ),
-            Positioned(
-              // top: 15.h,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                child: SpeedometerWidget(
-                  speed: speed,
-                ),
-              ),
-            ),
-            ListView.builder(
-              physics: BouncingScrollPhysics(),
-              itemCount: fancyCards().length,
-              itemBuilder: (context, index) {
-                return fancyCards()[index];
-              },
-            )
-          ],
-        ),
+            ],
+          );
+        },
       ),
+
+      floatingActionButtonLocation: isPortrait
+          ? FloatingActionButtonLocation.endFloat
+          : FloatingActionButtonLocation.endTop,
       floatingActionButton: InkWell(
         onTap: () async {
+          Provider.of<AppStartProvider>(context, listen: false).changeState();
           if (startTracking && !(geolocatorStream!.isPaused)) {
             String sessionId = DateTime.now().toString();
             startTracking = false;
@@ -272,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
             geolocatorStream?.pause();
             pedometerSessionProvider.setCurrentPedometerSession(
               PedometerSession(
-                sessionId: sessionId,
+                sessionId: DateTime.now().toString(),
                 sessionTitle: DateFormat('MM/dd/yy HH:mm')
                     .format(DateTime.parse(sessionId))
                     .toString(),
@@ -291,6 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         : pedometerSessionProvider
                             .currentPedometerSession!.pauseDuration,
                 maxSpeedInMS: maxSpeed,
+                altitude: endingAltitude - startingAltitude,
                 sessionDuration:
                     pedometerSessionProvider.currentPedometerSession == null
                         ? endTime!.difference(startTime!)
@@ -304,6 +360,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.blue, // Set the color of the polyline
                   width: 5, // Set the width of the polyline
                 ),
+                activityType: '',
+                note: '',
+                geoPositions: geoPostions,
               ),
             );
 
@@ -326,6 +385,33 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ))
                 .then((value) {
+              bool? isContinue = value;
+              if (isContinue != null && isContinue) {
+                endTime = null;
+                pauseTime = null;
+                startTracking = true;
+                _startTracking();
+
+                setState(() {});
+              } else {
+                startingAltitude = 0;
+                endingAltitude = 0;
+                pedometerSessionProvider.currentPedometerSession = null;
+                startTime = null;
+                endTime = null;
+                startingPosition = null;
+                totalDistance = 0;
+                speed = 0;
+                maxSpeed = 0;
+                currentPosition = null;
+                pauseTime = null;
+                startTracking = false;
+                setState(() {});
+              }
+            });
+          } else {
+            if (pedometerSessionProvider.pedometerSessions.length >= 4 &&
+                subscriptionStatus == SubscriptionStatus.notSubscribed) {
               showDialog(
                 context: context,
                 builder: (context) {
@@ -354,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                             textAlign: TextAlign.center,
-                            style: AppTextStyles().mRegular,
+                            style: context.textStyles.mRegular(),
                           ),
                           SizedBox(
                             height: 10.h,
@@ -368,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: StadiumBorder()),
                             child: Text(
                               'Unlimited Activity History',
-                              style: AppTextStyles().mThick,
+                              style: context.textStyles.mThick(),
                             ),
                           ),
                           TextButton(
@@ -377,9 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: Text(
                                 "Cancel",
-                                style: AppTextStyles()
-                                    .mRegular
-                                    .copyWith(color: Colors.black),
+                                style: context.textStyles.mRegular(),
                               ))
                         ],
                       ),
@@ -387,53 +471,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               );
-              bool? isContinue = value;
-              if (isContinue != null && isContinue) {
-                endTime = null;
-                pauseTime = null;
-                startTracking = true;
-                _startTracking();
-
-                setState(() {});
-              } else {
-                pedometerSessionProvider.currentPedometerSession = null;
-                startTime = null;
-                endTime = null;
-                startingPosition = null;
-                totalDistance = 0;
-                speed = 0;
-                maxSpeed = 0;
-                currentPosition = null;
-                pauseTime = null;
-                startTracking = false;
-                setState(() {});
-              }
-            });
-          } else {
-            startTime = DateTime.now();
-            speed = 0;
-            maxSpeed = 0;
-            totalDistance = 0;
-            currentPosition = null;
-            pauseTime = null;
-            startTracking = true;
-            endTime = null;
-            _startTracking();
+            } else {
+              startTime = DateTime.now();
+              speed = 0;
+              maxSpeed = 0;
+              totalDistance = 0;
+              currentPosition = null;
+              pauseTime = null;
+              startTracking = true;
+              endTime = null;
+              _startTracking();
+            }
           }
           setState(() {});
         },
         child: CircleAvatar(
-            radius: 24.r,
+            radius: isPortrait ? 24.r : 45.r,
             backgroundColor: startTime != null && !startTracking
-                ? Colors.black
+                ? Theme.of(context).colorScheme.primary
                 : Color(0xffF82929),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              radius: 21.r,
+              radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
                 backgroundColor:
                     startTracking ? Color(0xffFD8282) : Color(0xffF82929),
-                radius: 18.r,
+                radius: isPortrait ? 18.r : 35.r,
               ),
             )),
       ),

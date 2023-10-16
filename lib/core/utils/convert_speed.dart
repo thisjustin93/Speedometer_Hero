@@ -4,13 +4,15 @@ double convertSpeed(double speedMetersPerSecond, String toUnit) {
   const double metersToMiles = 2.23694;
 
   switch (toUnit) {
-    case 'ft/s':
+    case 'ftps':
       return speedMetersPerSecond * metersToFeet;
-    case 'km/h':
+    case 'kmph':
       return speedMetersPerSecond * metersToKilometers;
     case 'mph':
       return speedMetersPerSecond * metersToMiles;
+    case 'mps':
+      return speedMetersPerSecond;
     default:
-      throw ArgumentError('Invalid target unit. Use "ft/s", "km/h", or "mph".');
+      throw ArgumentError('Invalid target unit. Use "ftps", "kmph", or "mph".');
   }
 }

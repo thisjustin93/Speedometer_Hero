@@ -10,6 +10,8 @@ class CompassWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     return Transform.rotate(
       angle: ((direction) * (pi / 180) * -1),
       child: SfRadialGauge(
@@ -21,16 +23,18 @@ class CompassWidget extends StatelessWidget {
             maximum: 360,
             interval: 45,
             labelOffset: 5,
-            radiusFactor: 0.35,
+            radiusFactor: isPortrait ? 0.35.r : 0.8.r,
             onLabelCreated: (value) {
-              value.labelStyle =
-                  GaugeTextStyle(fontWeight: FontWeight.bold, fontSize: 15.sp);
+              value.labelStyle = GaugeTextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: isPortrait ? 15.sp : 9.sp,
+                  color: Theme.of(context).colorScheme.onPrimary);
               if (value.text == '360' || value.text == '0') {
                 value.text = 'N';
                 value.labelStyle = GaugeTextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
-                    fontSize: 15.sp);
+                    fontSize: isPortrait ? 15.sp : 9.sp);
               } else if (value.text == '90') {
                 value.text = 'E';
               } else if (value.text == '180') {
@@ -46,12 +50,12 @@ class CompassWidget extends StatelessWidget {
             majorTickStyle: MajorTickStyle(
               length: 6,
               thickness: 2,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             minorTickStyle:
                 MinorTickStyle(length: 4, thickness: 2, color: Colors.grey),
             axisLabelStyle: GaugeTextStyle(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onPrimary,
               // fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -42,22 +43,33 @@ class PedometerSession extends HiveObject {
   late Duration pauseDuration;
   @HiveField(12)
   late String sessionTitle;
+  @HiveField(13)
+  late double altitude;
+  @HiveField(14)
+  late String? activityType;
+  @HiveField(15)
+  late String? note;
+  @HiveField(16)
+  late List<Position>? geoPositions;
 
-  PedometerSession({
-    required this.sessionId,
-    required this.sessionTitle,
-    this.sessionDuration = Duration.zero,
-    this.distanceInMeters = 0,
-    this.startTime,
-    this.endTime,
-    this.speedInMS = 0,
-    this.maxSpeedInMS = 0,
-    this.averageSpeedInMS = 0,
-    this.startPoint,
-    this.endPoint,
-    this.path,
-    this.pauseDuration=Duration.zero,
-  });
+  PedometerSession(
+      {required this.sessionId,
+      required this.sessionTitle,
+      this.sessionDuration = Duration.zero,
+      this.distanceInMeters = 0,
+      this.startTime,
+      this.endTime,
+      this.altitude = 0,
+      this.speedInMS = 0,
+      this.maxSpeedInMS = 0,
+      this.averageSpeedInMS = 0,
+      this.startPoint,
+      this.endPoint,
+      this.path,
+      this.pauseDuration = Duration.zero,
+      this.activityType,
+      this.note,
+      this.geoPositions});
 
   Map<String, dynamic> toMap() {
     return {
@@ -65,17 +77,20 @@ class PedometerSession extends HiveObject {
       'sessionTitle': sessionTitle,
       'sessionDuration':
           sessionDuration.inMilliseconds, // Convert to milliseconds
-      'pauseDuration':
-          pauseDuration.inMilliseconds, // Convert to milliseconds
+      'pauseDuration': pauseDuration.inMilliseconds, // Convert to milliseconds
       'distanceInMeters': distanceInMeters,
       'startTime': startTime?.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
       'speedInMS': speedInMS,
+      'altitude': altitude,
       'maxSpeedInMS': maxSpeedInMS,
       'averageSpeedInMS': averageSpeedInMS,
       'startPoint': startPoint?.toJson(),
       'endPoint': endPoint?.toJson(),
       'path': path?.toJson(),
+      'activityType': activityType,
+      'note': note,
+      'geoPositions': geoPositions,
     };
   }
 
@@ -91,7 +106,10 @@ class PedometerSession extends HiveObject {
     distanceInMeters = map['distanceInMeters'];
     endTime = map['endTime'] != null ? DateTime.parse(map['endTime']) : null;
     speedInMS = map['speedInMS'];
+    activityType = map['activityType'];
+    note = map['note'];
     maxSpeedInMS = map['maxSpeedInMS'];
+    altitude = map['altitude'];
     averageSpeedInMS = map['averageSpeedInMS'];
     startPoint =
         map['startPoint'] != null ? LatLng.fromJson(map['startPoint']) : null;
@@ -99,9 +117,11 @@ class PedometerSession extends HiveObject {
         map['endPoint'] != null ? LatLng.fromJson(map['endPoint']) : null;
     final List<dynamic>? pointsJson = map['path'];
     path = Polyline(
-      polylineId: PolylineId(sessionId),
+      polylineId: PolylineId("$sessionId"),
       points:
           pointsJson!.map((point) => LatLng.fromJson(point)!).toList() ?? [],
     );
+    geoPositions = map['geoPositions'];
+    
   }
 }

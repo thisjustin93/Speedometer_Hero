@@ -12,7 +12,7 @@ extension BuildContextX on BuildContext {
 
   Color? get iconColor => Theme.of(this).iconTheme.color;
 
-  AppTextStyles get textStyles => AppTextStyles();
+  AppTextStyles get textStyles => AppTextStyles(this);
 }
 
 extension NavigatorX on NavigatorState {

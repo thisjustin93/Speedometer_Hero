@@ -9,7 +9,7 @@ SnackBar errorSnackbar({
   return SnackBar(
     content: Text(
       content,
-      style: context.textStyles.sRegular.copyWith(color: Colors.white),
+      style: context.textStyles.sRegular().copyWith(color: Colors.white),
     ),
     backgroundColor: Colors.red,
     behavior: SnackBarBehavior.floating,
@@ -30,7 +30,7 @@ SnackBar successSnackbar({
   return SnackBar(
     content: Text(
       content,
-      style: context.textStyles.sRegular.copyWith(color: Colors.white),
+      style: context.textStyles.sRegular().copyWith(color: Colors.white),
     ),
     backgroundColor: Colors.green,
     // behavior: SnackBarBehavior.floating,
