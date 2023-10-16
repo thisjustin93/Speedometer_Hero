@@ -118,18 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
       if (mounted) {
-        print('ifa');
         geoPostions.add(position);
         if (position.speed < 0) {
-          print('ifb');
-
           return;
         } else {
-          print('ifc');
-
           if (currentPosition != null) {
-            print('ifd');
-
             double distanceInMeters = Geolocator.distanceBetween(
               currentPosition!.latitude,
               currentPosition!.longitude,
@@ -145,10 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
           endingAltitude = position.altitude;
           pathPoints.add(LatLng(position.latitude, position.longitude));
           currentPosition = position;
-          print('iff');
-
-          print("${currentPosition == null}");
-          print('ife');
 
           speed = position.speed;
           if (speed > maxSpeed) {
@@ -159,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {});
       }
     });
-    print(geolocatorStream == null);
   }
 
   @override
@@ -382,7 +370,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 geoPositions: geoPostions,
               ),
             );
-            print("navigation top");
             Navigator.of(context)
                 .push(PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -427,10 +414,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             });
           } else {
-            print("else1");
             if (pedometerSessionProvider.pedometerSessions.length >= 4 &&
                 subscriptionStatus == SubscriptionStatus.notSubscribed) {
-              print('if2');
               showDialog(
                 context: context,
                 builder: (context) {
@@ -491,7 +476,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               );
             } else {
-              print('else 3');
               startTime = DateTime.now();
               speed = 0;
               maxSpeed = 0;
@@ -503,7 +487,6 @@ class _HomeScreenState extends State<HomeScreen> {
               _startTracking();
             }
           }
-          print("setstate");
           setState(() {});
         },
         child: CircleAvatar(
