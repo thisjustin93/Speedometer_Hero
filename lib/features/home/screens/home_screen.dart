@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   width: isPortrait
                       ? 250.w
-                      : (MediaQuery.of(context).size.width * 0.26).w,
+                      : (MediaQuery.of(context).size.height * 0.92),
                   height: 240.h,
                   color: Colors.transparent,
                 ),
@@ -250,32 +250,24 @@ class _HomeScreenState extends State<HomeScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           // final isPortrait = constraints.maxHeight > constraints.maxWidth;
-
+          print(constraints);
           return Stack(
             children: [
               if (settings.showCityName)
                 Positioned(
                   top: isPortrait
-                      ? (MediaQuery.of(context).padding.top +
-                              MediaQuery.of(context).size.height * 0.05)
-                          .h
-                      : (MediaQuery.of(context).padding.top +
-                              MediaQuery.of(context).size.height * 0.3)
-                          .h,
-                  left: isPortrait
-                      ? 0
-                      : (MediaQuery.of(context).size.width * 0.12).w,
+                      ? (constraints.maxHeight * 0.14)
+                      : (constraints.maxHeight * 0.17),
+                  left: isPortrait ? 0 : (constraints.maxWidth * 0.22),
                   right: isPortrait ? 0 : null,
                   bottom: isPortrait ? null : 0,
-                  child: SafeArea(
-                    child: Text(
-                      'Jerico',
-                      style: context.textStyles.mRegular().copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: isPortrait ? 18.sp : 10.sp,
-                          ),
-                      textAlign: TextAlign.center,
-                    ),
+                  child: Text(
+                    'Jerico',
+                    style: context.textStyles.mRegular().copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: isPortrait ? 18.sp : 10.sp,
+                        ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               if (settings.showCompass)

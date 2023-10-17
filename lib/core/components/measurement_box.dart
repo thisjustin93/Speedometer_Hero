@@ -49,7 +49,7 @@ class MeasurementBox extends StatelessWidget {
                 : '${measurement.toStringAsFixed(1)} $measurementUnit',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: isPortrait ? 17.sp : 10.sp,
+              fontSize: isPortrait ? 15.sp : 10.sp,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           )

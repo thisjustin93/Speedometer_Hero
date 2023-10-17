@@ -51,7 +51,7 @@ class FancyCard extends StatelessWidget {
               height: isPortrait ? 280.h : 230.h,
               width: isPortrait
                   ? 320.w
-                  : (MediaQuery.of(context).size.width * 0.26).w,
+                  : (MediaQuery.of(context).size.width * 0.49),
               // padding: EdgeInsets.symmetric(
               //     horizontal: isPortrait ? 15.w : 0.w,
               //     vertical: isPortrait
@@ -110,7 +110,7 @@ class FancyCard extends StatelessWidget {
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: isPortrait ? 120.sp : 50.sp,
+                                  fontSize: isPortrait ? 100.sp : 50.sp,
                                   height: 0.7),
                             )
                           ],

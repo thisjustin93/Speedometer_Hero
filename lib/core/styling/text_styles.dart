@@ -9,7 +9,7 @@ class AppTextStyles {
     return GoogleFonts.poppins(
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
-      fontSize: 16.sp,
+      fontSize: 14.sp,
       decoration: TextDecoration.none,
       letterSpacing: 0,
       color: Theme.of(context).colorScheme.onPrimary,
