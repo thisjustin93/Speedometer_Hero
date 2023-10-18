@@ -33,6 +33,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   double speed = 0;
+  double avgSpeed = 0;
   double direction = 0;
   double maxSpeed = 0.0;
   double startingAltitude = 0;
@@ -145,6 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
           }
           startingPosition ??= position;
         }
+        avgSpeed = 0;
+        for (var i in geoPostions) {
+          avgSpeed =(avgSpeed + i.speed) / geoPostions.length;
+          
+        }
         setState(() {});
       }
     });
@@ -220,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : settings.speedUnit == 'kmph'
                       ? 'km'
                       : 'm'),
+          avgSpeed: avgSpeed,
           onPressed: () {
             geolocatorStream?.cancel();
             geolocatorStream = null;
@@ -247,65 +254,69 @@ class _HomeScreenState extends State<HomeScreen> {
       // backgroundColor: Color(0xFFF6F6F6     ),
       backgroundColor: Theme.of(context).colorScheme.background,
       // backgroundColor: Color.fromARGB(5, 0, (153 / 235).toInt(), 255),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // final isPortrait = constraints.maxHeight > constraints.maxWidth;
-          print(constraints);
-          return Stack(
-            children: [
-              if (settings.showCityName)
-                Positioned(
-                  top: isPortrait
-                      ? (constraints.maxHeight * 0.14)
-                      : (constraints.maxHeight * 0.17),
-                  left: isPortrait ? 0 : (constraints.maxWidth * 0.22),
-                  right: isPortrait ? 0 : null,
-                  bottom: isPortrait ? null : 0,
-                  child: Text(
-                    'Jerico',
-                    style: context.textStyles.mRegular().copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: isPortrait ? 18.sp : 10.sp,
-                        ),
-                    textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          LayoutBuilder(builder: (context, constraints) {
+            constraints = BoxConstraints(
+                maxHeight: isPortrait ? constraints.maxHeight : 480,
+                maxWidth: isPortrait ? constraints.maxWidth : 672);
+            return Stack(
+              children: [
+                if (settings.showCityName)
+                  Positioned(
+                    top: isPortrait
+                        ? (constraints.maxHeight * 0.14)
+                        : (constraints.maxHeight * 0.17),
+                    left: isPortrait ? 0 : (constraints.maxWidth * 0.22),
+                    right: isPortrait ? 0 : null,
+                    bottom: isPortrait ? null : 0,
+                    child: Text(
+                      'Jerico',
+                      style: context.textStyles.mRegular().copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: isPortrait ? 18.sp : 10.sp,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-              if (settings.showCompass)
+                if (settings.showCompass)
+                  Positioned(
+                    top: isPortrait ? null : 0,
+                    left: isPortrait ? 0 : 0,
+                    right: isPortrait ? 0 : null,
+                    bottom: isPortrait ? null : 0,
+                    child: SafeArea(
+                      child: CompassWidget(
+                        direction: direction,
+                      ),
+                    ),
+                  ),
                 Positioned(
                   top: isPortrait ? null : 0,
                   left: isPortrait ? 0 : 0,
                   right: isPortrait ? 0 : null,
                   bottom: isPortrait ? null : 0,
                   child: SafeArea(
-                    child: CompassWidget(
-                      direction: direction,
+                    child: SpeedometerWidget(
+                      altitude: convertDistance(
+                          endingAltitude - startingAltitude,
+                          settings.elevationUnit),
                     ),
                   ),
                 ),
-              Positioned(
-                top: isPortrait ? null : 0,
-                left: isPortrait ? 0 : 0,
-                right: isPortrait ? 0 : null,
-                bottom: isPortrait ? null : 0,
-                child: SafeArea(
-                  child: SpeedometerWidget(
-                    altitude: convertDistance(endingAltitude - startingAltitude,
-                        settings.elevationUnit),
-                  ),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
-                physics: BouncingScrollPhysics(),
-                itemCount: fancyCards().length,
-                itemBuilder: (context, index) {
-                  return fancyCards()[index];
-                },
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          }),
+          ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
+            physics: BouncingScrollPhysics(),
+            itemCount: fancyCards().length,
+            itemBuilder: (context, index) {
+              return fancyCards()[index];
+            },
+          ),
+        ],
       ),
 
       floatingActionButtonLocation: isPortrait

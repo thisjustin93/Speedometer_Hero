@@ -31,6 +31,7 @@ class FancyCard extends StatelessWidget {
   double speed = 0;
   double maxSpeed = 0;
   double avgSpeed = 0;
+
   double distanceCovered = 0;
   var duration = Duration.zero;
   VoidCallback? onPressed = () {};
@@ -153,12 +154,13 @@ class FancyCard extends StatelessWidget {
                                   : 'M/S'),
                       MeasurementBox(
                           boxType: 'Avg Speed',
-                          measurement: distanceCovered == 0 ||
-                                  duration == Duration.zero
-                              ? 0
-                              : distanceCovered /
-                                  (duration.inSeconds /
-                                      (settings.speedUnit == 'mps' ? 1 : 3600)),
+                          measurement: convertSpeed(avgSpeed, settings.speedUnit),
+                          // measurement: distanceCovered == 0 ||
+                          //         duration == Duration.zero
+                          //     ? 0
+                          //     : distanceCovered /
+                          //         (duration.inSeconds /
+                          //             (settings.speedUnit == 'mps' ? 1 : 3600)),
                           measurementUnit: settings.speedUnit == "mph"
                               ? 'MPH'
                               : settings.speedUnit == 'kmph'
