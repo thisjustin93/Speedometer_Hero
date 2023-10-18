@@ -28,13 +28,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   getallsession() async {
     List<PedometerSession> sessions =
-        await HiveDatabaseServices().getAllSessions();
+        await HiveDatabaseServices().getAllSessions( );
     Provider.of<PedoMeterSessionProvider>(context, listen: false)
         .updatePedometerSessionList(sessions);
   }
 
-  getSettings() async {
-    SettingsModel settings = await HiveSettingsDB().getSettings();
+  getSettings(bool isDarkTheme) async {
+    SettingsModel settings = await HiveSettingsDB().getSettings(isDarkTheme);
     Provider.of<UnitsProvider>(context, listen: false).setAllUnits(settings);
   }
 
@@ -48,14 +48,24 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       },
     );
   }
-
   @override
-  void initState() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+        bool isDarkTheme =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     getallsession();
     checkSubscription();
-    getSettings();
-    super.initState();
+    getSettings(isDarkTheme);
   }
+  // @override
+  // void initState() {
+  //   bool isDarkTheme =
+  //       MediaQuery.of(context).platformBrightness == Brightness.dark;
+  //   getallsession();
+  //   checkSubscription();
+  //   getSettings(isDarkTheme);
+  //   super.initState();
+  // }
 
   static List<Widget> screens = [
     HomeScreen(),
@@ -77,6 +87,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).platformBrightness);
+
     setOrientation(pageIndex);
 
     appStartSession =

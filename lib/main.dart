@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,8 @@ import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+ WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
   Hive

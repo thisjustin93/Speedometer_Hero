@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
 
@@ -11,14 +12,16 @@ class HiveSettingsDB {
     }
   }
 
-  Future<SettingsModel> getSettings() async {
+  Future<SettingsModel> getSettings(bool isDarkTheme) async {
+    
+
     final settingsBox = await Hive.openBox<SettingsModel>('settings');
     if (settingsBox.isNotEmpty) {
       return settingsBox.getAt(0)!;
     } else {
-      await settingsBox.add(SettingsModel());
+      await settingsBox.add(SettingsModel(darkTheme: isDarkTheme));
     }
-    return SettingsModel(); // Return default settings if none found
+    return SettingsModel(darkTheme: isDarkTheme); // Return default settings if none found
   }
 
   Future updateSettings(SettingsModel newSettings) async {

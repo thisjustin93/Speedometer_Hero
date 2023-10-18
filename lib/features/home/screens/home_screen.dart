@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -54,7 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    checkAndRequestLocationPermission();
+    Future.delayed(
+      Duration(milliseconds: 1000),
+      () {
+        FlutterNativeSplash.remove();
+      },
+    );
+    // checkAndRequestLocationPermission();
     startTime = DateTime.now();
     speed = 0;
     maxSpeed = 0;
@@ -148,8 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         avgSpeed = 0;
         for (var i in geoPostions) {
-          avgSpeed =(avgSpeed + i.speed) / geoPostions.length;
-          
+          avgSpeed = (avgSpeed + i.speed) / geoPostions.length;
         }
         setState(() {});
       }
