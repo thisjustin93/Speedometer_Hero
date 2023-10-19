@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/app_snackbar.dart';
@@ -21,6 +23,33 @@ class PausedTrackingScreen extends StatefulWidget {
 }
 
 class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
+  //   InterstitialAd? _interstitialAd;
+  // void _createInterstitialAd() {
+  //   InterstitialAd.load(
+  //       adUnitId: AdMobService.instertitialAdUnitId!,
+  //       request: const AdRequest(),
+  //       adLoadCallback: InterstitialAdLoadCallback(
+  //         onAdLoaded: (ad) => _interstitialAd = ad,
+  //         onAdFailedToLoad: (error) => _interstitialAd = null,
+  //       ));
+  // }
+  BannerAd? _banner;
+  void _createBannerAd(double screenWidth) {
+    AdSize adSize = AdSize(width: screenWidth.toInt(), height: 390);
+    _banner = BannerAd(
+        size: adSize,
+        adUnitId: AdMobService.bannerAdUnitId!,
+        listener: AdMobService.bannerAdListener,
+        request: const AdRequest())
+      ..load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _createBannerAd(MediaQuery.of(context).size.width);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     var currentPedometerSessionProvider =
@@ -41,10 +70,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                   color: Theme.of(context).colorScheme.background,
                   padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   width: double.infinity,
-                  child: Image.asset(
-                    'assets/images/ad.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: AdWidget(ad: _banner!),
                 ),
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
@@ -146,7 +172,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              height: isPortrait ? 60.h : 120.h,
+                              height: isPortrait ? 60.h : 110.h,
                               width: isPortrait ? 60.h : 120.h,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.green),
@@ -159,7 +185,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                           ),
                           Text(
                             'Save',
-                            style: context.textStyles.mRegular(),
+                            style: context.textStyles.sRegular(),
                           )
                         ],
                       ),
@@ -171,7 +197,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop();
                             },
                             child: Container(
-                              height: isPortrait ? 60.h : 120.h,
+                              height: isPortrait ? 60.h : 110.h,
                               width: isPortrait ? 60.h : 120.h,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle, color: Colors.yellow),
@@ -184,12 +210,12 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                           ),
                           Text(
                             'Delete',
-                            style: context.textStyles.mRegular(),
+                            style: context.textStyles.sRegular(),
                           )
                         ],
                       ),
                       SizedBox(
-                        height: isPortrait ? 60.h : 180.h,
+                        height: isPortrait ? 50.h : 160.h,
                         width: isPortrait ? 3.w : 2.w,
                         child: Container(color: Colors.grey),
                       ),
@@ -204,21 +230,24 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               Navigator.of(context).pop(true);
                             },
                             child: CircleAvatar(
-                                radius: isPortrait ? 30.r : 60.r,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
+                                radius: isPortrait ? 30.r : 55.r,
+                                backgroundColor: settings.darkTheme
+                                    ? Colors.white
+                                    : Colors.black,
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: isPortrait ? 27.r : 54.r,
+                                  backgroundColor: settings.darkTheme
+                                      ? Colors.black
+                                      : Colors.white,
+                                  radius: isPortrait ? 27.r : 51.r,
                                   child: CircleAvatar(
                                     backgroundColor: Colors.red,
-                                    radius: isPortrait ? 23.r : 46.r,
+                                    radius: isPortrait ? 23.r : 43.r,
                                   ),
                                 )),
                           ),
                           Text(
                             'Resume',
-                            style: context.textStyles.mRegular(),
+                            style: context.textStyles.sRegular(),
                           )
                         ],
                       ),

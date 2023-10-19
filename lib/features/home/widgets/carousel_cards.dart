@@ -49,17 +49,12 @@ class FancyCard extends StatelessWidget {
             margin: EdgeInsets.zero,
             child: Container(
               color: Theme.of(context).colorScheme.background,
-              height: isPortrait ? 280.h : 230.h,
+              height: isPortrait ? 300.h : 230.h,
               width: isPortrait
                   ? 320.w
                   : (MediaQuery.of(context).size.width * 0.49),
-              // padding: EdgeInsets.symmetric(
-              //     horizontal: isPortrait ? 15.w : 0.w,
-              //     vertical: isPortrait
-              //         ? 0
-              //         : (MediaQuery.of(context).size.height * 0.15).h),
               padding: isPortrait
-                  ? EdgeInsets.symmetric(horizontal: 15.w)
+                  ? EdgeInsets.symmetric(horizontal: 25.w)
                   : EdgeInsets.only(
                       top: (MediaQuery.of(context).size.height * 0.22).h),
               child: Column(
@@ -67,7 +62,6 @@ class FancyCard extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                      // color: Color(0xFFF6F6F6),
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
@@ -76,12 +70,10 @@ class FancyCard extends StatelessWidget {
                               : Color(0xffc6c6c6),
                           width: isPortrait ? 2.sp : 1.sp),
                     ),
-                    width: isPortrait ? null : 170.w,
+                    // width: isPortrait ? null : 170.w,
                     height: isPortrait ? 140.h : 280.h,
                     child: Row(
-                      crossAxisAlignment: isPortrait
-                          ? CrossAxisAlignment.start
-                          : CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
@@ -142,7 +134,7 @@ class FancyCard extends StatelessWidget {
                     height: isPortrait ? 4.sp : 2.sp,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MeasurementBox(
                           boxType: 'Max Speed',
@@ -154,7 +146,8 @@ class FancyCard extends StatelessWidget {
                                   : 'M/S'),
                       MeasurementBox(
                           boxType: 'Avg Speed',
-                          measurement: convertSpeed(avgSpeed, settings.speedUnit),
+                          measurement:
+                              convertSpeed(avgSpeed, settings.speedUnit),
                           // measurement: distanceCovered == 0 ||
                           //         duration == Duration.zero
                           //     ? 0
@@ -172,7 +165,7 @@ class FancyCard extends StatelessWidget {
                     height: isPortrait ? 4.sp : 2.sp,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MeasurementBox(
                           boxType: 'Distance',
@@ -194,7 +187,7 @@ class FancyCard extends StatelessWidget {
           )
         : Card(
             margin: isPortrait
-                ? EdgeInsets.zero
+                ? EdgeInsets.only(top: 10.h)
                 : EdgeInsets.only(
                     top: (MediaQuery.of(context).size.height * 0.23).h,
                     bottom: (MediaQuery.of(context).size.height * 0.15).h,

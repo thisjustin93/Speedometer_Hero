@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
-
+import 'package:location/location.dart' as location;
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
@@ -109,11 +111,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Get Device Moving Speed
   void _startTracking() async {
-    var status = await permission.Permission.location.status;
-    if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
-      await permission.Permission.location.request();
+    geolocatorStream = null;
+    var status = await Geolocator.checkPermission();
+
+    if (status == LocationPermission.denied ||
+        status == LocationPermission.deniedForever ||
+        status == LocationPermission.unableToDetermine) {
+      await Geolocator.requestPermission();
     }
+
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!isLocationServiceEnabled) {
+      final result = await location.Location().requestService();
+      if (result == true) {
+        print('Service has been enabled');
+      } else {
+        print('Service has not been enabled');
+      }
+    }
+
     final geolocator = Geolocator();
+
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
@@ -172,101 +191,17 @@ class _HomeScreenState extends State<HomeScreen> {
         MediaQuery.of(context).orientation == Orientation.portrait;
     List<Widget> fancyCards() {
       return <Widget>[
-        Card(
-          borderOnForeground: false,
-
-          color: Colors.transparent,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          // elevation: 4.0,
-          child: Container(
-            // padding: EdgeInsets.all(16.0.sp),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: isPortrait
-                      ? 250.w
-                      : (MediaQuery.of(context).size.height * 0.92),
-                  height: 240.h,
-                  color: Colors.transparent,
-                ),
-                Text(
-                  '',
-                ),
-                OutlinedButton(
-                  child: const Text(""),
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      elevation: 0,
-                      side: BorderSide.none),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 10.h,
-        ),
-        FancyCard(
-          cardIndex: 0,
-          speed: convertSpeed(speed, settings.speedUnit),
-          maxSpeed: convertSpeed(maxSpeed, settings.speedUnit),
-          duration: startTime != null
-              ? endTime != null
-                  ? endTime!.difference(startTime!)
-                  : pedometerSessionProvider.currentPedometerSession != null
-                      ? DateTime.now()
-                          .subtract(pedometerSessionProvider
-                              .currentPedometerSession!.pauseDuration)
-                          .difference(startTime!)
-                      : DateTime.now().difference(startTime!)
-              : Duration.zero,
-          distanceCovered: convertDistance(
-              totalDistance,
-              settings.speedUnit == 'mph'
-                  ? 'mi'
-                  : settings.speedUnit == 'kmph'
-                      ? 'km'
-                      : 'm'),
-          avgSpeed: avgSpeed,
-          onPressed: () {
-            geolocatorStream?.cancel();
-            geolocatorStream = null;
-            speed = 0;
-            maxSpeed = 0;
-            totalDistance = 0;
-            startTime = null;
-            endTime = null;
-            startTracking = false;
-            pauseTime = null;
-            setState(() {});
-          },
-        ),
-        FancyCard(
-          cardIndex: 1,
-          googleMapAPI: 'assets/images/map.png',
-        ),
-        SizedBox(
-          height: 100.h,
-        )
-      ];
-    }
-
-    return Scaffold(
-      // backgroundColor: Color(0xFFF6F6F6     ),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      // backgroundColor: Color.fromARGB(5, 0, (153 / 235).toInt(), 255),
-      body: Stack(
-        children: [
-          LayoutBuilder(builder: (context, constraints) {
-            constraints = BoxConstraints(
-                maxHeight: isPortrait ? constraints.maxHeight : 480,
-                maxWidth: isPortrait ? constraints.maxWidth : 672);
-            return Stack(
+        LayoutBuilder(builder: (context, constraints) {
+          constraints = BoxConstraints(
+            maxHeight: 480,
+            maxWidth: 672,
+            // maxHeight: isPortrait ? constraints.maxHeight : 480,
+            // maxWidth: isPortrait ? constraints.maxWidth : 672,
+          );
+          return Container(
+            height: 310,
+            width: 340,
+            child: Stack(
               children: [
                 if (settings.showCityName)
                   Positioned(
@@ -311,20 +246,68 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ],
-            );
-          }),
-          ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
-            physics: BouncingScrollPhysics(),
-            itemCount: fancyCards().length,
-            itemBuilder: (context, index) {
-              return fancyCards()[index];
-            },
-          ),
-        ],
-      ),
+            ),
+          );
+        }),
+        SizedBox(
+          height: 10.h,
+        ),
+        FancyCard(
+          cardIndex: 0,
+          speed: convertSpeed(speed, settings.speedUnit),
+          maxSpeed: convertSpeed(maxSpeed, settings.speedUnit),
+          duration: startTime != null
+              ? endTime != null
+                  ? endTime!.difference(startTime!)
+                  : pedometerSessionProvider.currentPedometerSession != null
+                      ? DateTime.now()
+                          .subtract(pedometerSessionProvider
+                              .currentPedometerSession!.pauseDuration)
+                          .difference(startTime!)
+                      : DateTime.now().difference(startTime!)
+              : Duration.zero,
+          distanceCovered: convertDistance(
+              totalDistance,
+              settings.speedUnit == 'mph'
+                  ? 'mi'
+                  : settings.speedUnit == 'kmph'
+                      ? 'km'
+                      : 'm'),
+          avgSpeed: avgSpeed,
+          onPressed: () {
+            geolocatorStream?.cancel();
+            geolocatorStream = null;
+            speed = 0;
+            maxSpeed = 0;
+            totalDistance = 0;
+            startTime = null;
+            endTime = null;
+            startTracking = false;
+            pauseTime = null;
+            setState(() {});
+          },
+        ),
+        FancyCard(
+          cardIndex: 1,
+          googleMapAPI: 'assets/images/map.png',
+        ),
+        // SizedBox(
+        //   height: 100.h,
+        // )
+      ];
+    }
 
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
+        physics: BouncingScrollPhysics(),
+        itemCount: fancyCards().length,
+        itemBuilder: (context, index) {
+          return fancyCards()[index];
+        },
+      ),
       floatingActionButtonLocation: isPortrait
           ? FloatingActionButtonLocation.endFloat
           : FloatingActionButtonLocation.endTop,
@@ -500,11 +483,13 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: CircleAvatar(
             radius: isPortrait ? 24.r : 45.r,
-            backgroundColor: startTime != null && !startTracking
-                ? Theme.of(context).colorScheme.primary
-                : Color(0xffF82929),
+            backgroundColor: settings.darkTheme
+                ? Colors.white
+                : startTime != null && !startTracking
+                    ? Colors.black
+                    : Color(0xffF82929),
             child: CircleAvatar(
-              backgroundColor: Colors.white,
+              backgroundColor: settings.darkTheme ? Colors.black : Colors.white,
               radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
                 backgroundColor:

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ void main() async {
     ..registerAdapter(PedometerSessionAdapter())
     ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  MobileAds.instance.initialize();
   runApp(MyApp());
 }
 

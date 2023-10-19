@@ -298,7 +298,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                               insetPadding:
                                                   EdgeInsets.symmetric(
                                                       horizontal: 10.w,
-                                                      vertical: 200.h),
+                                                      vertical: 210.h),
                                               title: Container(
                                                 alignment: Alignment.center,
                                                 height: 50.sp,
@@ -374,10 +374,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                           "Cancel",
                                                           style: context
                                                               .textStyles
-                                                              .mRegular()
-                                                              .copyWith(
-                                                                  color: Colors
-                                                                      .black),
+                                                              .mRegular(),
                                                         ))
                                                   ],
                                                 ),

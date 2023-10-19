@@ -24,8 +24,8 @@ class MeasurementBox extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait;
     var settings = Provider.of<UnitsProvider>(context).settings;
     return Container(
-      height: isPortrait ? 55.h : 140.h,
-      width: isPortrait ? 158.w : 80.w,
+      height: isPortrait ? 75.h : 140.h,
+      width: isPortrait ? 153.w : 80.w,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         // color: Colors.white,

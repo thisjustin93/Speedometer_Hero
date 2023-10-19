@@ -193,8 +193,10 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                               pedometerSession.sessionTitle = value;
                             },
                           ),
-                          SizedBox(
-                            height: 10.h,
+                          Container(
+                            height: 1.h,
+                            color: Colors.grey,
+                            margin: EdgeInsets.only(bottom: 10.h),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
