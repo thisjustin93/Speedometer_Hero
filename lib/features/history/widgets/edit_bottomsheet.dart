@@ -274,6 +274,7 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                         controller: noteController,
                         maxLines: 7,
                         maxLength: 200,
+                        style: context.textStyles.mRegular(),
                         onChanged: (value) {
                           setState(
                             () {},
