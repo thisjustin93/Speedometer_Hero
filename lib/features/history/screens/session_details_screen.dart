@@ -349,37 +349,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               minorGridLines: const MinorGridLines(width: 0),
                               isVisible: true),
                           series: <ChartSeries>[
-                            // Renders line chart
-                            // CandleSeries<geolocator.Position, DateTime>(
-                            //   dataSource: widget.session.geoPositions!,
-
-                            //   xValueMapper: (geolocator.Position position, _) =>
-                            //       position.timestamp,
-                            //   lowValueMapper:
-                            //       (geolocator.Position position, _) =>
-                            //           position.speed,
-                            //   highValueMapper:
-                            //       (geolocator.Position position, _) => 0,
-                            //   openValueMapper:
-                            //       (geolocator.Position position, _) => 0,
-                            //   closeValueMapper:
-                            //       (geolocator.Position position, _) =>
-                            //           position.speed,
-                            //   pointColorMapper:
-                            //       (geolocator.Position position, _) {
-                            //     if (position.speed >= 0) {
-                            //       return Colors
-                            //           .green; // Set color to green for positive speeds
-                            //     } else {
-                            //       return Colors
-                            //           .red; // Set color to red for negative speeds
-                            //     }
-                            //   },
-                            //   borderWidth:
-                            //       2, // Adjust the candlestick thickness
-                            //   bullColor: Colors
-                            //       .grey, // Fill color for the positive candles
-                            // ),
                             LineSeries<geolocator.Position, DateTime>(
                               dataSource: widget.session.geoPositions!,
                               xValueMapper: (geolocator.Position position, _) =>
@@ -387,18 +356,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               yValueMapper: (geolocator.Position position, _) =>
                                   convertSpeed(
                                       position.speed, settings.speedUnit),
-                              // pointColorMapper:
-                              //     (geolocator.Position position, _) {
-                              //   if (convertSpeed(
-                              //           position.speed, settings.speedUnit) >=
-                              //       0) {
-                              //     return Colors
-                              //         .green; // Set color to green for positive speeds
-                              //   } else {
-                              //     return Colors
-                              //         .red; // Set color to red for negative speeds
-                              //   }
-                              // },
+                           
                             )
                           ]),
                     ),
@@ -490,16 +448,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                           widget.session.geoPositions![0]
                                               .altitude,
                                       settings.elevationUnit),
-                              // pointColorMapper:
-                              //     (geolocator.Position position, _) {
-                              //   if (position.altitude >= 0) {
-                              //     return Colors
-                              //         .green; // Set color to green for positive speeds
-                              //   } else {
-                              //     return Colors
-                              //         .red; // Set color to red for negative speeds
-                              //   }
-                              // },
+                           
                             )
                           ]),
                     ),

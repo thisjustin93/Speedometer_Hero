@@ -19,6 +19,7 @@ import 'package:speedometer/features/history/widgets/matching_activity_tiles.dar
 import 'package:speedometer/features/history/widgets/sessionActivity.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:speedometer/features/history/widgets/edit_bottomsheet.dart';
+import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -176,6 +177,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       width: 2.sp),
                 ),
                 child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: 4,
                   itemBuilder: (context, index) {
@@ -282,104 +284,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 SlidableAction(
                                   onPressed: (context) {
                                     // Dialog when click share button
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              backgroundColor:
-                                                  settings.darkTheme
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : Color.fromARGB(
-                                                          247, 211, 211, 204),
-                                              titlePadding:
-                                                  EdgeInsets.only(top: 10.h),
-                                              contentPadding: EdgeInsets.zero,
-                                              insetPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 10.w,
-                                                      vertical: 210.h),
-                                              title: Container(
-                                                alignment: Alignment.center,
-                                                height: 50.sp,
-                                                width: 50.sp,
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xffF82929),
-                                                    shape: BoxShape.circle),
-                                                child: Icon(
-                                                  Icons.shopping_cart,
-                                                  color: Colors.white,
-                                                  size: 30.sp,
-                                                ),
-                                              ),
-                                              content: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.w),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: context.textStyles
-                                                          .mRegular(),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.h,
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () async {
-                                                        final directory =
-                                                            await getApplicationDocumentsDirectory();
-                                                        final file = File(
-                                                            '${directory.path}/${pedometerSessionProvider.pedometerSessions[index].sessionTitle.replaceAll('/', '')}.text');
-                                                        await file.writeAsString(
-                                                            jsonEncode(
-                                                                pedometerSessionProvider
-                                                                    .pedometerSessions[
-                                                                        index]
-                                                                    .toMap()));
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Share.shareXFiles(
-                                                            [XFile(file.path)]);
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                              backgroundColor:
-                                                                  Color(
-                                                                      0xffF82929),
-                                                              foregroundColor:
-                                                                  Colors.white,
-                                                              fixedSize: Size(
-                                                                  300.w, 40.h),
-                                                              shape:
-                                                                  StadiumBorder()),
-                                                      child: Text(
-                                                        'Export Data',
-                                                        style: context
-                                                            .textStyles
-                                                            .mThick()
-                                                            .copyWith(
-                                                                color: Colors
-                                                                    .white),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: Text(
-                                                          "Cancel",
-                                                          style: context
-                                                              .textStyles
-                                                              .mRegular(),
-                                                        ))
-                                                  ],
-                                                ),
-                                              ),
-                                            ));
+                                    shareBottomSheet(
+                                        context,
+                                        pedometerSessionProvider
+                                            .pedometerSessions[index]);
                                   },
                                   backgroundColor: Color(0xFF00BF63),
                                   foregroundColor: Colors.white,
