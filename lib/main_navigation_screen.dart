@@ -28,9 +28,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int pageIndex = 0;
   bool appStartSession = true;
   BannerAd? _banner;
-  void _createBannerAd() {
+  void _createBannerAd(bool isLandscape) {
     _banner = BannerAd(
-        size: AdSize.fullBanner,
+        size: isLandscape ? AdSize(width: 500, height: 60) : AdSize.fullBanner,
         adUnitId: AdMobService.bannerAdUnitId!,
         listener: AdMobService.bannerAdListener,
         request: const AdRequest())
@@ -68,7 +68,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     getallsession();
     checkSubscription();
     getSettings(isDarkTheme);
-    _createBannerAd();
+    _createBannerAd(
+        MediaQuery.of(context).orientation == Orientation.landscape);
   }
 
   static List<Widget> screens = [
@@ -102,7 +103,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: screens[pageIndex],
       bottomNavigationBar: MediaQuery.of(context).orientation ==
               Orientation.landscape
-          ? null
+          ? Container(
+              height: 45.h,
+              child: AdWidget(ad: _banner!),
+            )
           : Container(
               height: 100.h,
               child: Column(

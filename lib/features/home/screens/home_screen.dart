@@ -183,6 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.sizeOf(context).width;
+    var height = MediaQuery.sizeOf(context).height;
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
 
@@ -193,23 +195,25 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: 480,
-            maxWidth: 672,
+            maxHeight: height * 0.7,
+            maxWidth: width * 1,
             // maxHeight: isPortrait ? constraints.maxHeight : 480,
             // maxWidth: isPortrait ? constraints.maxWidth : 672,
           );
           return Container(
-            height: 310,
-            width: 340,
+            height: height * 0.47,
+            width: isPortrait ? width * 1 : width * 0.48,
             child: Stack(
               children: [
                 if (settings.showCityName)
                   Positioned(
                     top: isPortrait
                         ? (constraints.maxHeight * 0.14)
-                        : (constraints.maxHeight * 0.17),
-                    left: isPortrait ? 0 : (constraints.maxWidth * 0.22),
-                    right: isPortrait ? 0 : null,
+                        : (constraints.maxHeight * 0.33),
+                    left: 0,
+                    // left: isPortrait ? 0 : (constraints.maxWidth * 0.21),
+                    right: 0,
+                    // right: isPortrait ? 0 : null,
                     bottom: isPortrait ? null : 0,
                     child: Text(
                       'Jerico',
@@ -222,9 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 if (settings.showCompass)
                   Positioned(
-                    top: isPortrait ? null : 0,
-                    left: isPortrait ? 0 : 0,
-                    right: isPortrait ? 0 : null,
+                    top: isPortrait ? height * 0.02 : 0,
+                    left: 0,
+                    right: 0,
                     bottom: isPortrait ? null : 0,
                     child: SafeArea(
                       child: CompassWidget(
@@ -233,16 +237,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 Positioned(
-                  top: isPortrait ? null : 0,
-                  left: isPortrait ? 0 : 0,
-                  right: isPortrait ? 0 : null,
+                  top: isPortrait ? height * 0.02 : height * 0.05,
+                  left: 0,
+                  right: 0,
                   bottom: isPortrait ? null : 0,
-                  child: SafeArea(
-                    child: SpeedometerWidget(
-                      altitude: convertDistance(
-                          endingAltitude - startingAltitude,
-                          settings.elevationUnit),
-                    ),
+                  child: SpeedometerWidget(
+                    altitude: convertDistance(endingAltitude - startingAltitude,
+                        settings.elevationUnit),
                   ),
                 ),
               ],

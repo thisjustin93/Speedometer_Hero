@@ -356,7 +356,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               yValueMapper: (geolocator.Position position, _) =>
                                   convertSpeed(
                                       position.speed, settings.speedUnit),
-                           
                             )
                           ]),
                     ),
@@ -448,7 +447,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                           widget.session.geoPositions![0]
                                               .altitude,
                                       settings.elevationUnit),
-                           
                             )
                           ]),
                     ),
@@ -479,6 +477,35 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   ],
                 ),
               ),
+              if (widget.session.note != null &&
+                  widget.session.note!.isNotEmpty) ...[
+                SizedBox(
+                  height: 20.h,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      8.h,
+                    ),
+                    border: Border.all(
+                      color: settings.darkTheme
+                          ? Color(0xff1c1c1e)
+                          : Color(0xffc6c6c6),
+                      width: 2,
+                    ),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  // height: 150.h,
+                  constraints: BoxConstraints(minHeight: 45.h),
+                  width: double.maxFinite,
+                  padding: EdgeInsets.all(10.sp),
+                  child: Text(
+                    widget.session.note!,
+                    style: context.textStyles.mRegular(),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+              ],
               SizedBox(
                 height: 20.h,
               ),

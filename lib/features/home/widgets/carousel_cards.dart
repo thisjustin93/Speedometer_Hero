@@ -41,6 +41,8 @@ class FancyCard extends StatelessWidget {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return googleMapAPI.isEmpty
         ? Card(
             color: Theme.of(context).colorScheme.background,
@@ -52,11 +54,13 @@ class FancyCard extends StatelessWidget {
               height: isPortrait ? 300.h : 230.h,
               width: isPortrait
                   ? 320.w
-                  : (MediaQuery.of(context).size.width * 0.49),
+                  : (MediaQuery.of(context).size.width * 0.46),
               padding: isPortrait
                   ? EdgeInsets.symmetric(horizontal: 25.w)
                   : EdgeInsets.only(
-                      top: (MediaQuery.of(context).size.height * 0.22).h),
+                      top: (height * 0.1),
+                      left: width * 0.02,
+                      right: width * 0.02),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
