@@ -208,8 +208,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (settings.showCityName)
                   Positioned(
                     top: isPortrait
-                        ? (constraints.maxHeight * 0.14)
-                        : (constraints.maxHeight * 0.33),
+                        ? (constraints.maxHeight * 0.15)
+                        : (constraints.maxHeight * 0.28),
                     left: 0,
                     // left: isPortrait ? 0 : (constraints.maxWidth * 0.21),
                     right: 0,
