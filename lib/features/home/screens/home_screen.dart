@@ -195,13 +195,13 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: height * 0.7,
+            maxHeight: height * 0.43,
             maxWidth: width * 1,
             // maxHeight: isPortrait ? constraints.maxHeight : 480,
             // maxWidth: isPortrait ? constraints.maxWidth : 672,
           );
           return Container(
-            height: height * 0.47,
+            height: height * 0.43,
             width: isPortrait ? width * 1 : width * 0.48,
             child: Stack(
               children: [
@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Positioned(
                     top: isPortrait
                         ? (constraints.maxHeight * 0.15)
-                        : (constraints.maxHeight * 0.28),
+                        : (constraints.maxHeight * 0.3),
                     left: 0,
                     // left: isPortrait ? 0 : (constraints.maxWidth * 0.21),
                     right: 0,
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Jerico',
                       style: context.textStyles.mRegular().copyWith(
                             fontWeight: FontWeight.bold,
-                            fontSize: isPortrait ? 18.sp : 10.sp,
+                            fontSize: isPortrait ? 18.sp : 8.sp,
                           ),
                       textAlign: TextAlign.center,
                     ),
