@@ -256,6 +256,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ),
                       )
                     : ListView.builder(
+                        reverse: true,
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
                         itemCount:

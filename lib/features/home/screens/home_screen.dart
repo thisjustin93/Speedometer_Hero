@@ -181,6 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+//932 430
+//667 375
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
@@ -195,20 +197,36 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: height * 0.43,
-            maxWidth: width * 1,
+            maxHeight: height < 700 ? height * 0.53 : height * 0.43,
+            maxWidth: isPortrait ? width * 1 : height * 1,
+
+            // maxWidth: isPortrait
+            //     ? height < 700
+            //         ? width * 1
+            //         : width * 1
+            //     : height < 400
+            //         ? height * 1
+            //         : height * 1,
             // maxHeight: isPortrait ? constraints.maxHeight : 480,
             // maxWidth: isPortrait ? constraints.maxWidth : 672,
           );
           return Container(
-            height: height * 0.43,
-            width: isPortrait ? width * 1 : width * 0.48,
+            height: height < 700 ? height * 0.53 : height * 0.43,
+            // height: isPortrait ? height * 0.53 : width * 0.53,
+            width: isPortrait ? width * 1 : height * 1,
+            // width: isPortrait
+            //     ? height < 700
+            //         ? width * 1
+            //         : width * 1
+            //     : height < 400
+            //         ? height * 1
+            //         : height * 1,
             child: Stack(
               children: [
                 if (settings.showCityName)
                   Positioned(
                     top: isPortrait
-                        ? (constraints.maxHeight * 0.15)
+                        ? (constraints.maxHeight * 0.22)
                         : (constraints.maxHeight * 0.3),
                     left: 0,
                     // left: isPortrait ? 0 : (constraints.maxWidth * 0.21),
@@ -252,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }),
         SizedBox(
           height: 10.h,
+          width: isPortrait ? 0 : 5.w,
         ),
         FancyCard(
           cardIndex: 0,
