@@ -1,9 +1,13 @@
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/styling/sizes.dart';
@@ -46,7 +50,10 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
 
   @override
   void didChangeDependencies() {
-    _createBannerAd(MediaQuery.of(context).size.width);
+    Provider.of<SubscriptionProvider>(context, listen: false).status ==
+            SubscriptionStatus.notSubscribed
+        ? _createBannerAd(MediaQuery.of(context).size.width)
+        : null;
     super.didChangeDependencies();
   }
 
@@ -57,6 +64,9 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    bool isUserSubscribed =
+        Provider.of<SubscriptionProvider>(context, listen: true).status ==
+            SubscriptionStatus.subscribed;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
@@ -65,13 +75,91 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  height: 390.h,
-                  color: Theme.of(context).colorScheme.background,
-                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                  width: double.infinity,
-                  child: AdWidget(ad: _banner!),
-                ),
+                isUserSubscribed
+                    ? Container(
+                        height: 390.h,
+                        color: Theme.of(context).colorScheme.background,
+                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                        width: double.infinity,
+                        child: AdWidget(ad: _banner!),
+                      )
+                    : Container(
+                        height: 380.h,
+                        color: Theme.of(context).colorScheme.background,
+                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                        width: double.maxFinite,
+                        child: AppleMap(
+                          initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .startPoint!
+                                      .latitude,
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .startPoint!
+                                      .longitude),
+                              zoom: 15),
+                          zoomGesturesEnabled: true,
+                          gestureRecognizers:
+                              <Factory<OneSequenceGestureRecognizer>>[
+                            new Factory<OneSequenceGestureRecognizer>(
+                              () => new EagerGestureRecognizer(),
+                            ),
+                          ].toSet(),
+                          mapType: MapType.standard,
+                          scrollGesturesEnabled: true,
+                          annotations: Set()
+                            ..add(
+                              Annotation(
+                                  annotationId: AnnotationId('start'),
+                                  position: LatLng(
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .startPoint!
+                                          .latitude,
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .startPoint!
+                                          .longitude),
+                                  icon: BitmapDescriptor.markerAnnotation),
+                            )
+                            ..add(
+                              Annotation(
+                                  annotationId: AnnotationId('end'),
+                                  position: LatLng(
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .endPoint!
+                                          .latitude,
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .endPoint!
+                                          .longitude),
+                                  icon: BitmapDescriptor.markerAnnotation),
+                            ),
+                          polylines: Set<Polyline>.of([
+                            Polyline(
+                              polylineId: PolylineId(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .path!
+                                      .polylineId
+                                      .value),
+                              color: currentPedometerSessionProvider
+                                  .currentPedometerSession!.path!.color,
+                              points: List<LatLng>.from(
+                                currentPedometerSessionProvider
+                                    .currentPedometerSession!.path!.points
+                                    .map(
+                                  (e) => LatLng(e.latitude, e.longitude),
+                                ),
+                              ),
+                              width: 5,
+                            ),
+                          ]),
+                        ),
+                      ),
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
                 ),

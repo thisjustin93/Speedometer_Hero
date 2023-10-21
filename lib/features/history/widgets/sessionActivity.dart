@@ -1,3 +1,6 @@
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -66,16 +69,44 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
             ),
           Container(
             height: 70.h,
-            width: 70.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),
-              image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/sessionpath.png',
+            ),
+            width: 70.h,
+            child: AppleMap(
+              initialCameraPosition: CameraPosition(
+                  target: LatLng(widget.pedometerSession.startPoint!.latitude,
+                      widget.pedometerSession.startPoint!.longitude),
+                  zoom: 18),
+              mapType: MapType.standard,
+              polylines: Set<Polyline>.of([
+                Polyline(
+                  polylineId: PolylineId(
+                      widget.pedometerSession.path!.polylineId.value),
+                  color: Colors.blue,
+                  points: List<LatLng>.from(
+                    widget.pedometerSession.path!.points.map(
+                      (e) => LatLng(e.latitude, e.longitude),
+                    ),
                   ),
-                  fit: BoxFit.cover),
+                  width: 1,
+                ),
+              ]),
             ),
           ),
+
+          // Container(
+          //   height: 70.h,
+          //   width: 70.h,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(10.r),
+          //     image: DecorationImage(
+          //         image: AssetImage(
+          //           'assets/images/sessionpath.png',
+          //         ),
+          //         fit: BoxFit.cover),
+          //   ),
+          // ),
           SizedBox(
             width: 15.w,
           ),

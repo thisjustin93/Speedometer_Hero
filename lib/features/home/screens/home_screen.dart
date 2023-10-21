@@ -174,8 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         avgSpeed = 0;
         for (var i in geoPostions) {
-          avgSpeed = (avgSpeed + i.speed) / geoPostions.length;
+          avgSpeed = (avgSpeed + i.speed);
         }
+        avgSpeed /= geoPostions.length;
         setState(() {});
       }
     });
@@ -199,28 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
           constraints = BoxConstraints(
             maxHeight: height < 700 ? height * 0.53 : height * 0.43,
             maxWidth: isPortrait ? width * 1 : height * 1,
-
-            // maxWidth: isPortrait
-            //     ? height < 700
-            //         ? width * 1
-            //         : width * 1
-            //     : height < 400
-            //         ? height * 1
-            //         : height * 1,
-            // maxHeight: isPortrait ? constraints.maxHeight : 480,
-            // maxWidth: isPortrait ? constraints.maxWidth : 672,
           );
           return Container(
             height: height < 700 ? height * 0.53 : height * 0.43,
-            // height: isPortrait ? height * 0.53 : width * 0.53,
             width: isPortrait ? width * 1 : height * 1,
-            // width: isPortrait
-            //     ? height < 700
-            //         ? width * 1
-            //         : width * 1
-            //     : height < 400
-            //         ? height * 1
-            //         : height * 1,
             child: Stack(
               children: [
                 if (settings.showCityName)
@@ -229,9 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? (constraints.maxHeight * 0.22)
                         : (constraints.maxHeight * 0.3),
                     left: 0,
-                    // left: isPortrait ? 0 : (constraints.maxWidth * 0.21),
                     right: 0,
-                    // right: isPortrait ? 0 : null,
                     bottom: isPortrait ? null : 0,
                     child: Text(
                       'Jerico',
@@ -304,16 +285,21 @@ class _HomeScreenState extends State<HomeScreen> {
             endTime = null;
             startTracking = false;
             pauseTime = null;
+            avgSpeed = 0;
             setState(() {});
           },
         ),
         FancyCard(
           cardIndex: 1,
           googleMapAPI: 'assets/images/map.png',
+          position: currentPosition,
+          polyline: Polyline(
+            polylineId: PolylineId('1'),
+            points: List<LatLng>.from(pathPoints),
+            color: Colors.blue,
+            width: 5,
+          ),
         ),
-        // SizedBox(
-        //   height: 100.h,
-        // )
       ];
     }
 
@@ -325,7 +311,19 @@ class _HomeScreenState extends State<HomeScreen> {
         physics: BouncingScrollPhysics(),
         itemCount: fancyCards().length,
         itemBuilder: (context, index) {
-          return fancyCards()[index];
+          return
+              // index == 2
+              //     ? isPortrait
+              //         ? GestureDetector(
+              //             onVerticalDragUpdate: (detail) {},
+              //             child: fancyCards()[index],
+              //           )
+              //         : GestureDetector(
+              //             onHorizontalDragUpdate: (detail) {},
+              //             child: fancyCards()[index],
+              //           )
+              //     :
+              fancyCards()[index];
         },
       ),
       floatingActionButtonLocation: isPortrait
@@ -373,7 +371,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 speedInMS: speed,
                 path: Polyline(
                   polylineId: PolylineId(sessionId), // Provide a unique ID
-                  points: pathPoints, // Set the path points
+                  // points: List<LatLng>.from(pathPoints), // Set the path points
+                  points: pathPoints,
                   color: Colors.blue, // Set the color of the polyline
                   width: 5, // Set the width of the polyline
                 ),

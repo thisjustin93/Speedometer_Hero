@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as googlemaps;
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
@@ -15,10 +19,12 @@ import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/home/widgets/duration_counter.dart';
 
-class FancyCard extends StatelessWidget {
+class FancyCard extends StatefulWidget {
   FancyCard(
       {super.key,
       required this.cardIndex,
+      this.position,
+      this.polyline,
       this.speed = 0,
       this.avgSpeed = 0,
       this.distanceCovered = 0,
@@ -31,10 +37,24 @@ class FancyCard extends StatelessWidget {
   double speed = 0;
   double maxSpeed = 0;
   double avgSpeed = 0;
-
+  Position? position;
+  googlemaps.Polyline? polyline;
   double distanceCovered = 0;
   var duration = Duration.zero;
   VoidCallback? onPressed = () {};
+
+  @override
+  State<FancyCard> createState() => _FancyCardState();
+}
+
+class _FancyCardState extends State<FancyCard> {
+  AppleMapController? mapController;
+
+  void _onMapCreated(AppleMapController controller) {
+    mapController = controller;
+  }
+
+  CameraPosition? cameraPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +63,7 @@ class FancyCard extends StatelessWidget {
         MediaQuery.of(context).orientation == Orientation.portrait;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return googleMapAPI.isEmpty
+    return widget.googleMapAPI.isEmpty
         ? Card(
             color: Theme.of(context).colorScheme.background,
             borderOnForeground: false,
@@ -102,7 +122,7 @@ class FancyCard extends StatelessWidget {
                               height: 10.h,
                             ),
                             Text(
-                              speed.toStringAsFixed(0),
+                              widget.speed.toStringAsFixed(0),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -128,7 +148,7 @@ class FancyCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            onPressed: onPressed
+                            onPressed: widget.onPressed
                             // size: 35.sp,
                             )
                       ],
@@ -142,7 +162,7 @@ class FancyCard extends StatelessWidget {
                     children: [
                       MeasurementBox(
                           boxType: 'Max Speed',
-                          measurement: maxSpeed,
+                          measurement: widget.maxSpeed,
                           measurementUnit: settings.speedUnit == "mph"
                               ? 'MPH'
                               : settings.speedUnit == 'kmph'
@@ -151,7 +171,7 @@ class FancyCard extends StatelessWidget {
                       MeasurementBox(
                           boxType: 'Avg Speed',
                           measurement:
-                              convertSpeed(avgSpeed, settings.speedUnit),
+                              convertSpeed(widget.avgSpeed, settings.speedUnit),
                           // measurement: distanceCovered == 0 ||
                           //         duration == Duration.zero
                           //     ? 0
@@ -173,7 +193,7 @@ class FancyCard extends StatelessWidget {
                     children: [
                       MeasurementBox(
                           boxType: 'Distance',
-                          measurement: distanceCovered,
+                          measurement: widget.distanceCovered,
                           measurementUnit: settings.speedUnit == "mph"
                               ? 'Mi'
                               : settings.speedUnit == 'kmph'
@@ -181,7 +201,7 @@ class FancyCard extends StatelessWidget {
                                   : 'M'),
                       MeasurementBox(
                           boxType: 'Duration',
-                          measurement: duration.inSeconds.toDouble(),
+                          measurement: widget.duration.inSeconds.toDouble(),
                           measurementUnit: ''),
                     ],
                   ),
@@ -198,16 +218,67 @@ class FancyCard extends StatelessWidget {
                     right: 5.w),
 
             // elevation: 6.0,
-            child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isPortrait ? 15.w : 0.w,
-                ),
-                height: 260.h,
-                width: isPortrait ? 320.w : 180.w,
-                child: Image.asset(
-                  googleMapAPI,
-                  fit: BoxFit.cover,
-                )),
+            child: widget.position != null
+                ? Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isPortrait ? 15.w : 0.w,
+                    ),
+                    height: 260.h,
+                    width: isPortrait ? 320.w : 180.w,
+                    child: AppleMap(
+                      onMapCreated: _onMapCreated,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(widget.position!.latitude,
+                            widget.position!.longitude),
+                        zoom: 20,
+                      ),
+                      gestureRecognizers:
+                          <Factory<OneSequenceGestureRecognizer>>[
+                        new Factory<OneSequenceGestureRecognizer>(
+                          () => new EagerGestureRecognizer(),
+                        ),
+                      ].toSet(),
+                      trafficEnabled: true,
+                      trackingMode: TrackingMode.followWithHeading,
+                      zoomGesturesEnabled: true,
+                      mapType: MapType.standard,
+                      scrollGesturesEnabled: true,
+
+                      // onCameraMove: (position) async {
+                      //   cameraPosition = position;
+                      //   print("Position: $position");
+                      //   if (mapController != null) {
+                      //     await mapController!.animateCamera(
+                      //         CameraUpdate.newCameraPosition(position));
+                      //   }
+                      // },
+                      // onLongPress: (argument) async {
+                      //   if (mapController != null) {
+                      //     await mapController!
+                      //         .moveCamera(CameraUpdate.newLatLng(argument));
+                      //   }
+                      // },
+                      polylines: Set<Polyline>.of([
+                        Polyline(
+                          polylineId:
+                              PolylineId(widget.polyline!.polylineId.value),
+                          color: widget.polyline!.color,
+                          points: List<LatLng>.from(widget.polyline!.points
+                              .map((e) => LatLng(e.latitude, e.longitude))),
+                        ),
+                      ]),
+                    ),
+                  )
+                : Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isPortrait ? 15.w : 0.w,
+                    ),
+                    height: 260.h,
+                    width: isPortrait ? 320.w : 180.w,
+                    child: Image.asset(
+                      widget.googleMapAPI,
+                      fit: BoxFit.cover,
+                    )),
           );
   }
 }

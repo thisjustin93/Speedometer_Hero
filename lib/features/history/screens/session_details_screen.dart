@@ -1,3 +1,6 @@
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -197,12 +200,62 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                         ),
                       ],
                     ),
-                    Image.asset(
-                      'assets/images/map.png',
+                    Container(
                       height: 180.h,
                       width: double.maxFinite,
-                      fit: BoxFit.cover,
+                      child: AppleMap(
+                        initialCameraPosition: CameraPosition(
+                            target: LatLng(widget.session.startPoint!.latitude,
+                                widget.session.startPoint!.longitude),
+                            zoom: 20),
+                        zoomGesturesEnabled: true,
+                        gestureRecognizers:
+                            <Factory<OneSequenceGestureRecognizer>>[
+                          new Factory<OneSequenceGestureRecognizer>(
+                            () => new EagerGestureRecognizer(),
+                          ),
+                        ].toSet(),
+                        mapType: MapType.standard,
+                        scrollGesturesEnabled: true,
+                        annotations: Set()
+                          ..add(
+                            Annotation(
+                                annotationId: AnnotationId('start'),
+                                position: LatLng(
+                                    widget.session.startPoint!.latitude,
+                                    widget.session.startPoint!.longitude),
+                                icon: BitmapDescriptor.markerAnnotation),
+                          )
+                          ..add(
+                            Annotation(
+                                annotationId: AnnotationId('end'),
+                                position: LatLng(
+                                    widget.session.endPoint!.latitude,
+                                    widget.session.endPoint!.longitude),
+                                icon: BitmapDescriptor.markerAnnotation),
+                          ),
+                        polylines: Set<Polyline>.of([
+                          Polyline(
+                            polylineId: PolylineId(
+                                widget.session.path!.polylineId.value),
+                            color: widget.session.path!.color,
+                            points: List<LatLng>.from(
+                              widget.session.path!.points.map(
+                                (e) => LatLng(e.latitude, e.longitude),
+                              ),
+                            ),
+                            width: 3,
+                          ),
+                        ]),
+                      ),
                     ),
+
+                    // Image.asset(
+                    //   'assets/images/map.png',
+                    //   height: 180.h,
+                    //   width: double.maxFinite,
+                    //   fit: BoxFit.cover,
+                    // ),
                     SizedBox(
                       height: 5.h,
                     ),
