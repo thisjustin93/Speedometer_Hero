@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
-      intervalDuration: Duration(milliseconds: 500),
+      intervalDuration: Duration(milliseconds: 100),
     );
     final iosSettings = AppleSettings(
         accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
@@ -276,8 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? 'km'
                       : 'm'),
           avgSpeed: avgSpeed,
-          onPressed: () {
-            geolocatorStream?.cancel();
+          onPressed: () async {
+            await geolocatorStream?.cancel();
             geolocatorStream = null;
             speed = 0;
             maxSpeed = 0;
@@ -287,6 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
             startTracking = false;
             pauseTime = null;
             avgSpeed = 0;
+            pathPoints.clear();
+            currentPosition = null;
             setState(() {});
           },
         ),
@@ -411,8 +413,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 endTime = null;
                 pauseTime = null;
                 startTracking = true;
-                _startTracking();
-
+                // _startTracking();
+                geolocatorStream!.resume();
                 setState(() {});
               } else {
                 startingAltitude = 0;
@@ -422,6 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 endTime = null;
                 startingPosition = null;
                 totalDistance = 0;
+
                 speed = 0;
                 maxSpeed = 0;
                 currentPosition = null;
@@ -503,6 +506,10 @@ class _HomeScreenState extends State<HomeScreen> {
               pauseTime = null;
               startTracking = true;
               endTime = null;
+              pathPoints.clear();
+
+              startingAltitude = 0;
+              endingAltitude = 0;
               _startTracking();
             }
           }

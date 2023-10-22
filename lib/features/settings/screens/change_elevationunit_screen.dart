@@ -24,13 +24,13 @@ class _ChangeElevationUnitScreenState extends State<ChangeElevationUnitScreen> {
         centerTitle: true,
       ),
       body: Column(children: [
-        RadioListTile(
+        RadioListTile.adaptive(
             toggleable: true,
             title: Text(
               "Feet",
               style: context.textStyles.mRegular(),
             ),
-            activeColor: Theme.of(context).colorScheme.onPrimary,
+            // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "ft",
             groupValue: settingsProvider.settings.elevationUnit,
             onChanged: (value) {
@@ -38,13 +38,13 @@ class _ChangeElevationUnitScreenState extends State<ChangeElevationUnitScreen> {
                   value ?? settingsProvider.settings.elevationUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
             }),
-        RadioListTile(
+        RadioListTile.adaptive(
             toggleable: true,
             title: Text(
               "Meters",
               style: context.textStyles.mRegular(),
             ),
-            activeColor: Theme.of(context).colorScheme.onPrimary,
+            // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "m",
             groupValue: settingsProvider.settings.elevationUnit,
             onChanged: (value) {

@@ -12,7 +12,7 @@ import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 
 shareBottomSheet(BuildContext context, PedometerSession session) {
-  var settings = Provider.of<UnitsProvider>(context).settings;
+  var settings = Provider.of<UnitsProvider>(context, listen: false).settings;
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
