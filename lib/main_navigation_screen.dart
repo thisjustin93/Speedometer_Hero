@@ -46,6 +46,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   getSettings(bool isDarkTheme) async {
     SettingsModel settings = await HiveSettingsDB().getSettings(isDarkTheme);
+
     Provider.of<UnitsProvider>(context, listen: false).setAllUnits(settings);
   }
 
@@ -108,7 +109,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               child: AdWidget(ad: _banner!),
             )
           : Container(
-              height: 100.h,
+              height: 110.h,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

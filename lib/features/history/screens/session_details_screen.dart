@@ -152,9 +152,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -343,9 +348,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,
@@ -377,9 +387,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -464,9 +479,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -541,9 +561,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,
@@ -579,9 +604,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,

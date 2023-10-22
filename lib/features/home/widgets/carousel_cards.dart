@@ -89,9 +89,14 @@ class _FancyCardState extends State<FancyCard> {
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                          color: settings.darkTheme
-                              ? Color(0xff1c1c1e)
-                              : Color(0xffc6c6c6),
+                          color: settings.darkTheme == null
+                              ? MediaQuery.of(context).platformBrightness ==
+                                      Brightness.dark
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6)
+                              : settings.darkTheme!
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6),
                           width: isPortrait ? 2.sp : 1.sp),
                     ),
                     // width: isPortrait ? null : 170.w,
@@ -209,76 +214,121 @@ class _FancyCardState extends State<FancyCard> {
               ),
             ),
           )
-        : Card(
-            margin: isPortrait
-                ? EdgeInsets.only(top: 10.h)
-                : EdgeInsets.only(
-                    top: (MediaQuery.of(context).size.height * 0.23).h,
-                    bottom: (MediaQuery.of(context).size.height * 0.15).h,
-                    right: 5.w),
+        : widget.position != null
+            ? Container(
+                padding: isPortrait
+                    ? EdgeInsets.symmetric(horizontal: 25.w)
+                    : EdgeInsets.only(
+                        top: (height * 0.1),
+                        left: width * 0.01,
+                        right: width * 0.02),
+                height: 260.h,
+                // width: isPortrait ? 320.w : 180.w,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                        color: settings.darkTheme == null
+                            ? MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6)
+                            : settings.darkTheme!
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6),
+                        width: isPortrait ? 2.sp : 1.sp),
+                  ),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth: isPortrait ? width : width * 0.43),
+                          child: AppleMap(
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              target: LatLng(widget.position!.latitude,
+                                  widget.position!.longitude),
+                              zoom: 20,
+                            ),
+                            gestureRecognizers:
+                                <Factory<OneSequenceGestureRecognizer>>[
+                              new Factory<OneSequenceGestureRecognizer>(
+                                () => new EagerGestureRecognizer(),
+                              ),
+                            ].toSet(),
+                            trafficEnabled: true,
+                            trackingMode: TrackingMode.followWithHeading,
+                            zoomGesturesEnabled: true,
+                            mapType: MapType.standard,
+                            scrollGesturesEnabled: true,
 
-            // elevation: 6.0,
-            child: widget.position != null
-                ? Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isPortrait ? 15.w : 0.w,
-                    ),
-                    height: 260.h,
-                    width: isPortrait ? 320.w : 180.w,
-                    child: AppleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(widget.position!.latitude,
-                            widget.position!.longitude),
-                        zoom: 20,
+                            // onCameraMove: (position) async {
+                            //   cameraPosition = position;
+                            //   print("Position: $position");
+                            //   if (mapController != null) {
+                            //     await mapController!.animateCamera(
+                            //         CameraUpdate.newCameraPosition(position));
+                            //   }
+                            // },
+                            // onLongPress: (argument) async {
+                            //   if (mapController != null) {
+                            //     await mapController!
+                            //         .moveCamera(CameraUpdate.newLatLng(argument));
+                            //   }
+                            // },
+                            polylines: Set<Polyline>.of([
+                              Polyline(
+                                polylineId: PolylineId(
+                                    widget.polyline!.polylineId.value),
+                                color: widget.polyline!.color,
+                                points: List<LatLng>.from(
+                                    widget.polyline!.points.map((e) =>
+                                        LatLng(e.latitude, e.longitude))),
+                              ),
+                            ]),
+                          ),
+                        ),
                       ),
-                      gestureRecognizers:
-                          <Factory<OneSequenceGestureRecognizer>>[
-                        new Factory<OneSequenceGestureRecognizer>(
-                          () => new EagerGestureRecognizer(),
+                      Positioned(
+                        bottom: 7,
+                        left: 30,
+                        child: Text(
+                          widget.speed.toStringAsFixed(0),
+                          style: context.textStyles.lRegular(),
                         ),
-                      ].toSet(),
-                      trafficEnabled: true,
-                      trackingMode: TrackingMode.followWithHeading,
-                      zoomGesturesEnabled: true,
-                      mapType: MapType.standard,
-                      scrollGesturesEnabled: true,
-
-                      // onCameraMove: (position) async {
-                      //   cameraPosition = position;
-                      //   print("Position: $position");
-                      //   if (mapController != null) {
-                      //     await mapController!.animateCamera(
-                      //         CameraUpdate.newCameraPosition(position));
-                      //   }
-                      // },
-                      // onLongPress: (argument) async {
-                      //   if (mapController != null) {
-                      //     await mapController!
-                      //         .moveCamera(CameraUpdate.newLatLng(argument));
-                      //   }
-                      // },
-                      polylines: Set<Polyline>.of([
-                        Polyline(
-                          polylineId:
-                              PolylineId(widget.polyline!.polylineId.value),
-                          color: widget.polyline!.color,
-                          points: List<LatLng>.from(widget.polyline!.points
-                              .map((e) => LatLng(e.latitude, e.longitude))),
-                        ),
-                      ]),
-                    ),
-                  )
-                : Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isPortrait ? 15.w : 0.w,
-                    ),
-                    height: 260.h,
-                    width: isPortrait ? 320.w : 180.w,
-                    child: Image.asset(
-                      widget.googleMapAPI,
-                      fit: BoxFit.cover,
-                    )),
-          );
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Container(
+                padding: isPortrait
+                    ? EdgeInsets.symmetric(horizontal: 25.w)
+                    : EdgeInsets.only(
+                        top: (height * 0.1),
+                        left: width * 0.01,
+                        right: width * 0.02),
+                height: 260.h,
+                // decoration: BoxDecoration(
+                //   color: Theme.of(context).primaryColor,
+                //   borderRadius: BorderRadius.circular(8.r),
+                //   border: Border.all(
+                //       color: settings.darkTheme == null
+                //           ? MediaQuery.of(context).platformBrightness ==
+                //                   Brightness.dark
+                //               ? Color(0xff1c1c1e)
+                //               : Color(0xffc6c6c6)
+                //           : settings.darkTheme!
+                //               ? Color(0xff1c1c1e)
+                //               : Color(0xffc6c6c6),
+                //       width: isPortrait ? 2.sp : 1.sp),
+                // ),
+                child: Image.asset(
+                  widget.googleMapAPI,
+                  fit: BoxFit.cover,
+                ));
   }
 }

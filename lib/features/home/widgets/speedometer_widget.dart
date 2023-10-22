@@ -6,7 +6,8 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class SpeedometerWidget extends StatelessWidget {
   double altitude;
-  SpeedometerWidget({super.key, required this.altitude});
+  double speed;
+  SpeedometerWidget({super.key, required this.altitude, required this.speed});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class SpeedometerWidget extends StatelessWidget {
                   : height * 0.0024,
           pointers: <GaugePointer>[
             NeedlePointer(
-                value: altitude > 0 ? altitude : 0,
+                value: speed,
                 needleLength: isPortrait ? 0.95.h : 0.45.w,
                 enableAnimation: true,
                 animationType: AnimationType.ease,

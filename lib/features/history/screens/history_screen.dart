@@ -129,14 +129,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
           InkWell(
             onTap: () {
               setState(() {
-                selectSessions = false;
+                selectSessions = !selectSessions;
               });
             },
-            onLongPress: () {
-              setState(() {
-                selectSessions = true;
-              });
-            },
+            // onLongPress: () {
+            //   setState(() {
+            //     selectSessions = true;
+            //   });
+            // },
             child: Container(
                 decoration: BoxDecoration(shape: BoxShape.circle),
                 width: 70.w,
@@ -171,9 +171,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2.sp),
                 ),
                 child: ListView.builder(
@@ -243,9 +248,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(8.r)),
                   border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2.sp),
                 ),
                 child: pedometerSessionProvider.pedometerSessions.isEmpty

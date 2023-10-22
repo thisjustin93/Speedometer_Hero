@@ -241,6 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   right: 0,
                   bottom: isPortrait ? null : 0,
                   child: SpeedometerWidget(
+                    speed: convertSpeed(speed, settings.speedUnit),
                     altitude: convertDistance(endingAltitude - startingAltitude,
                         settings.elevationUnit),
                   ),
@@ -289,7 +290,12 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {});
           },
         ),
+        SizedBox(
+          height: 10.h,
+          width: isPortrait ? 0 : 5,
+        ),
         FancyCard(
+          speed: convertSpeed(speed, settings.speedUnit),
           cardIndex: 1,
           googleMapAPI: 'assets/images/map.png',
           position: currentPosition,
@@ -469,7 +475,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: StadiumBorder()),
                             child: Text(
                               'Unlimited Activity History',
-                              style: context.textStyles.mThick(),
+                              style: context.textStyles
+                                  .mThick()
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                           TextButton(
@@ -502,13 +510,25 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: CircleAvatar(
             radius: isPortrait ? 24.r : 45.r,
-            backgroundColor: settings.darkTheme
-                ? Colors.white
-                : startTime != null && !startTracking
-                    ? Colors.black
-                    : Color(0xffF82929),
+            backgroundColor: settings.darkTheme == null
+                ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                    ? Colors.white
+                    : startTime != null && !startTracking
+                        ? Colors.black
+                        : Color(0xffF82929)
+                : settings.darkTheme!
+                    ? Colors.white
+                    : startTime != null && !startTracking
+                        ? Colors.black
+                        : Color(0xffF82929),
             child: CircleAvatar(
-              backgroundColor: settings.darkTheme ? Colors.black : Colors.white,
+              backgroundColor: settings.darkTheme == null
+                  ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.white
+                  : settings.darkTheme!
+                      ? Colors.black
+                      : Colors.white,
               radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
                 backgroundColor:

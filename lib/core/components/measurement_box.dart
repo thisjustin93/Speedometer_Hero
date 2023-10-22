@@ -33,7 +33,13 @@ class MeasurementBox extends StatelessWidget {
         // color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: settings.darkTheme ? Color(0xff1c1c1e) : Color(0xffc6c6c6),
+          color: settings.darkTheme == null
+              ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                  ? Color(0xff1c1c1e)
+                  : Color(0xffc6c6c6)
+              : settings.darkTheme!
+                  ? Color(0xff1c1c1e)
+                  : Color(0xffc6c6c6),
           // color: Colors.white,
           width: isPortrait ? 2.sp : 1.sp,
         ),

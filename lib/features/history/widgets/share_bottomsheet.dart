@@ -12,11 +12,15 @@ import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 
 shareBottomSheet(BuildContext context, PedometerSession session) {
+  var settings = Provider.of<UnitsProvider>(context).settings;
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-            backgroundColor:
-                Provider.of<UnitsProvider>(context).settings.darkTheme
+            backgroundColor: settings.darkTheme == null
+                ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.primary
+                    : Color.fromARGB(247, 211, 211, 204)
+                : settings.darkTheme!
                     ? Theme.of(context).colorScheme.primary
                     : Color.fromARGB(247, 211, 211, 204),
             titlePadding: EdgeInsets.only(top: 10.h),

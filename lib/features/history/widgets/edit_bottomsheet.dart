@@ -47,54 +47,84 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
           color: Colors.green,
         )),
     ActionType(
-      "Hike",
-      const Icon(
-        Icons.hiking_rounded,
-        color: Colors.green,
-      ),
-    ),
+        "Motorcycle",
+        const Icon(
+          Icons.two_wheeler,
+          color: Colors.green,
+        )),
     ActionType(
-      "Walk",
-      const Icon(
-        Icons.directions_walk,
-        color: Colors.green,
-      ),
-    ),
+        "Car",
+        const Icon(
+          Icons.directions_car,
+          color: Colors.green,
+        )),
     ActionType(
-      "Snowboard",
-      const Icon(
-        Icons.snowboarding,
-        color: Colors.green,
-      ),
-    ),
+        "Train",
+        const Icon(
+          Icons.directions_train,
+          color: Colors.green,
+        )),
     ActionType(
-      "Sail",
-      const Icon(
-        Icons.sailing_outlined,
-        color: Colors.green,
-      ),
-    ),
+        "Plane",
+        const Icon(
+          Icons.flight,
+          color: Colors.green,
+        )),
     ActionType(
-      "Skateboard",
-      const Icon(
-        Icons.skateboarding,
-        color: Colors.green,
-      ),
-    ),
-    ActionType(
-      "Ski",
-      const Icon(
-        Icons.downhill_skiing,
-        color: Colors.green,
-      ),
-    ),
-    ActionType(
-      "Crosscountry ski",
-      const Icon(
-        Icons.downhill_skiing,
-        color: Colors.green,
-      ),
-    ),
+        "Ship",
+        const Icon(
+          Icons.sailing,
+          color: Colors.green,
+        )),
+    // ActionType(
+    //   "Hike",
+    //   const Icon(
+    //     Icons.hiking_rounded,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Walk",
+    //   const Icon(
+    //     Icons.directions_walk,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Snowboard",
+    //   const Icon(
+    //     Icons.snowboarding,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Sail",
+    //   const Icon(
+    //     Icons.sailing_outlined,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Skateboard",
+    //   const Icon(
+    //     Icons.skateboarding,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Ski",
+    //   const Icon(
+    //     Icons.downhill_skiing,
+    //     color: Colors.green,
+    //   ),
+    // ),
+    // ActionType(
+    //   "Crosscountry ski",
+    //   const Icon(
+    //     Icons.downhill_skiing,
+    //     color: Colors.green,
+    //   ),
+    // ),
   ];
   ActionType selectedActionType = pedometerSession.activityType!.isEmpty
       ? items[0]
@@ -164,19 +194,34 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                       padding: EdgeInsets.only(left: 25.w),
                       width: MediaQuery.sizeOf(context).width * 0.95,
                       decoration: BoxDecoration(
-                          color: settings.darkTheme
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withRed(35)
-                                  .withGreen(35)
-                                  .withBlue(35)
-                              : Colors.white,
+                          color: settings.darkTheme == null
+                              ? MediaQuery.of(context).platformBrightness ==
+                                      Brightness.dark
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withRed(35)
+                                      .withGreen(35)
+                                      .withBlue(35)
+                                  : Colors.white
+                              : settings.darkTheme!
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withRed(35)
+                                      .withGreen(35)
+                                      .withBlue(35)
+                                  : Colors.white,
                           borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(
-                              color: settings.darkTheme
-                                  ? Color(0xff1c1c1e)
-                                  : Color(0xffc6c6c6))),
+                              color: settings.darkTheme == null
+                                  ? MediaQuery.of(context).platformBrightness ==
+                                          Brightness.dark
+                                      ? Color(0xff1c1c1e)
+                                      : Color(0xffc6c6c6)
+                                  : settings.darkTheme!
+                                      ? Color(0xff1c1c1e)
+                                      : Color(0xffc6c6c6))),
                       child: Column(
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -257,19 +302,33 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(horizontal: 15.w),
                       decoration: BoxDecoration(
-                          color: settings.darkTheme
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withRed(35)
-                                  .withGreen(35)
-                                  .withBlue(35)
-                              : Colors.white,
+                          color: settings.darkTheme == null
+                              ? MediaQuery.of(context).platformBrightness ==
+                                      Brightness.dark
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withRed(35)
+                                      .withGreen(35)
+                                  : Colors.white
+                              : settings.darkTheme!
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withRed(35)
+                                      .withGreen(35)
+                                      .withBlue(35)
+                                  : Colors.white,
                           borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(
-                              color: settings.darkTheme
-                                  ? Color(0xff1c1c1e)
-                                  : Color(0xffc6c6c6))),
+                              color: settings.darkTheme == null
+                                  ? MediaQuery.of(context).platformBrightness ==
+                                          Brightness.dark
+                                      ? Color(0xff1c1c1e)
+                                      : Color(0xffc6c6c6)
+                                  : settings.darkTheme!
+                                      ? Color(0xff1c1c1e)
+                                      : Color(0xffc6c6c6))),
                       child: TextField(
                         controller: noteController,
                         maxLines: 7,

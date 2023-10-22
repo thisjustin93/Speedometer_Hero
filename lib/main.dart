@@ -18,8 +18,8 @@ import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 
 void main() async {
- WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
   Hive
@@ -55,7 +55,13 @@ class MyApp extends StatelessWidget {
             var settings = Provider.of<UnitsProvider>(context).settings;
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-              themeMode: settings.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settings.darkTheme == null
+                  ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? ThemeMode.dark
+                      : ThemeMode.light
+                  : settings.darkTheme!
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
               darkTheme: ThemeData(
                   colorScheme: ColorScheme.fromSwatch(
                     cardColor: Colors.white,

@@ -27,7 +27,7 @@ class SettingsModel extends HiveObject {
   bool liveActivity = true;
 
   @HiveField(7)
-  bool darkTheme = false;
+  bool? darkTheme;
   SettingsModel({
     this.speedUnit = "mph",
     this.elevationUnit = "ft",
@@ -36,7 +36,7 @@ class SettingsModel extends HiveObject {
     this.showCityName = true,
     this.maximumGaugeSpeed = 200,
     this.liveActivity = true,
-    this.darkTheme = false,
+    this.darkTheme,
   });
 
   Map<String, dynamic> toMap() {
@@ -53,14 +53,13 @@ class SettingsModel extends HiveObject {
   }
 
   SettingsModel.fromMap(Map<String, dynamic> map) {
-  speedUnit = map['speedUnit'] ?? "mph";
-  elevationUnit = map['elevationUnit'] ?? "ft";
-  showCompass = map['showCompass'] ?? true;
-  showElevation = map['showElevation'] ?? true;
-  showCityName = map['showCityName'] ?? true;
-  maximumGaugeSpeed = map['maximumGaugeSpeed'] ?? 200;
-  liveActivity = map['liveActivity'] ?? true;
-  darkTheme = map['darkTheme'] ?? false;
-}
-
+    speedUnit = map['speedUnit'] ?? "mph";
+    elevationUnit = map['elevationUnit'] ?? "ft";
+    showCompass = map['showCompass'] ?? true;
+    showElevation = map['showElevation'] ?? true;
+    showCityName = map['showCityName'] ?? true;
+    maximumGaugeSpeed = map['maximumGaugeSpeed'] ?? 200;
+    liveActivity = map['liveActivity'] ?? true;
+    darkTheme = map['darkTheme'] ?? false;
+  }
 }

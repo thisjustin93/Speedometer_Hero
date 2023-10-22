@@ -35,9 +35,7 @@ class SwithListTile extends StatelessWidget {
                 ? settingProvider.settings.showCompass
                 : type == "Show Elevation"
                     ? settingProvider.settings.showElevation
-                    : type == "Show City Name"
-                        ? settingProvider.settings.showCityName
-                        : settingProvider.settings.darkTheme,
+                    : settingProvider.settings.showCityName,
             onChanged: (value) async {
               switch (type) {
                 case "Show Compass":
@@ -55,11 +53,11 @@ class SwithListTile extends StatelessWidget {
                       !settingProvider.settings.showCityName;
                   settingProvider.setAllUnits(settingProvider.settings);
                   break;
-                case "Dark Theme":
-                  settingProvider.settings.darkTheme =
-                      !settingProvider.settings.darkTheme;
-                  settingProvider.setAllUnits(settingProvider.settings);
-                  break;
+                // case "Dark Theme":
+                //   settingProvider.settings.darkTheme =
+                //       !settingProvider.settings.darkTheme;
+                //   settingProvider.setAllUnits(settingProvider.settings);
+                //   break;
                 default:
               }
               await HiveSettingsDB().updateSettings(settingProvider.settings);

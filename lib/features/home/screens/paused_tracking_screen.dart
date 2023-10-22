@@ -75,16 +75,19 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                isUserSubscribed
+                isUserSubscribed ||
+                        currentPedometerSessionProvider
+                                .currentPedometerSession ==
+                            null
                     ? Container(
-                        height: 390.h,
+                        height: 340.h,
                         color: Theme.of(context).colorScheme.background,
                         padding: EdgeInsets.symmetric(horizontal: 5.sp),
                         width: double.infinity,
                         child: AdWidget(ad: _banner!),
                       )
                     : Container(
-                        height: 380.h,
+                        height: 340.h,
                         color: Theme.of(context).colorScheme.background,
                         padding: EdgeInsets.symmetric(horizontal: 5.sp),
                         width: double.maxFinite,
@@ -163,74 +166,80 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MeasurementBox(
-                        boxType: 'Max Speed',
-                        measurement: convertSpeed(
-                            currentPedometerSessionProvider
-                                .currentPedometerSession!.maxSpeedInMS,
-                            settings.speedUnit),
-                        measurementUnit: settings.speedUnit),
-                    SizedBox(
-                      width: 5.sp,
-                    ),
-                    MeasurementBox(
-                        boxType: 'Avg Speed',
-                        measurement: currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .distanceInMeters ==
-                                    0 ||
-                                currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .sessionDuration ==
-                                    Duration.zero
-                            ? 0
-                            : convertSpeed(
-                                currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .distanceInMeters /
-                                    currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .sessionDuration
-                                        .inSeconds,
-                                settings.speedUnit),
-                        measurementUnit: settings.speedUnit),
-                  ],
-                ),
+                if (currentPedometerSessionProvider.currentPedometerSession !=
+                    null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MeasurementBox(
+                          boxType: 'Max Speed',
+                          measurement: convertSpeed(
+                              currentPedometerSessionProvider
+                                  .currentPedometerSession!.maxSpeedInMS,
+                              settings.speedUnit),
+                          measurementUnit: settings.speedUnit),
+                      SizedBox(
+                        width: 5.sp,
+                      ),
+                      MeasurementBox(
+                          boxType: 'Avg Speed',
+                          measurement: currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .distanceInMeters ==
+                                      0 ||
+                                  currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .sessionDuration ==
+                                      Duration.zero
+                              ? 0
+                              : convertSpeed(
+                                  currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .distanceInMeters /
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .sessionDuration
+                                          .inSeconds,
+                                  settings.speedUnit),
+                          measurementUnit: settings.speedUnit),
+                    ],
+                  ),
                 SizedBox(
                   height: 5.sp,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MeasurementBox(
-                        boxType: 'Distance',
-                        measurement: convertDistance(
-                            currentPedometerSessionProvider
-                                .currentPedometerSession!.distanceInMeters,
-                            settings.speedUnit == "mph"
-                                ? 'mi'
-                                : settings.speedUnit == 'kmph'
-                                    ? 'km'
-                                    : 'm'),
-                        measurementUnit: settings.speedUnit == "mph"
-                            ? 'mi'
-                            : settings.speedUnit == 'kmph'
-                                ? 'km'
-                                : 'm'),
-                    SizedBox(
-                      width: 5.sp,
-                    ),
-                    MeasurementBox(
-                        boxType: 'Duration',
-                        measurement: currentPedometerSessionProvider
-                            .currentPedometerSession!.sessionDuration.inSeconds
-                            .toDouble(),
-                        measurementUnit: 'min'),
-                  ],
-                ),
+                if (currentPedometerSessionProvider.currentPedometerSession !=
+                    null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MeasurementBox(
+                          boxType: 'Distance',
+                          measurement: convertDistance(
+                              currentPedometerSessionProvider
+                                  .currentPedometerSession!.distanceInMeters,
+                              settings.speedUnit == "mph"
+                                  ? 'mi'
+                                  : settings.speedUnit == 'kmph'
+                                      ? 'km'
+                                      : 'm'),
+                          measurementUnit: settings.speedUnit == "mph"
+                              ? 'mi'
+                              : settings.speedUnit == 'kmph'
+                                  ? 'km'
+                                  : 'm'),
+                      SizedBox(
+                        width: 5.sp,
+                      ),
+                      MeasurementBox(
+                          boxType: 'Duration',
+                          measurement: currentPedometerSessionProvider
+                              .currentPedometerSession!
+                              .sessionDuration
+                              .inSeconds
+                              .toDouble(),
+                          measurementUnit: 'min'),
+                    ],
+                  ),
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
                 ),
@@ -319,13 +328,25 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                             },
                             child: CircleAvatar(
                                 radius: isPortrait ? 30.r : 55.r,
-                                backgroundColor: settings.darkTheme
-                                    ? Colors.white
-                                    : Colors.black,
+                                backgroundColor: settings.darkTheme == null
+                                    ? MediaQuery.of(context)
+                                                .platformBrightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black
+                                    : settings.darkTheme!
+                                        ? Colors.white
+                                        : Colors.black,
                                 child: CircleAvatar(
-                                  backgroundColor: settings.darkTheme
-                                      ? Colors.black
-                                      : Colors.white,
+                                  backgroundColor: settings.darkTheme == null
+                                      ? MediaQuery.of(context)
+                                                  .platformBrightness ==
+                                              Brightness.dark
+                                          ? Colors.black
+                                          : Colors.white
+                                      : settings.darkTheme!
+                                          ? Colors.black
+                                          : Colors.white,
                                   radius: isPortrait ? 27.r : 51.r,
                                   child: CircleAvatar(
                                     backgroundColor: Colors.red,

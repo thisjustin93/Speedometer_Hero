@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,8 +5,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
-import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
+import 'package:speedometer/features/settings/screens/change_elevationunit_screen.dart';
+import 'package:speedometer/features/settings/screens/change_speedunit_screen.dart';
+import 'package:speedometer/features/settings/screens/change_theme_screen.dart';
 import 'package:speedometer/features/settings/widgets/switch_listtile_widget.dart';
 
 class Unit {
@@ -67,9 +68,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                          color: settingProvider.settings.darkTheme
-                              ? Color(0xff1c1c1e)
-                              : Color(0xffc6c6c6),
+                          color: settingProvider.settings.darkTheme == null
+                              ? MediaQuery.of(context).platformBrightness ==
+                                      Brightness.dark
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6)
+                              : settingProvider.settings.darkTheme!
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6),
                           width: 2.sp),
                     ),
                     child: Column(
@@ -92,6 +98,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           textAlign: TextAlign.center,
                           style: context.textStyles.mRegular(),
                         ),
+                        SizedBox(
+                          height: 15.h,
+                        ),
                         ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
@@ -112,115 +121,172 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                        color: settingProvider.settings.darkTheme
-                            ? Color(0xff1c1c1e)
-                            : Color(0xffc6c6c6),
+                        color: settingProvider.settings.darkTheme == null
+                            ? MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6)
+                            : settingProvider.settings.darkTheme!
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6),
                         width: 2.sp),
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        height: 50.h,
-                        padding: EdgeInsets.only(top: 5.h),
-                        decoration: const BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Speed Unit',
-                                  style: context.textStyles.mRegular(),
-                                ),
-                                Text(
-                                  settingProvider.settings.speedUnit == 'mph'
-                                      ? "Miles Per Hour"
-                                      : settingProvider.settings.speedUnit ==
-                                              'kmph'
-                                          ? "Kilometers Per Hour"
-                                          : "Meters Per Second",
-                                  style: context.textStyles.sRegular(),
-                                ),
-                              ],
-                            ),
-                            DropdownButton(
-                              value: settingProvider.settings.speedUnit,
-                              items: speedUnits
-                                  .map(
-                                    (unit) => DropdownMenuItem(
-                                      value: unit.key,
-                                      child: Text(
-                                        unit.key,
-                                        style: context.textStyles
-                                            .sThick()
-                                            .copyWith(color: Colors.red),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                // settingProvider.settings.setSpeedUnit(value!);
-                                settingProvider.settings.speedUnit = value!;
-                                settingProvider
-                                    .setAllUnits(settingProvider.settings);
-                                HiveSettingsDB()
-                                    .updateSettings(settingProvider.settings);
-                              },
-                            ),
-                          ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    ChangeSpeedUnitScreen(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              var begin = Offset(1.0, 0.0);
+                              var end = Offset.zero;
+                              var curve = Curves.ease;
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ));
+                        },
+                        child: Container(
+                          height: 50.h,
+                          padding: EdgeInsets.only(top: 5.h),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Speed Unit',
+                                    style: context.textStyles.mRegular(),
+                                  ),
+                                  Text(
+                                    settingProvider.settings.speedUnit == 'mph'
+                                        ? "Miles Per Hour"
+                                        : settingProvider.settings.speedUnit ==
+                                                'kmph'
+                                            ? "Kilometers Per Hour"
+                                            : "Meters Per Second",
+                                    style: context.textStyles.sRegular(),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              // DropdownButton(
+                              //   value: settingProvider.settings.speedUnit,
+                              //   items: speedUnits
+                              //       .map(
+                              //         (unit) => DropdownMenuItem(
+                              //           value: unit.key,
+                              //           child: Text(
+                              //             unit.key,
+                              //             style: context.textStyles
+                              //                 .sThick()
+                              //                 .copyWith(color: Colors.red),
+                              //           ),
+                              //         ),
+                              //       )
+                              //       .toList(),
+                              //   onChanged: (value) {
+                              //     // settingProvider.settings.setSpeedUnit(value!);
+                              //     settingProvider.settings.speedUnit = value!;
+                              //     settingProvider
+                              //         .setAllUnits(settingProvider.settings);
+                              //     HiveSettingsDB()
+                              //         .updateSettings(settingProvider.settings);
+                              //   },
+                              // ),
+                            ],
+                          ),
                         ),
                       ),
-                      Container(
-                        height: 50.h,
-                        padding: EdgeInsets.only(top: 5.h),
-                        decoration: const BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Elevation Unit',
-                                  style: context.textStyles.mRegular(),
-                                ),
-                                Text(
-                                  settingProvider.settings.elevationUnit,
-                                  style: context.textStyles.sRegular(),
-                                ),
-                              ],
-                            ),
-                            DropdownButton(
-                              value: settingProvider.settings.elevationUnit,
-                              items: elevationUnits
-                                  .map(
-                                    (unit) => DropdownMenuItem(
-                                      value: unit.key,
-                                      child: Text(
-                                        unit.key,
-                                        style: context.textStyles
-                                            .sThick()
-                                            .copyWith(color: Colors.red),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                settingProvider.settings.elevationUnit = value!;
-                                settingProvider
-                                    .setAllUnits(settingProvider.settings);
-                                HiveSettingsDB()
-                                    .updateSettings(settingProvider.settings);
-                                // settingProvider.settings
-                                //     .setElevationUnit(value!);
-                              },
-                            ),
-                          ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    ChangeElevationUnitScreen(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              var begin = Offset(1.0, 0.0);
+                              var end = Offset.zero;
+                              var curve = Curves.ease;
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ));
+                        },
+                        child: Container(
+                          height: 50.h,
+                          padding: EdgeInsets.only(top: 5.h),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Elevation Unit',
+                                    style: context.textStyles.mRegular(),
+                                  ),
+                                  Text(
+                                    settingProvider.settings.elevationUnit,
+                                    style: context.textStyles.sRegular(),
+                                  ),
+                                ],
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              // DropdownButton(
+                              //   value: settingProvider.settings.elevationUnit,
+                              //   items: elevationUnits
+                              //       .map(
+                              //         (unit) => DropdownMenuItem(
+                              //           value: unit.key,
+                              //           child: Text(
+                              //             unit.key,
+                              //             style: context.textStyles
+                              //                 .sThick()
+                              //                 .copyWith(color: Colors.red),
+                              //           ),
+                              //         ),
+                              //       )
+                              //       .toList(),
+                              //   onChanged: (value) {
+                              //     settingProvider.settings.elevationUnit = value!;
+                              //     settingProvider
+                              //         .setAllUnits(settingProvider.settings);
+                              //     HiveSettingsDB()
+                              //         .updateSettings(settingProvider.settings);
+                              //     // settingProvider.settings
+                              //     //     .setElevationUnit(value!);
+                              //   },
+                              // ),
+                            ],
+                          ),
                         ),
                       ),
                       SwithListTile(type: 'Show Compass'),
@@ -290,21 +356,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(
                   height: 15.h,
                 ),
-                Container(
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          ChangeAppThemeScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        var begin = Offset(1.0, 0.0);
+                        var end = Offset.zero;
+                        var curve = Curves.ease;
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+
+                        return SlideTransition(
+                          position: animation.drive(tween),
+                          child: child,
+                        );
+                      },
+                    ));
+                  },
+                  child: Container(
                     width: double.maxFinite,
-                    padding: EdgeInsets.only(left: 20.w),
+                    padding: EdgeInsets.only(left: 20.w, top: 5.h, bottom: 5.h),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                          color: settingProvider.settings.darkTheme
-                              ? Color(0xff1c1c1e)
-                              : Color(0xffc6c6c6),
+                          color: settingProvider.settings.darkTheme == null
+                              ? MediaQuery.of(context).platformBrightness ==
+                                      Brightness.dark
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6)
+                              : settingProvider.settings.darkTheme!
+                                  ? Color(0xff1c1c1e)
+                                  : Color(0xffc6c6c6),
                           width: 2.sp),
                     ),
-                    child: SwithListTile(
-                      type: 'Dark Theme',
-                    )),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Theme',
+                              style: context.textStyles.mRegular(),
+                            ),
+                            Text(
+                              settingProvider.settings.darkTheme == null
+                                  ? "System"
+                                  : settingProvider.settings.darkTheme!
+                                      ? "Dark"
+                                      : "Light",
+                              style: context.textStyles
+                                  .sRegular()
+                                  .copyWith(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        )
+                      ],
+                    ),
+                    // child: SwithListTile(
+                    //   type: 'Dark Theme',
+                    // ),
+                  ),
+                ),
                 SizedBox(
                   height: 15.h,
                 ),
@@ -361,9 +482,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                        color: settingProvider.settings.darkTheme
-                            ? Color(0xff1c1c1e)
-                            : Color(0xffc6c6c6),
+                        color: settingProvider.settings.darkTheme == null
+                            ? MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6)
+                            : settingProvider.settings.darkTheme!
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6),
                         width: 2.sp),
                   ),
                   child: Column(
@@ -389,7 +515,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 style: context.textStyles.mRegular(),
                               ),
                             ),
-                            const Icon(Icons.chevron_right)
+                            Icon(
+                              Icons.chevron_right,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            )
                           ],
                         ),
                       ),
@@ -414,7 +543,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 style: context.textStyles.mRegular(),
                               ),
                             ),
-                            const Icon(Icons.chevron_right)
+                            Icon(
+                              Icons.chevron_right,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            )
                           ],
                         ),
                       ),
