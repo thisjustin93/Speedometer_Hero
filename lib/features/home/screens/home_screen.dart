@@ -198,11 +198,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: height < 700 ? height * 0.53 : height * 0.43,
+            maxHeight: height < 730 ? height * 0.53 : height * 0.43,
             maxWidth: isPortrait ? width * 1 : height * 1,
           );
           return Container(
-            height: height < 700 ? height * 0.53 : height * 0.43,
+            height: height < 730 ? height * 0.53 : height * 0.43,
             width: isPortrait ? width * 1 : height * 1,
             child: Stack(
               children: [

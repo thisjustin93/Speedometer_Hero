@@ -24,7 +24,7 @@ class SpeedometerWidget extends StatelessWidget {
           // interval: 20,
           labelOffset: isPortrait ? 15 : 18,
           radiusFactor: isPortrait
-              ? height < 700
+              ? height < 730
                   ? height * 0.0015
                   : height * 0.00125
               : height < 400
