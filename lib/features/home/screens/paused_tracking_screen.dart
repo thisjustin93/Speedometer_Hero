@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -75,16 +77,17 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                isUserSubscribed ||
+                !isUserSubscribed ||
                         currentPedometerSessionProvider
                                 .currentPedometerSession ==
-                            null
+                            null ||
+                        Platform.isAndroid
                     ? Container(
                         height: 340.h,
                         color: Theme.of(context).colorScheme.background,
                         padding: EdgeInsets.symmetric(horizontal: 5.sp),
                         width: double.infinity,
-                        child: AdWidget(ad: _banner!),
+                        child: _banner == null ? null : AdWidget(ad: _banner!),
                       )
                     : Container(
                         height: 340.h,
@@ -96,13 +99,17 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               target: LatLng(
                                   currentPedometerSessionProvider
                                       .currentPedometerSession!
-                                      .startPoint!
+                                      .path!
+                                      .points
+                                      .first
                                       .latitude,
                                   currentPedometerSessionProvider
                                       .currentPedometerSession!
-                                      .startPoint!
+                                      .path!
+                                      .points
+                                      .first
                                       .longitude),
-                              zoom: 15),
+                              zoom: 20),
                           zoomGesturesEnabled: true,
                           gestureRecognizers:
                               <Factory<OneSequenceGestureRecognizer>>[
@@ -119,11 +126,15 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                                   position: LatLng(
                                       currentPedometerSessionProvider
                                           .currentPedometerSession!
-                                          .startPoint!
+                                          .path!
+                                          .points
+                                          .first
                                           .latitude,
                                       currentPedometerSessionProvider
                                           .currentPedometerSession!
-                                          .startPoint!
+                                          .path!
+                                          .points
+                                          .first
                                           .longitude),
                                   icon: BitmapDescriptor.markerAnnotation),
                             )
@@ -133,11 +144,15 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                                   position: LatLng(
                                       currentPedometerSessionProvider
                                           .currentPedometerSession!
-                                          .endPoint!
+                                          .path!
+                                          .points
+                                          .last
                                           .latitude,
                                       currentPedometerSessionProvider
                                           .currentPedometerSession!
-                                          .endPoint!
+                                          .path!
+                                          .points
+                                          .last
                                           .longitude),
                                   icon: BitmapDescriptor.markerAnnotation),
                             ),
@@ -174,33 +189,36 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                       MeasurementBox(
                           boxType: 'Max Speed',
                           measurement: convertSpeed(
-                              currentPedometerSessionProvider
-                                  .currentPedometerSession!.maxSpeedInMS,
-                              settings.speedUnit),
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!.maxSpeedInMS,
+                                  settings.speedUnit)
+                              .toStringAsFixed(1),
                           measurementUnit: settings.speedUnit),
                       SizedBox(
                         width: 5.sp,
                       ),
                       MeasurementBox(
                           boxType: 'Avg Speed',
-                          measurement: currentPedometerSessionProvider
-                                          .currentPedometerSession!
-                                          .distanceInMeters ==
-                                      0 ||
-                                  currentPedometerSessionProvider
-                                          .currentPedometerSession!
-                                          .sessionDuration ==
-                                      Duration.zero
-                              ? 0
-                              : convertSpeed(
-                                  currentPedometerSessionProvider
-                                          .currentPedometerSession!
-                                          .distanceInMeters /
+                          measurement:
+                              currentPedometerSessionProvider
+                                              .currentPedometerSession!
+                                              .distanceInMeters ==
+                                          0 ||
                                       currentPedometerSessionProvider
-                                          .currentPedometerSession!
-                                          .sessionDuration
-                                          .inSeconds,
-                                  settings.speedUnit),
+                                              .currentPedometerSession!
+                                              .sessionDuration ==
+                                          Duration.zero
+                                  ? '0'
+                                  : convertSpeed(
+                                          currentPedometerSessionProvider
+                                                  .currentPedometerSession!
+                                                  .distanceInMeters /
+                                              currentPedometerSessionProvider
+                                                  .currentPedometerSession!
+                                                  .sessionDuration
+                                                  .inSeconds,
+                                          settings.speedUnit)
+                                      .toStringAsFixed(1),
                           measurementUnit: settings.speedUnit),
                     ],
                   ),
@@ -215,18 +233,24 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                       MeasurementBox(
                           boxType: 'Distance',
                           measurement: convertDistance(
-                              currentPedometerSessionProvider
-                                  .currentPedometerSession!.distanceInMeters,
-                              settings.speedUnit == "mph"
-                                  ? 'mi'
-                                  : settings.speedUnit == 'kmph'
-                                      ? 'km'
-                                      : 'm'),
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .distanceInMeters,
+                                  settings.speedUnit == "mph"
+                                      ? 'mi'
+                                      : settings.speedUnit == 'kmph'
+                                          ? 'km'
+                                          : settings.speedUnit == 'knots'
+                                              ? "knots"
+                                              : 'm')
+                              .toStringAsFixed(1),
                           measurementUnit: settings.speedUnit == "mph"
                               ? 'mi'
                               : settings.speedUnit == 'kmph'
                                   ? 'km'
-                                  : 'm'),
+                                  : settings.speedUnit == 'knots'
+                                      ? "knots"
+                                      : 'm'),
                       SizedBox(
                         width: 5.sp,
                       ),
@@ -236,7 +260,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                               .currentPedometerSession!
                               .sessionDuration
                               .inSeconds
-                              .toDouble(),
+                              .toString(),
                           measurementUnit: 'min'),
                     ],
                   ),

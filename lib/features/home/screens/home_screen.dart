@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart' as location;
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<LatLng> pathPoints = [];
   SubscriptionStatus? subscriptionStatus;
   List<Position> geoPostions = [];
+  String cityName = "Unknown";
 
   @override
   void initState() {
@@ -141,7 +143,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final iosSettings = AppleSettings(
         accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
     final settings = Platform.isAndroid ? androidSettings : iosSettings;
-
+    startTime = DateTime.now();
+    speed = 0;
+    maxSpeed = 0;
+    totalDistance = 0;
+    currentPosition = null;
+    pauseTime = null;
+    endTime = null;
+    startingAltitude = 0;
+    endingAltitude = 0;
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
       if (mounted) {
@@ -171,15 +181,45 @@ class _HomeScreenState extends State<HomeScreen> {
             maxSpeed = speed;
           }
           startingPosition ??= position;
+          if (DateTime.now().difference(startTime!).inSeconds % 3 == 0) {
+            getCityNameFromCoordinates(position);
+          }
         }
         avgSpeed = 0;
         for (var i in geoPostions) {
           avgSpeed = (avgSpeed + i.speed);
         }
         avgSpeed /= geoPostions.length;
+
         setState(() {});
       }
     });
+  }
+
+  Future<String> getCityNameFromCoordinates(Position position) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        currentPosition!.latitude,
+        currentPosition!.longitude,
+      );
+      if (mounted) {
+        if (placemarks.isNotEmpty) {
+          final placemark = placemarks.first;
+          final city = placemark.locality; // City name
+          setState(() {
+            cityName = placemark.locality!;
+          });
+          return city ?? "Unknown";
+        } else {
+          return "Unknown";
+        }
+      } else {
+        return "Unknown";
+      }
+    } catch (e) {
+      print(e);
+      return "Unknown";
+    }
   }
 
 //932 430
@@ -215,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 0,
                     bottom: isPortrait ? null : 0,
                     child: Text(
-                      'Jerico',
+                      cityName,
                       style: context.textStyles.mRegular().copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: isPortrait ? 18.sp : 8.sp,
@@ -242,8 +282,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottom: isPortrait ? null : 0,
                   child: SpeedometerWidget(
                     speed: convertSpeed(speed, settings.speedUnit),
-                    altitude: convertDistance(endingAltitude - startingAltitude,
-                        settings.elevationUnit),
+                    altitude: geoPostions.isNotEmpty
+                        ? convertDistance(
+                            geoPostions.last.altitude -
+                                geoPostions.first.altitude,
+                            settings.elevationUnit)
+                        : 0,
                   ),
                 ),
               ],
@@ -256,40 +300,65 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         FancyCard(
           cardIndex: 0,
-          speed: convertSpeed(speed, settings.speedUnit),
-          maxSpeed: convertSpeed(maxSpeed, settings.speedUnit),
-          duration: startTime != null
-              ? endTime != null
-                  ? endTime!.difference(startTime!)
-                  : pedometerSessionProvider.currentPedometerSession != null
-                      ? DateTime.now()
-                          .subtract(pedometerSessionProvider
-                              .currentPedometerSession!.pauseDuration)
-                          .difference(startTime!)
-                      : DateTime.now().difference(startTime!)
-              : Duration.zero,
-          distanceCovered: convertDistance(
-              totalDistance,
-              settings.speedUnit == 'mph'
-                  ? 'mi'
-                  : settings.speedUnit == 'kmph'
-                      ? 'km'
-                      : 'm'),
-          avgSpeed: avgSpeed,
+          speed: speed == -99
+              ? '--'
+              : convertSpeed(speed, settings.speedUnit).toStringAsFixed(0),
+          maxSpeed: maxSpeed == -99
+              ? '--'
+              : convertSpeed(maxSpeed, settings.speedUnit).toStringAsFixed(1),
+          duration: startTime == DateTime(30000)
+              ? Duration(seconds: -99)
+              : startTime != null
+                  ? endTime != null
+                      ? endTime!.difference(startTime!)
+                      : pedometerSessionProvider.currentPedometerSession != null
+                          ? DateTime.now()
+                              .subtract(pedometerSessionProvider
+                                  .currentPedometerSession!.pauseDuration)
+                              .difference(startTime!)
+                          : DateTime.now().difference(startTime!)
+                  : Duration.zero,
+          distanceCovered: totalDistance == -99
+              ? '--'
+              : convertDistance(
+                      totalDistance,
+                      settings.speedUnit == 'mph'
+                          ? 'mi'
+                          : settings.speedUnit == 'kmph'
+                              ? 'km'
+                              : settings.speedUnit == 'knots'
+                                  ? "knots"
+                                  : 'm')
+                  .toStringAsFixed(1),
+          avgSpeed: avgSpeed == -99
+              ? '--'
+              : convertSpeed(avgSpeed, settings.speedUnit).toStringAsFixed(1),
           onPressed: () async {
-            await geolocatorStream?.cancel();
-            geolocatorStream = null;
-            speed = 0;
-            maxSpeed = 0;
-            totalDistance = 0;
-            startTime = null;
+            // geolocatorStream?.pause();
+
             endTime = null;
             startTracking = false;
             pauseTime = null;
-            avgSpeed = 0;
             pathPoints.clear();
-            currentPosition = null;
-            setState(() {});
+            // currentPosition = null;
+            geolocatorStream != null ? geolocatorStream!.pause() : null;
+            startTime = DateTime(30000);
+            // startTime = null;
+            speed = -99;
+            avgSpeed = -99;
+            maxSpeed = -99;
+            totalDistance = -99;
+            geoPostions.removeRange(0, geoPostions.length);
+            await Future.delayed(Duration(seconds: 1));
+            speed = 0;
+            maxSpeed = 0;
+            startTime = null;
+            avgSpeed = 0;
+
+            totalDistance = 0;
+            if (mounted) {
+              setState(() {});
+            }
           },
         ),
         SizedBox(
@@ -297,7 +366,9 @@ class _HomeScreenState extends State<HomeScreen> {
           width: isPortrait ? 0 : 5,
         ),
         FancyCard(
-          speed: convertSpeed(speed, settings.speedUnit),
+          speed: speed == -99
+              ? '--'
+              : convertSpeed(speed, settings.speedUnit).toStringAsFixed(0),
           cardIndex: 1,
           googleMapAPI: 'assets/images/map.png',
           position: currentPosition,
@@ -313,26 +384,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
-        physics: BouncingScrollPhysics(),
-        itemCount: fancyCards().length,
-        itemBuilder: (context, index) {
-          return
-              // index == 2
-              //     ? isPortrait
-              //         ? GestureDetector(
-              //             onVerticalDragUpdate: (detail) {},
-              //             child: fancyCards()[index],
-              //           )
-              //         : GestureDetector(
-              //             onHorizontalDragUpdate: (detail) {},
-              //             child: fancyCards()[index],
-              //           )
-              //     :
-              fancyCards()[index];
-        },
+      body: SafeArea(
+        child: ListView.builder(
+          shrinkWrap: true,
+          scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
+          physics: BouncingScrollPhysics(),
+          itemCount: fancyCards().length,
+          itemBuilder: (context, index) {
+            return
+                // index == 2
+                //     ? isPortrait
+                //         ? GestureDetector(
+                //             onVerticalDragUpdate: (detail) {},
+                //             child: fancyCards()[index],
+                //           )
+                //         : GestureDetector(
+                //             onHorizontalDragUpdate: (detail) {},
+                //             child: fancyCards()[index],
+                //           )
+                //     :
+                fancyCards()[index];
+          },
+        ),
       ),
       floatingActionButtonLocation: isPortrait
           ? FloatingActionButtonLocation.endFloat
@@ -408,6 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ))
                 .then((value) {
+              // Checks for when we return from Pause Screen
               bool? isContinue = value;
               if (isContinue != null && isContinue) {
                 endTime = null;
@@ -424,7 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 endTime = null;
                 startingPosition = null;
                 totalDistance = 0;
-
+                avgSpeed = 0;
                 speed = 0;
                 maxSpeed = 0;
                 currentPosition = null;
@@ -434,17 +508,20 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             });
           } else {
+            // to start tracking but if not subscribed then show a dialog to subscribe
             if (pedometerSessionProvider.pedometerSessions.length >= 4 &&
                 subscriptionStatus == SubscriptionStatus.notSubscribed) {
               showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    backgroundColor: Color.fromARGB(247, 211, 211, 204),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.r)),
                     titlePadding: EdgeInsets.only(top: 10.h),
                     contentPadding: EdgeInsets.zero,
                     insetPadding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 200.h),
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 215.h),
                     title: Container(
                       alignment: Alignment.center,
                       height: 50.sp,
@@ -497,11 +574,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               );
-            } else {
-              startTime = DateTime.now();
-              speed = 0;
-              maxSpeed = 0;
-              totalDistance = 0;
+            }
+            // When Subscribed, the start recording
+            else {
+              // maxSpeed = 0;
+              // totalDistance = 0;
               currentPosition = null;
               pauseTime = null;
               startTracking = true;
@@ -510,6 +587,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
               startingAltitude = 0;
               endingAltitude = 0;
+              // -99 is a code speed to show the speed as -- for a second. Per clients request
+              geolocatorStream != null ? geolocatorStream!.pause() : null;
+              startTime = DateTime(30000);
+              // startTime = null;
+              speed = -99;
+              avgSpeed = -99;
+              maxSpeed = -99;
+              totalDistance = -99;
+              await Future.delayed(Duration(seconds: 1));
               _startTracking();
             }
           }
@@ -520,12 +606,12 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: settings.darkTheme == null
                 ? MediaQuery.of(context).platformBrightness == Brightness.dark
                     ? Colors.white
-                    : startTime != null && !startTracking
+                    : !startTracking
                         ? Colors.black
                         : Color(0xffF82929)
                 : settings.darkTheme!
                     ? Colors.white
-                    : startTime != null && !startTracking
+                    : !startTracking
                         ? Colors.black
                         : Color(0xffF82929),
             child: CircleAvatar(
@@ -538,8 +624,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Colors.white,
               radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
-                backgroundColor:
-                    startTracking ? Color(0xffFD8282) : Color(0xffF82929),
+                backgroundColor: startTracking
+                    ? DateTime.now().difference(startTime!).inSeconds % 2 == 0
+                        ? Colors.red
+                        : Color(0xffFD8282)
+                    : Color(0xffF82929),
                 radius: isPortrait ? 18.r : 35.r,
               ),
             )),

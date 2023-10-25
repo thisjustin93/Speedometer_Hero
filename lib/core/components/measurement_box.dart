@@ -10,7 +10,7 @@ import 'package:speedometer/core/utils/extensions/context.dart';
 
 class MeasurementBox extends StatelessWidget {
   String boxType;
-  double measurement;
+  String measurement;
   String measurementUnit;
   MeasurementBox(
       {super.key,
@@ -26,8 +26,8 @@ class MeasurementBox extends StatelessWidget {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
     return Container(
-      height: isPortrait ? 75.h : 140.h,
-      width: isPortrait ? 153.w : width * 0.207,
+      height: isPortrait ? 80.h : 125.h,
+      width: isPortrait ? 173.w : width * 0.207,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         // color: Colors.white,
@@ -53,8 +53,10 @@ class MeasurementBox extends StatelessWidget {
                   )),
           Text(
             boxType == 'Duration'
-                ? '${Duration(seconds: measurement.toInt()).inMinutes.remainder(60)}:${Duration(seconds: measurement.toInt()).inSeconds.remainder(60)} $measurementUnit'
-                : '${measurement.toStringAsFixed(1)} $measurementUnit',
+                ? measurement=='-99'
+                    ? "--"
+                    : '${Duration(seconds: int.parse(measurement)).inMinutes.remainder(60)}:${Duration(seconds: int.parse(measurement)).inSeconds.remainder(60)} $measurementUnit'
+                : '${measurement} $measurementUnit',
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: isPortrait ? 15.sp : 10.sp,

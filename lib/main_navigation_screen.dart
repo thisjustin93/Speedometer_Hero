@@ -51,7 +51,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   checkSubscription() async {
-    SubscriptionStatus status = SubscriptionStatus.notSubscribed;
+    SubscriptionStatus status = SubscriptionStatus.subscribed;
     Future.delayed(
       Duration(milliseconds: 1),
       () {
@@ -109,42 +109,48 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               child: AdWidget(ad: _banner!),
             )
           : Container(
-              height: 110.h,
+              height: 120.h,
+              color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
                     height: 45.h,
+                    width: MediaQuery.of(context).size.width,
                     child: AdWidget(ad: _banner!),
                   ),
-                  CupertinoTabBar(
-                    // backgroundColor: Color(0xFFF6F6F6),
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    activeColor: appStartSession ? Colors.grey : Colors.red,
-                    currentIndex: pageIndex,
-                    onTap: (value) {
-                      Provider.of<AppStartProvider>(context, listen: false)
-                          .changeState();
-                      setState(() {
-                        pageIndex = value;
-                      });
-                    },
-                    items: [
-                      BottomNavigationBarItem(
-                        // label: 'Home',
-                        icon: appStartSession
-                            ? Icon(Icons.home_outlined)
-                            : Icon(Icons.assistant_navigation),
-                      ),
-                      BottomNavigationBarItem(
-                        // label: "Data",
-                        icon: Icon(Icons.article_outlined),
-                      ),
-                      BottomNavigationBarItem(
-                        // label: 'Settings',
-                        icon: Icon(Icons.settings),
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: CupertinoTabBar(
+                      // backgroundColor: Color(0xFFF6F6F6),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      activeColor: appStartSession ? Colors.grey : Colors.red,
+                      currentIndex: pageIndex,
+                      onTap: (value) {
+                        Provider.of<AppStartProvider>(context, listen: false)
+                            .changeState();
+                        setState(() {
+                          pageIndex = value;
+                        });
+                      },
+                      iconSize: 35.sp,
+                      items: [
+                        BottomNavigationBarItem(
+                          // label: 'Home',
+                          icon: pageIndex != 0
+                              ? Icon(Icons.home_outlined)
+                              : Icon(Icons.assistant_navigation),
+                        ),
+                        BottomNavigationBarItem(
+                          // label: "Data",
+                          icon: Icon(Icons.article_outlined),
+                        ),
+                        BottomNavigationBarItem(
+                          // label: 'Settings',
+                          icon: Icon(Icons.settings),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

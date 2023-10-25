@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -67,46 +69,69 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                 color: Colors.red,
               ),
             ),
-          Container(
-            height: 70.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            width: 70.h,
-            child: AppleMap(
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(widget.pedometerSession.startPoint!.latitude,
-                      widget.pedometerSession.startPoint!.longitude),
-                  zoom: 18),
-              mapType: MapType.standard,
-              polylines: Set<Polyline>.of([
-                Polyline(
-                  polylineId: PolylineId(
-                      widget.pedometerSession.path!.polylineId.value),
-                  color: Colors.blue,
-                  points: List<LatLng>.from(
-                    widget.pedometerSession.path!.points.map(
-                      (e) => LatLng(e.latitude, e.longitude),
-                    ),
+          Platform.isIOS
+              ? Container(
+                  height: 70.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  width: 1,
+                  width: 70.h,
+                  child: AppleMap(
+                    initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                            widget.pedometerSession.path!.points.first.latitude,
+                            widget
+                                .pedometerSession.path!.points.first.longitude),
+                        zoom: 18),
+                    mapType: MapType.standard,
+                    annotations: Set()
+                      ..add(
+                        Annotation(
+                            annotationId: AnnotationId('start'),
+                            position: LatLng(
+                                widget.pedometerSession.path!.points.first
+                                    .latitude,
+                                widget.pedometerSession.path!.points.first
+                                    .longitude),
+                            icon: BitmapDescriptor.markerAnnotation),
+                      )
+                      ..add(
+                        Annotation(
+                            annotationId: AnnotationId('end'),
+                            position: LatLng(
+                                widget.pedometerSession.path!.points.last
+                                    .latitude,
+                                widget.pedometerSession.path!.points.last
+                                    .longitude),
+                            icon: BitmapDescriptor.markerAnnotation),
+                      ),
+                    polylines: Set<Polyline>.of([
+                      Polyline(
+                        polylineId: PolylineId(
+                            widget.pedometerSession.path!.polylineId.value),
+                        color: Colors.blue,
+                        points: List<LatLng>.from(
+                          widget.pedometerSession.path!.points.map(
+                            (e) => LatLng(e.latitude, e.longitude),
+                          ),
+                        ),
+                        width: 1,
+                      ),
+                    ]),
+                  ),
+                )
+              : Container(
+                  height: 70.h,
+                  width: 70.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    image: DecorationImage(
+                        image: AssetImage(
+                          'assets/images/sessionpath.png',
+                        ),
+                        fit: BoxFit.cover),
+                  ),
                 ),
-              ]),
-            ),
-          ),
-
-          // Container(
-          //   height: 70.h,
-          //   width: 70.h,
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(10.r),
-          //     image: DecorationImage(
-          //         image: AssetImage(
-          //           'assets/images/sessionpath.png',
-          //         ),
-          //         fit: BoxFit.cover),
-          //   ),
-          // ),
           SizedBox(
             width: 15.w,
           ),
@@ -150,7 +175,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                   style: context.textStyles.sRegular(),
                 ),
                 Text(
-                  "${convertDistance(widget.pedometerSession.distanceInMeters, settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${settings.speedUnit == 'mph' ? "miles" : settings.speedUnit == 'kmph' ? "kilometers" : "meters"} \u2981 ${(widget.pedometerSession.sessionDuration.inSeconds / 60).toStringAsFixed(2)} minutes",
+                  "${convertDistance(widget.pedometerSession.distanceInMeters, settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${settings.speedUnit == 'mph' ? "miles" : settings.speedUnit == 'kmph' ? "kilometers" : settings.speedUnit == 'knots' ? "knots" : "meters"} \u2981 ${(widget.pedometerSession.sessionDuration.inSeconds / 60).toStringAsFixed(2)} minutes",
                   style: context.textStyles.sRegular(),
                 )
               ],

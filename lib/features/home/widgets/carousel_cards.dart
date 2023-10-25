@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
@@ -25,21 +26,21 @@ class FancyCard extends StatefulWidget {
       required this.cardIndex,
       this.position,
       this.polyline,
-      this.speed = 0,
-      this.avgSpeed = 0,
-      this.distanceCovered = 0,
-      this.maxSpeed = 0,
+      this.speed = '0',
+      this.avgSpeed = '0',
+      this.distanceCovered = '0',
+      this.maxSpeed = '0',
       this.duration = Duration.zero,
       this.googleMapAPI = '',
       this.onPressed});
   String googleMapAPI = '';
   int cardIndex;
-  double speed = 0;
-  double maxSpeed = 0;
-  double avgSpeed = 0;
+  String speed = '0';
+  String maxSpeed = '0';
+  String avgSpeed = '0';
   Position? position;
   googlemaps.Polyline? polyline;
-  double distanceCovered = 0;
+  String distanceCovered = '0';
   var duration = Duration.zero;
   VoidCallback? onPressed = () {};
 
@@ -71,12 +72,12 @@ class _FancyCardState extends State<FancyCard> {
             margin: EdgeInsets.zero,
             child: Container(
               color: Theme.of(context).colorScheme.background,
-              height: isPortrait ? 300.h : 230.h,
+              height: isPortrait ? 310.h : 230.h,
               width: isPortrait
                   ? 320.w
                   : (MediaQuery.of(context).size.width * 0.46),
               padding: isPortrait
-                  ? EdgeInsets.symmetric(horizontal: 25.w)
+                  ? EdgeInsets.symmetric(horizontal: 5.w)
                   : EdgeInsets.only(
                       top: (height * 0.1),
                       left: width * 0.02,
@@ -119,7 +120,9 @@ class _FancyCardState extends State<FancyCard> {
                                   ? 'MPH'
                                   : settings.speedUnit == 'kmph'
                                       ? "KMPH"
-                                      : "M/S",
+                                      : settings.speedUnit == 'knots'
+                                          ? "KNOTS"
+                                          : "M/S",
                               style: context.textStyles.mRegular().copyWith(
                                   fontSize: isPortrait ? null : 10.sp),
                             ),
@@ -127,7 +130,7 @@ class _FancyCardState extends State<FancyCard> {
                               height: 10.h,
                             ),
                             Text(
-                              widget.speed.toStringAsFixed(0),
+                              widget.speed,
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -168,26 +171,33 @@ class _FancyCardState extends State<FancyCard> {
                       MeasurementBox(
                           boxType: 'Max Speed',
                           measurement: widget.maxSpeed,
-                          measurementUnit: settings.speedUnit == "mph"
-                              ? 'MPH'
-                              : settings.speedUnit == 'kmph'
-                                  ? 'KM/H'
-                                  : 'M/S'),
+                          measurementUnit: widget.maxSpeed == '--'
+                              ? ''
+                              : settings.speedUnit == "mph"
+                                  ? 'MPH'
+                                  : settings.speedUnit == 'kmph'
+                                      ? 'KM/H'
+                                      : settings.speedUnit == 'knots'
+                                          ? "KNOTS"
+                                          : 'M/S'),
                       MeasurementBox(
                           boxType: 'Avg Speed',
-                          measurement:
-                              convertSpeed(widget.avgSpeed, settings.speedUnit),
+                          measurement: widget.avgSpeed,
                           // measurement: distanceCovered == 0 ||
                           //         duration == Duration.zero
                           //     ? 0
                           //     : distanceCovered /
                           //         (duration.inSeconds /
                           //             (settings.speedUnit == 'mps' ? 1 : 3600)),
-                          measurementUnit: settings.speedUnit == "mph"
-                              ? 'MPH'
-                              : settings.speedUnit == 'kmph'
-                                  ? 'KM/H'
-                                  : 'M/S'),
+                          measurementUnit: widget.maxSpeed == '--'
+                              ? ''
+                              : settings.speedUnit == "mph"
+                                  ? 'MPH'
+                                  : settings.speedUnit == 'kmph'
+                                      ? 'KM/H'
+                                      : settings.speedUnit == 'knots'
+                                          ? "KNOTS"
+                                          : 'M/S'),
                     ],
                   ),
                   SizedBox(
@@ -199,14 +209,18 @@ class _FancyCardState extends State<FancyCard> {
                       MeasurementBox(
                           boxType: 'Distance',
                           measurement: widget.distanceCovered,
-                          measurementUnit: settings.speedUnit == "mph"
-                              ? 'Mi'
-                              : settings.speedUnit == 'kmph'
-                                  ? 'KM'
-                                  : 'M'),
+                          measurementUnit: widget.maxSpeed == '--'
+                              ? ''
+                              : settings.speedUnit == "mph"
+                                  ? 'Mi'
+                                  : settings.speedUnit == 'kmph'
+                                      ? 'KM'
+                                      : settings.speedUnit == 'knots'
+                                          ? "KNOTS"
+                                          : 'M'),
                       MeasurementBox(
                           boxType: 'Duration',
-                          measurement: widget.duration.inSeconds.toDouble(),
+                          measurement: widget.duration.inSeconds.toString(),
                           measurementUnit: ''),
                     ],
                   ),
@@ -214,10 +228,10 @@ class _FancyCardState extends State<FancyCard> {
               ),
             ),
           )
-        : widget.position != null
+        : widget.position != null && Platform.isIOS
             ? Container(
                 padding: isPortrait
-                    ? EdgeInsets.symmetric(horizontal: 25.w)
+                    ? EdgeInsets.symmetric(horizontal: 5.w)
                     : EdgeInsets.only(
                         top: (height * 0.1),
                         left: width * 0.01,
@@ -284,6 +298,7 @@ class _FancyCardState extends State<FancyCard> {
                                 polylineId: PolylineId(
                                     widget.polyline!.polylineId.value),
                                 color: widget.polyline!.color,
+                                width: 3,
                                 points: List<LatLng>.from(
                                     widget.polyline!.points.map((e) =>
                                         LatLng(e.latitude, e.longitude))),
@@ -296,8 +311,19 @@ class _FancyCardState extends State<FancyCard> {
                         bottom: 7,
                         left: 30,
                         child: Text(
-                          widget.speed.toStringAsFixed(0),
-                          style: context.textStyles.lRegular(),
+                          widget.speed,
+                          // style: context.textStyles.lRegular(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 40.sp,
+                            decoration: TextDecoration.none,
+                            letterSpacing: 0,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimary
+                                .withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ],
@@ -306,7 +332,7 @@ class _FancyCardState extends State<FancyCard> {
               )
             : Container(
                 padding: isPortrait
-                    ? EdgeInsets.symmetric(horizontal: 25.w)
+                    ? EdgeInsets.symmetric(horizontal: 10.w)
                     : EdgeInsets.only(
                         top: (height * 0.1),
                         left: width * 0.01,

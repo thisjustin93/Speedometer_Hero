@@ -16,17 +16,20 @@ shareBottomSheet(BuildContext context, PedometerSession session) {
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-            backgroundColor: settings.darkTheme == null
-                ? MediaQuery.of(context).platformBrightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.primary
-                    : Color.fromARGB(247, 211, 211, 204)
-                : settings.darkTheme!
-                    ? Theme.of(context).colorScheme.primary
-                    : Color.fromARGB(247, 211, 211, 204),
+            // backgroundColor: settings.darkTheme == null
+            //     ? MediaQuery.of(context).platformBrightness == Brightness.dark
+            //         ? Theme.of(context).colorScheme.primary
+            //         : Theme.of(context).colorScheme.primary
+            //     : settings.darkTheme!
+            //         ? Theme.of(context).colorScheme.primary
+            //         : Color.fromARGB(247, 211, 211, 204),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.r)),
+            backgroundColor: Theme.of(context).colorScheme.primary,
             titlePadding: EdgeInsets.only(top: 10.h),
             contentPadding: EdgeInsets.zero,
             insetPadding:
-                EdgeInsets.symmetric(horizontal: 10.w, vertical: 200.h),
+                EdgeInsets.symmetric(horizontal: 13.w, vertical: 200.h),
             title: Container(
               alignment: Alignment.center,
               height: 50.sp,

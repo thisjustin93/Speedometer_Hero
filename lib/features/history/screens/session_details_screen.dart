@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -77,7 +79,9 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
             ? "miles"
             : settings.speedUnit == 'kmph'
                 ? "kilometers"
-                : "meters"
+                : settings.speedUnit == "knots"
+                    ? "knots"
+                    : "meters"
       },
       {
         'activityType': 'Top Duration',
@@ -91,7 +95,12 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         // backgroundColor: const Color(0xFFF7F7F7),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Colors.white,
+        // surfaceTintColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -205,62 +214,70 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                         ),
                       ],
                     ),
-                    Container(
-                      height: 180.h,
-                      width: double.maxFinite,
-                      child: AppleMap(
-                        initialCameraPosition: CameraPosition(
-                            target: LatLng(widget.session.startPoint!.latitude,
-                                widget.session.startPoint!.longitude),
-                            zoom: 20),
-                        zoomGesturesEnabled: true,
-                        gestureRecognizers:
-                            <Factory<OneSequenceGestureRecognizer>>[
-                          new Factory<OneSequenceGestureRecognizer>(
-                            () => new EagerGestureRecognizer(),
-                          ),
-                        ].toSet(),
-                        mapType: MapType.standard,
-                        scrollGesturesEnabled: true,
-                        annotations: Set()
-                          ..add(
-                            Annotation(
-                                annotationId: AnnotationId('start'),
-                                position: LatLng(
-                                    widget.session.startPoint!.latitude,
-                                    widget.session.startPoint!.longitude),
-                                icon: BitmapDescriptor.markerAnnotation),
-                          )
-                          ..add(
-                            Annotation(
-                                annotationId: AnnotationId('end'),
-                                position: LatLng(
-                                    widget.session.endPoint!.latitude,
-                                    widget.session.endPoint!.longitude),
-                                icon: BitmapDescriptor.markerAnnotation),
-                          ),
-                        polylines: Set<Polyline>.of([
-                          Polyline(
-                            polylineId: PolylineId(
-                                widget.session.path!.polylineId.value),
-                            color: widget.session.path!.color,
-                            points: List<LatLng>.from(
-                              widget.session.path!.points.map(
-                                (e) => LatLng(e.latitude, e.longitude),
-                              ),
+                    Platform.isIOS
+                        ? Container(
+                            height: 180.h,
+                            width: double.maxFinite,
+                            child: AppleMap(
+                              initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                      widget
+                                          .session.path!.points.first.latitude,
+                                      widget.session.path!.points.first
+                                          .longitude),
+                                  zoom: 20),
+                              zoomGesturesEnabled: true,
+                              gestureRecognizers:
+                                  <Factory<OneSequenceGestureRecognizer>>[
+                                new Factory<OneSequenceGestureRecognizer>(
+                                  () => new EagerGestureRecognizer(),
+                                ),
+                              ].toSet(),
+                              mapType: MapType.standard,
+                              scrollGesturesEnabled: true,
+                              annotations: Set()
+                                ..add(
+                                  Annotation(
+                                      annotationId: AnnotationId('start'),
+                                      position: LatLng(
+                                          widget.session.path!.points.first
+                                              .latitude,
+                                          widget.session.path!.points.first
+                                              .longitude),
+                                      icon: BitmapDescriptor.markerAnnotation),
+                                )
+                                ..add(
+                                  Annotation(
+                                      annotationId: AnnotationId('end'),
+                                      position: LatLng(
+                                          widget.session.path!.points.last
+                                              .latitude,
+                                          widget.session.path!.points.last
+                                              .longitude),
+                                      icon: BitmapDescriptor.markerAnnotation),
+                                ),
+                              polylines: Set<Polyline>.of([
+                                Polyline(
+                                  polylineId: PolylineId(
+                                      widget.session.path!.polylineId.value),
+                                  // color: widget.session.path!.color,
+                                  color: Colors.blue,
+                                  points: List<LatLng>.from(
+                                    widget.session.path!.points.map(
+                                      (e) => LatLng(e.latitude, e.longitude),
+                                    ),
+                                  ),
+                                  width: 3,
+                                ),
+                              ]),
                             ),
-                            width: 3,
+                          )
+                        : Image.asset(
+                            'assets/images/map.png',
+                            height: 180.h,
+                            width: double.maxFinite,
+                            fit: BoxFit.cover,
                           ),
-                        ]),
-                      ),
-                    ),
-
-                    // Image.asset(
-                    //   'assets/images/map.png',
-                    //   height: 180.h,
-                    //   width: double.maxFinite,
-                    //   fit: BoxFit.cover,
-                    // ),
                     SizedBox(
                       height: 5.h,
                     ),
@@ -301,7 +318,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                         ? '  ${durationInMinutes(tileData[index]['value']).toStringAsFixed(1)}  ${tileData[index]['valueUnit']}'
                                         : tileData[index]['activityType'] ==
                                                 'Top Distance'
-                                            ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
+                                            ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : settings.speedUnit == "knots" ? "knots" : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
                                             : tileData[index]['activityType'] ==
                                                     'Max Speed'
                                                 ? '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}'

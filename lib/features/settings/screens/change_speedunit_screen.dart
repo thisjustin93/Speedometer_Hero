@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/services/settigns_db_services.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/settings/screens/settings_page.dart';
 
@@ -17,6 +18,7 @@ class _ChangeSpeedUnitScreenState extends State<ChangeSpeedUnitScreen> {
     Unit(key: 'mph', value: 'Miles Per Hour'),
     Unit(key: 'mps', value: 'Meters Per Second'),
     Unit(key: 'kmph', value: 'Kilometers Per Hour'),
+    Unit(key: 'knot', value: 'Nautical Mile Per Hour'),
   ];
   @override
   Widget build(BuildContext context) {
@@ -38,10 +40,11 @@ class _ChangeSpeedUnitScreenState extends State<ChangeSpeedUnitScreen> {
             // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "mph",
             groupValue: settingsProvider.settings.speedUnit,
-            onChanged: (value) {
+            onChanged: (value) async {
               settingsProvider.settings.speedUnit =
                   value ?? settingsProvider.settings.speedUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
+              await HiveSettingsDB().updateSettings(settingsProvider.settings); 
             }),
         RadioListTile.adaptive(
             toggleable: true,
@@ -52,10 +55,11 @@ class _ChangeSpeedUnitScreenState extends State<ChangeSpeedUnitScreen> {
             // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "mps",
             groupValue: settingsProvider.settings.speedUnit,
-            onChanged: (value) {
+            onChanged: (value) async {
               settingsProvider.settings.speedUnit =
                   value ?? settingsProvider.settings.speedUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
+              await HiveSettingsDB().updateSettings(settingsProvider.settings);
             }),
         RadioListTile.adaptive(
             toggleable: true,
@@ -66,10 +70,26 @@ class _ChangeSpeedUnitScreenState extends State<ChangeSpeedUnitScreen> {
             // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "kmph",
             groupValue: settingsProvider.settings.speedUnit,
-            onChanged: (value) {
+            onChanged: (value) async {
               settingsProvider.settings.speedUnit =
                   value ?? settingsProvider.settings.speedUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
+              await HiveSettingsDB().updateSettings(settingsProvider.settings);
+            }),
+        RadioListTile.adaptive(
+            toggleable: true,
+            title: Text(
+              "Nautical Mile Per Hour",
+              style: context.textStyles.mRegular(),
+            ),
+            // activeColor: Theme.of(context).colorScheme.onPrimary,
+            value: "knots",
+            groupValue: settingsProvider.settings.speedUnit,
+            onChanged: (value) async {
+              settingsProvider.settings.speedUnit =
+                  value ?? settingsProvider.settings.speedUnit;
+              settingsProvider.setAllUnits(settingsProvider.settings);
+              await HiveSettingsDB().updateSettings(settingsProvider.settings);
             }),
       ]),
     );

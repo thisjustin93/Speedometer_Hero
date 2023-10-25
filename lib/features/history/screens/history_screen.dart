@@ -110,7 +110,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ? 'miles'
             : settings.speedUnit == 'kmph'
                 ? 'kilometers'
-                : "meters"
+                : settings.speedUnit == "knots"
+                    ? "knots"
+                    : "meters"
       },
       {
         'activityType': 'Top Duration',
@@ -122,8 +124,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         toolbarHeight: 40.h,
         actions: [
           InkWell(
@@ -239,33 +242,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
               SizedBox(
                 height: 15.h,
               ),
-              Container(
-                height: 280.h,
-                width: double.maxFinite,
-                padding: EdgeInsets.only(left: 15.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(8.r)),
-                  border: Border.all(
-                      color: settings.darkTheme == null
-                          ? MediaQuery.of(context).platformBrightness ==
-                                  Brightness.dark
-                              ? Color(0xff1c1c1e)
-                              : Color(0xffc6c6c6)
-                          : settings.darkTheme!
-                              ? Color(0xff1c1c1e)
-                              : Color(0xffc6c6c6),
-                      width: 2.sp),
-                ),
-                child: pedometerSessionProvider.pedometerSessions.isEmpty
-                    ? Center(
-                        child: Text(
-                          "No Session Saved yet.",
-                          style: context.textStyles.mRegular(),
-                        ),
-                      )
-                    : ListView.builder(
+              pedometerSessionProvider.pedometerSessions.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No Recorded History yet.",
+                        style: context.textStyles.mRegular(),
+                      ),
+                    )
+                  : Container(
+                      height: 290.h,
+                      width: double.maxFinite,
+                      padding: EdgeInsets.only(left: 15.w),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(8.r)),
+                        border: Border.all(
+                            color: settings.darkTheme == null
+                                ? MediaQuery.of(context).platformBrightness ==
+                                        Brightness.dark
+                                    ? Color(0xff1c1c1e)
+                                    : Color(0xffc6c6c6)
+                                : settings.darkTheme!
+                                    ? Color(0xff1c1c1e)
+                                    : Color(0xffc6c6c6),
+                            width: 2.sp),
+                      ),
+                      child: ListView.builder(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
                         itemCount:
@@ -389,7 +392,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           );
                         },
                       ),
-              ),
+                    ),
             ],
           ),
         ),

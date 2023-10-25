@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/services/settigns_db_services.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 
 class ChangeElevationUnitScreen extends StatefulWidget {
@@ -33,10 +34,11 @@ class _ChangeElevationUnitScreenState extends State<ChangeElevationUnitScreen> {
             // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "ft",
             groupValue: settingsProvider.settings.elevationUnit,
-            onChanged: (value) {
+            onChanged: (value) async{
               settingsProvider.settings.elevationUnit =
                   value ?? settingsProvider.settings.elevationUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
+                await HiveSettingsDB().updateSettings(settingsProvider.settings);
             }),
         RadioListTile.adaptive(
             toggleable: true,
@@ -47,10 +49,11 @@ class _ChangeElevationUnitScreenState extends State<ChangeElevationUnitScreen> {
             // activeColor: Theme.of(context).colorScheme.onPrimary,
             value: "m",
             groupValue: settingsProvider.settings.elevationUnit,
-            onChanged: (value) {
+            onChanged: (value) async{
               settingsProvider.settings.elevationUnit =
                   value ?? settingsProvider.settings.elevationUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
+                await HiveSettingsDB().updateSettings(settingsProvider.settings);
             }),
       ]),
     );

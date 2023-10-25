@@ -29,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Unit(key: 'mph', value: 'Miles Per Hour'),
     Unit(key: 'mps', value: 'Meters Per Second'),
     Unit(key: 'kmph', value: 'Kilometers Per Hour'),
+    Unit(key: 'knots', value: 'Nautical Miles Per Hour'),
   ];
   List<Unit> elevationUnits = [
     Unit(key: 'ft', value: 'Feet'),
@@ -176,7 +177,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         : settingProvider.settings.speedUnit ==
                                                 'kmph'
                                             ? "Kilometers Per Hour"
-                                            : "Meters Per Second",
+                                            : settingProvider
+                                                        .settings.speedUnit ==
+                                                    'knots'
+                                                ? "Nautical Miles Per Hour"
+                                                : "Meters Per Second",
                                     style: context.textStyles.sRegular(),
                                   ),
                                 ],
@@ -314,25 +319,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                             InkWell(
                               onTap: () {
-                                settingProvider.settings.maximumGaugeSpeed += 1;
-                                settingProvider
-                                    .setAllUnits(settingProvider.settings);
-                                HiveSettingsDB()
-                                    .updateSettings(settingProvider.settings);
-                                // settingProvider.settings
-                                //     .changeMaximumGaugeSpeed(true);
-                              },
-                              child: Icon(
-                                Icons.add_circle_outline_sharp,
-                                color: Colors.grey,
-                                size: 30.sp,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            InkWell(
-                              onTap: () {
                                 settingProvider.settings.maximumGaugeSpeed -= 1;
                                 settingProvider
                                     .setAllUnits(settingProvider.settings);
@@ -343,6 +329,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               },
                               child: Icon(
                                 Icons.remove_circle_outline,
+                                color: Colors.grey,
+                                size: 30.sp,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10.w,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                settingProvider.settings.maximumGaugeSpeed += 1;
+                                settingProvider
+                                    .setAllUnits(settingProvider.settings);
+                                HiveSettingsDB()
+                                    .updateSettings(settingProvider.settings);
+                                // settingProvider.settings
+                                //     .changeMaximumGaugeSpeed(true);
+                              },
+                              child: Icon(
+                                Icons.add_circle_outline_sharp,
                                 color: Colors.grey,
                                 size: 30.sp,
                               ),
