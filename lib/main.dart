@@ -28,6 +28,9 @@ void main() async {
     ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MobileAds.instance.initialize();
+   RequestConfiguration configuration =
+       RequestConfiguration(testDeviceIds: ['AD9AEB3A8102D4B5967050E524F217DE']);
+  MobileAds.instance.updateRequestConfiguration(configuration);
   runApp(MyApp());
 }
 
