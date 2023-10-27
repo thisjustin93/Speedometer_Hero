@@ -120,7 +120,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     child: AdWidget(ad: _banner!),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 35.w,verticle:10.h),
+                    padding: EdgeInsets.symmetric(horizontal: 35.w,vertical:10.h),
                     child: CupertinoTabBar(
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
