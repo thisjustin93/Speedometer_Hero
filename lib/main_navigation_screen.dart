@@ -120,7 +120,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                     child: AdWidget(ad: _banner!),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    padding: EdgeInsets.symmetric(horizontal: 35.w,verticle:10.h),
                     child: CupertinoTabBar(
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -137,7 +137,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       items: [
                         BottomNavigationBarItem(
                           // label: 'Home',
-                          icon: pageIndex != 0
+                          icon: pageIndex != 0 || appStartSession
                               ? Icon(Icons.home_outlined)
                               : Icon(Icons.assistant_navigation),
                         ),
