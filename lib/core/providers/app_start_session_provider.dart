@@ -2,10 +2,15 @@
 
 import 'package:flutter/cupertino.dart';
 
-class AppStartProvider extends ChangeNotifier {
-  bool appStartSession = true;
-  changeState() {
-    appStartSession = false;
+class RecordingProvider extends ChangeNotifier {
+  bool recordingStarted = false;
+  startRecording() {
+    recordingStarted = true;
+    notifyListeners();
+  }
+
+  stopRecording() {
+    recordingStarted = false;
     notifyListeners();
   }
 }

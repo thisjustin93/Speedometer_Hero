@@ -10,6 +10,8 @@ class CompassWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.sizeOf(context).width;
+    var height = MediaQuery.sizeOf(context).height;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
     return Transform.rotate(
@@ -23,7 +25,22 @@ class CompassWidget extends StatelessWidget {
             maximum: 360,
             interval: 45,
             labelOffset: 5,
-            radiusFactor: isPortrait ? 0.35.r : 0.8.r,
+            // isPortrait
+            //     ? height < 700
+            //         ? height * 0.35
+            //         : height * 0.35
+            //     : height < 400
+            //         ? height * 0.0027
+            //         : height * 0.0024,
+            radiusFactor: isPortrait
+                ? height < 0
+                    ? height * 0.0005
+                    : height * 0.0004
+                : height < 400
+                    ? height * 0.001
+                    : height * 0.0008,
+            // radiusFactor: isPortrait ? 0.35.r : 0.8.r,
+
             onLabelCreated: (value) {
               value.labelStyle = GaugeTextStyle(
                   fontWeight: FontWeight.bold,

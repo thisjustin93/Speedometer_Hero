@@ -12,7 +12,7 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
 
   @override
   SettingsModel read(BinaryReader reader) {
-   final numOfFields = reader.readByte();
+    final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
@@ -24,8 +24,7 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
       showCityName: fields[4] as bool,
       maximumGaugeSpeed: fields[5] as int,
       liveActivity: fields[6] as bool,
-      darkTheme: fields[7] as bool,
-
+      darkTheme: fields[7] as bool?,
     );
   }
 
@@ -34,30 +33,21 @@ class SettingsModelAdapter extends TypeAdapter<SettingsModel> {
     writer
       ..writeByte(8)
       ..writeByte(0)
-
       ..write(obj.speedUnit)
       ..writeByte(1)
-
       ..write(obj.elevationUnit)
       ..writeByte(2)
-
       ..write(obj.showCompass)
       ..writeByte(3)
-
       ..write(obj.showElevation)
       ..writeByte(4)
-
       ..write(obj.showCityName)
       ..writeByte(5)
-
       ..write(obj.maximumGaugeSpeed)
       ..writeByte(6)
-
       ..write(obj.liveActivity)
       ..writeByte(7)
-
       ..write(obj.darkTheme);
-
   }
 
   @override

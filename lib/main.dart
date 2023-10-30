@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -18,8 +19,8 @@ import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 
 void main() async {
- WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
   Hive
@@ -28,9 +29,9 @@ void main() async {
     ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MobileAds.instance.initialize();
-   RequestConfiguration configuration =
-       RequestConfiguration(testDeviceIds: ['AD9AEB3A8102D4B5967050E524F217DE']);
-  MobileAds.instance.updateRequestConfiguration(configuration);
+  //   RequestConfiguration configuration =
+  //      RequestConfiguration(testDeviceIds: ['AD9AEB3A8102D4B5967050E524F217DE']);
+  // MobileAds.instance.updateRequestConfiguration(configuration);
   runApp(MyApp());
 }
 
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
           create: (context) => SubscriptionProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => AppStartProvider(),
+          create: (context) => RecordingProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => UnitsProvider(),
@@ -57,8 +58,26 @@ class MyApp extends StatelessWidget {
           builder: (context, child) {
             var settings = Provider.of<UnitsProvider>(context).settings;
             return MaterialApp(
+              localizationsDelegates: [
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+                DefaultCupertinoLocalizations.delegate,
+      // GlobalMaterialLocalizations.delegate,
+      // GlobalWidgetsLocalizations.delegate,
+      // GlobalCupertinoLocalizations.delegate,
+    ],
+
+supportedLocales: [
+      Locale('en', 'US'),
+    ],
               debugShowCheckedModeBanner: false,
-              themeMode: settings.darkTheme ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settings.darkTheme == null
+                  ? MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? ThemeMode.dark
+                      : ThemeMode.light
+                  : settings.darkTheme!
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
               darkTheme: ThemeData(
                   colorScheme: ColorScheme.fromSwatch(
                     cardColor: Colors.white,

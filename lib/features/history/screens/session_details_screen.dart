@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +21,8 @@ import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
 import 'package:speedometer/features/history/widgets/speed_data_bottomsheet.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
+import 'package:syncfusion_flutter_charts/charts.dart' as chart;
+import 'package:screenshot/screenshot.dart';
 
 class SessionDetailsScreen extends StatefulWidget {
   PedometerSession session;
@@ -32,14 +39,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
     {"Cycle": Icons.directions_bike},
     {"None": null},
     {"Run": Icons.directions_run},
-    {"Hike": Icons.hiking_rounded},
-    {"Walk": Icons.directions_walk},
-    {"Snowboard": Icons.snowboarding},
-    {"Sail": Icons.sailing_outlined},
-    {"Skateboard": Icons.skateboarding},
-    {"Ski": Icons.downhill_skiing},
-    {"Crosscountry Ski": Icons.downhill_skiing},
-    {"Ship": Icons.sailing_outlined},
+    {"Motorcycle": Icons.two_wheeler},
+    {"Car": Icons.directions_car},
+    {"Train": Icons.directions_train},
+    {"Plane": Icons.flight},
+    {"Ship": Icons.sailing},
+    // {"Ski": Icons.downhill_skiing},
+    // {"Crosscountry Ski": Icons.downhill_skiing},
+    // {"Ship": Icons.sailing_outlined},
   ];
   double durationInMinutes(Duration? duration) {
     if (duration == null) {
@@ -74,7 +81,9 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
             ? "miles"
             : settings.speedUnit == 'kmph'
                 ? "kilometers"
-                : "meters"
+                : settings.speedUnit == "knots"
+                    ? "knots"
+                    : "meters"
       },
       {
         'activityType': 'Top Duration',
@@ -88,7 +97,12 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         // backgroundColor: const Color(0xFFF7F7F7),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Theme.of(context).colorScheme.primary,
+        // backgroundColor: Colors.white,
+        // surfaceTintColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -125,7 +139,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
             width: 5.w,
           ),
           InkWell(
-            onTap: () {
+            onTap: () async {
               shareBottomSheet(context, widget.session);
             },
             child: Icon(
@@ -149,9 +163,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -197,12 +216,70 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                         ),
                       ],
                     ),
-                    Image.asset(
-                      'assets/images/map.png',
-                      height: 180.h,
-                      width: double.maxFinite,
-                      fit: BoxFit.cover,
-                    ),
+                    Platform.isIOS
+                        ? Container(
+                            height: 180.h,
+                            width: double.maxFinite,
+                            child: AppleMap(
+                              initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                      widget
+                                          .session.path!.points.first.latitude,
+                                      widget.session.path!.points.first
+                                          .longitude),
+                                  zoom: 20),
+                              zoomGesturesEnabled: true,
+                              gestureRecognizers:
+                                  <Factory<OneSequenceGestureRecognizer>>[
+                                new Factory<OneSequenceGestureRecognizer>(
+                                  () => new EagerGestureRecognizer(),
+                                ),
+                              ].toSet(),
+                              mapType: MapType.standard,
+                              scrollGesturesEnabled: true,
+                              annotations: Set()
+                                ..add(
+                                  Annotation(
+                                      annotationId: AnnotationId('start'),
+                                      position: LatLng(
+                                          widget.session.path!.points.first
+                                              .latitude,
+                                          widget.session.path!.points.first
+                                              .longitude),
+                                      icon: BitmapDescriptor.markerAnnotation),
+                                )
+                                ..add(
+                                  Annotation(
+                                      annotationId: AnnotationId('end'),
+                                      position: LatLng(
+                                          widget.session.path!.points.last
+                                              .latitude,
+                                          widget.session.path!.points.last
+                                              .longitude),
+                                      icon: BitmapDescriptor.markerAnnotation),
+                                ),
+                              polylines: Set<Polyline>.of([
+                                Polyline(
+                                  polylineId: PolylineId(
+                                      widget.session.path!.polylineId.value),
+                                  // color: widget.session.path!.color,
+                                  color: Colors.blue,
+                                  points: List<LatLng>.from(
+                                    widget.session.path!.points.map(
+                                      (e) => LatLng(e.latitude, e.longitude),
+                                    ),
+                                  ),
+                                  width: 3,
+                                ),
+                              ]),
+                            ),
+                          )
+                        : Image.asset(
+                            'assets/images/map.png',
+                            height: 180.h,
+                            width: double.maxFinite,
+                            fit: BoxFit.cover,
+                          ),
                     SizedBox(
                       height: 5.h,
                     ),
@@ -243,7 +320,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                         ? '  ${durationInMinutes(tileData[index]['value']).toStringAsFixed(1)}  ${tileData[index]['valueUnit']}'
                                         : tileData[index]['activityType'] ==
                                                 'Top Distance'
-                                            ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
+                                            ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : settings.speedUnit == "knots" ? "knots" : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
                                             : tileData[index]['activityType'] ==
                                                     'Max Speed'
                                                 ? '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
@@ -290,9 +367,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,
@@ -324,9 +406,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -339,7 +426,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     Container(
                       height: 140.h,
                       child: SfCartesianChart(
-                          // primaryXAxis: DateTimeAxis(),
                           primaryXAxis: DateTimeAxis(
                               majorGridLines: const MajorGridLines(width: 0),
                               minorGridLines: const MinorGridLines(width: 0),
@@ -411,9 +497,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: settings.darkTheme
-                        ? Color(0xff1c1c1e)
-                        : Color(0xffc6c6c6),
+                    color: settings.darkTheme == null
+                        ? MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6)
+                        : settings.darkTheme!
+                            ? Color(0xff1c1c1e)
+                            : Color(0xffc6c6c6),
                     width: 2,
                   ),
                 ),
@@ -488,9 +579,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,
@@ -526,9 +622,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       8.h,
                     ),
                     border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2,
                     ),
                     color: Theme.of(context).primaryColor,

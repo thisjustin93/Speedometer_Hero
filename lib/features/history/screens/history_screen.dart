@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,6 +14,7 @@ import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
+import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/history/screens/session_details_screen.dart';
 import 'package:speedometer/features/history/widgets/matching_activity_tiles.dart';
@@ -20,9 +22,11 @@ import 'package:speedometer/features/history/widgets/sessionActivity.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:speedometer/features/history/widgets/edit_bottomsheet.dart';
 import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
+import 'package:syncfusion_flutter_charts/charts.dart' as chart;
+import 'package:screenshot/screenshot.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+  HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -110,7 +114,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ? 'miles'
             : settings.speedUnit == 'kmph'
                 ? 'kilometers'
-                : "meters"
+                : settings.speedUnit == "knots"
+                    ? "knots"
+                    : "meters"
       },
       {
         'activityType': 'Top Duration',
@@ -122,21 +128,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         toolbarHeight: 40.h,
         actions: [
           InkWell(
             onTap: () {
               setState(() {
-                selectSessions = false;
+                selectSessions = !selectSessions;
               });
             },
-            onLongPress: () {
-              setState(() {
-                selectSessions = true;
-              });
-            },
+            // onLongPress: () {
+            //   setState(() {
+            //     selectSessions = true;
+            //   });
+            // },
             child: Container(
                 decoration: BoxDecoration(shape: BoxShape.circle),
                 width: 70.w,
@@ -171,9 +178,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
+                      color: settings.darkTheme == null
+                          ? MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6)
+                          : settings.darkTheme!
+                              ? Color(0xff1c1c1e)
+                              : Color(0xffc6c6c6),
                       width: 2.sp),
                 ),
                 child: ListView.builder(
@@ -234,33 +246,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
               SizedBox(
                 height: 15.h,
               ),
-              Container(
-                height: 280.h,
-                width: double.maxFinite,
-                padding: EdgeInsets.only(left: 15.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(8.r)),
-                  border: Border.all(
-                      color: settings.darkTheme
-                          ? Color(0xff1c1c1e)
-                          : Color(0xffc6c6c6),
-                      width: 2.sp),
-                ),
-                child: pedometerSessionProvider.pedometerSessions.isEmpty
-                    ? Center(
-                        child: Text(
-                          "No Session Saved yet.",
-                          style: context.textStyles.mRegular(),
-                        ),
-                      )
-                    : ListView.builder(
+              pedometerSessionProvider.pedometerSessions.isEmpty
+                  ? Center(
+                      child: Text(
+                        "No Recorded History yet.",
+                        style: context.textStyles.mRegular(),
+                      ),
+                    )
+                  : Container(
+                      height: 290.h,
+                      width: double.maxFinite,
+                      padding: EdgeInsets.only(left: 15.w),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(8.r)),
+                        border: Border.all(
+                            color: settings.darkTheme == null
+                                ? MediaQuery.of(context).platformBrightness ==
+                                        Brightness.dark
+                                    ? Color(0xff1c1c1e)
+                                    : Color(0xffc6c6c6)
+                                : settings.darkTheme!
+                                    ? Color(0xff1c1c1e)
+                                    : Color(0xffc6c6c6),
+                            width: 2.sp),
+                      ),
+                      child: ListView.builder(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
                         itemCount:
                             pedometerSessionProvider.pedometerSessions.length,
-                        itemBuilder: (context, index) {
+                        itemBuilder: (__, index) {
                           return Slidable(
                             key: ValueKey(0),
                             endActionPane: ActionPane(
@@ -282,13 +299,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   padding: EdgeInsets.all(5.sp),
                                 ),
                                 SlidableAction(
-                                  onPressed: (context) {
-                                    // Dialog when click share button
+                                  onPressed: (_) async {
+                                 
                                     shareBottomSheet(
                                         context,
                                         pedometerSessionProvider
                                             .pedometerSessions[index]);
                                   },
+                                  // onPressed: (context) {
+                                  //   // Dialog when click share button
+                                  //   shareBottomSheet(
+                                  //       context,
+                                  //       pedometerSessionProvider
+                                  //           .pedometerSessions[index]);
+                                  // },
                                   backgroundColor: Color(0xFF00BF63),
                                   foregroundColor: Colors.white,
                                   icon: Icons.file_upload_outlined,
@@ -351,6 +375,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   setState(() {});
                                 });
                               },
+                              // child: widget,
                               child: SessionActivityTile(
                                   pedometerSession: pedometerSessionProvider
                                       .pedometerSessions[index],
@@ -379,7 +404,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           );
                         },
                       ),
-              ),
+                    ),
             ],
           ),
         ),

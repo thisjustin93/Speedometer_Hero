@@ -1,7 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 part 'PedometerSessionModel.g.dart';
 
 @HiveType(typeId: 0)
@@ -85,9 +84,9 @@ class PedometerSession extends HiveObject {
       'altitude': altitude,
       'maxSpeedInMS': maxSpeedInMS,
       'averageSpeedInMS': averageSpeedInMS,
-      'startPoint': startPoint?.toJson(),
-      'endPoint': endPoint?.toJson(),
-      'path': path?.toJson(),
+      'startPoint': [startPoint!.latitude, startPoint!.longitude],
+      'endPoint': [endPoint!.latitude, endPoint!.longitude],
+      'path': path!.toJson(),
       'activityType': activityType,
       'note': note,
       'geoPositions': geoPositions,
@@ -116,6 +115,7 @@ class PedometerSession extends HiveObject {
     endPoint =
         map['endPoint'] != null ? LatLng.fromJson(map['endPoint']) : null;
     final List<dynamic>? pointsJson = map['path'];
+    // path =
     path = Polyline(
       polylineId: PolylineId("$sessionId"),
       points:

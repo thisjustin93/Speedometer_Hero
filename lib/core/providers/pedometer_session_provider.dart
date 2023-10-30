@@ -12,7 +12,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
 
   void updatePedometerSessionList(List<PedometerSession> pedometerSessions) {
     this.pedometerSessions = pedometerSessions;
-
+    this.pedometerSessions = this.pedometerSessions.reversed.toList();
     notifyListeners();
   }
 }

@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/styling/sizes.dart';
@@ -46,7 +52,10 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
 
   @override
   void didChangeDependencies() {
-    _createBannerAd(MediaQuery.of(context).size.width);
+    Provider.of<SubscriptionProvider>(context, listen: false).status ==
+            SubscriptionStatus.notSubscribed
+        ? _createBannerAd(MediaQuery.of(context).size.width)
+        : null;
     super.didChangeDependencies();
   }
 
@@ -57,6 +66,9 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+    bool isUserSubscribed =
+        Provider.of<SubscriptionProvider>(context, listen: true).status ==
+            SubscriptionStatus.subscribed;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
@@ -65,84 +77,193 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  height: 390.h,
-                  color: Theme.of(context).colorScheme.background,
-                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                  width: double.infinity,
-                  child: AdWidget(ad: _banner!),
-                ),
+                !isUserSubscribed ||
+                        currentPedometerSessionProvider
+                                .currentPedometerSession ==
+                            null ||
+                        Platform.isAndroid
+                    ? Container(
+                        height: 340.h,
+                        color: Theme.of(context).colorScheme.background,
+                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                        width: double.infinity,
+                        child: _banner == null ? null : AdWidget(ad: _banner!),
+                      )
+                    : Container(
+                        height: 340.h,
+                        color: Theme.of(context).colorScheme.background,
+                        padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                        width: double.maxFinite,
+                        child: AppleMap(
+                          initialCameraPosition: CameraPosition(
+                              target: LatLng(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .path!
+                                      .points
+                                      .first
+                                      .latitude,
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .path!
+                                      .points
+                                      .first
+                                      .longitude),
+                              zoom: 25),
+                          zoomGesturesEnabled: true,
+                          gestureRecognizers:
+                              <Factory<OneSequenceGestureRecognizer>>[
+                            new Factory<OneSequenceGestureRecognizer>(
+                              () => new EagerGestureRecognizer(),
+                            ),
+                          ].toSet(),
+                          mapType: MapType.standard,
+                          scrollGesturesEnabled: true,
+                          annotations: Set()
+                            ..add(
+                              Annotation(
+                                  annotationId: AnnotationId('start'),
+                                  position: LatLng(
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .path!
+                                          .points
+                                          .first
+                                          .latitude,
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .path!
+                                          .points
+                                          .first
+                                          .longitude),
+                                  icon: BitmapDescriptor.markerAnnotation),
+                            )
+                            ..add(
+                              Annotation(
+                                  annotationId: AnnotationId('end'),
+                                  position: LatLng(
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .path!
+                                          .points
+                                          .last
+                                          .latitude,
+                                      currentPedometerSessionProvider
+                                          .currentPedometerSession!
+                                          .path!
+                                          .points
+                                          .last
+                                          .longitude),
+                                  icon: BitmapDescriptor.markerAnnotation),
+                            ),
+                          polylines: Set<Polyline>.of([
+                            Polyline(
+                              polylineId: PolylineId(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .path!
+                                      .polylineId
+                                      .value),
+                              color: currentPedometerSessionProvider
+                                  .currentPedometerSession!.path!.color,
+                              points: List<LatLng>.from(
+                                currentPedometerSessionProvider
+                                    .currentPedometerSession!.path!.points
+                                    .map(
+                                  (e) => LatLng(e.latitude, e.longitude),
+                                ),
+                              ),
+                              width: 5,
+                            ),
+                          ]),
+                        ),
+                      ),
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MeasurementBox(
-                        boxType: 'Max Speed',
-                        measurement: convertSpeed(
-                            currentPedometerSessionProvider
-                                .currentPedometerSession!.maxSpeedInMS,
-                            settings.speedUnit),
-                        measurementUnit: settings.speedUnit),
-                    SizedBox(
-                      width: 5.sp,
-                    ),
-                    MeasurementBox(
-                        boxType: 'Avg Speed',
-                        measurement: currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .distanceInMeters ==
-                                    0 ||
-                                currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .sessionDuration ==
-                                    Duration.zero
-                            ? 0
-                            : convertSpeed(
-                                currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .distanceInMeters /
-                                    currentPedometerSessionProvider
-                                        .currentPedometerSession!
-                                        .sessionDuration
-                                        .inSeconds,
-                                settings.speedUnit),
-                        measurementUnit: settings.speedUnit),
-                  ],
-                ),
+                if (currentPedometerSessionProvider.currentPedometerSession !=
+                    null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MeasurementBox(
+                          boxType: 'Max Speed',
+                          measurement: convertSpeed(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!.maxSpeedInMS,
+                                  settings.speedUnit)
+                              .toStringAsFixed(1),
+                          measurementUnit: settings.speedUnit),
+                      SizedBox(
+                        width: 5.sp,
+                      ),
+                      MeasurementBox(
+                          boxType: 'Avg Speed',
+                          measurement:
+                              currentPedometerSessionProvider
+                                              .currentPedometerSession!
+                                              .distanceInMeters ==
+                                          0 ||
+                                      currentPedometerSessionProvider
+                                              .currentPedometerSession!
+                                              .sessionDuration ==
+                                          Duration.zero
+                                  ? '0'
+                                  : convertSpeed(
+                                          currentPedometerSessionProvider
+                                                  .currentPedometerSession!
+                                                  .distanceInMeters /
+                                              currentPedometerSessionProvider
+                                                  .currentPedometerSession!
+                                                  .sessionDuration
+                                                  .inSeconds,
+                                          settings.speedUnit)
+                                      .toStringAsFixed(1),
+                          measurementUnit: settings.speedUnit),
+                    ],
+                  ),
                 SizedBox(
                   height: 5.sp,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MeasurementBox(
-                        boxType: 'Distance',
-                        measurement: convertDistance(
-                            currentPedometerSessionProvider
-                                .currentPedometerSession!.distanceInMeters,
-                            settings.speedUnit == "mph"
-                                ? 'mi'
-                                : settings.speedUnit == 'kmph'
-                                    ? 'km'
-                                    : 'm'),
-                        measurementUnit: settings.speedUnit == "mph"
-                            ? 'mi'
-                            : settings.speedUnit == 'kmph'
-                                ? 'km'
-                                : 'm'),
-                    SizedBox(
-                      width: 5.sp,
-                    ),
-                    MeasurementBox(
-                        boxType: 'Duration',
-                        measurement: currentPedometerSessionProvider
-                            .currentPedometerSession!.sessionDuration.inSeconds
-                            .toDouble(),
-                        measurementUnit: 'min'),
-                  ],
-                ),
+                if (currentPedometerSessionProvider.currentPedometerSession !=
+                    null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MeasurementBox(
+                          boxType: 'Distance',
+                          measurement: convertDistance(
+                                  currentPedometerSessionProvider
+                                      .currentPedometerSession!
+                                      .distanceInMeters,
+                                  settings.speedUnit == "mph"
+                                      ? 'mi'
+                                      : settings.speedUnit == 'kmph'
+                                          ? 'km'
+                                          : settings.speedUnit == 'knots'
+                                              ? "knots"
+                                              : 'm')
+                              .toStringAsFixed(1),
+                          measurementUnit: settings.speedUnit == "mph"
+                              ? 'mi'
+                              : settings.speedUnit == 'kmph'
+                                  ? 'km'
+                                  : settings.speedUnit == 'knots'
+                                      ? "knots"
+                                      : 'm'),
+                      SizedBox(
+                        width: 5.sp,
+                      ),
+                      MeasurementBox(
+                          boxType: 'Duration',
+                          measurement: currentPedometerSessionProvider
+                              .currentPedometerSession!
+                              .sessionDuration
+                              .inSeconds
+                              .toString(),
+                          measurementUnit: 'min'),
+                    ],
+                  ),
                 SizedBox(
                   height: isPortrait ? 15.sp : 5.sp,
                 ),
@@ -231,13 +352,25 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                             },
                             child: CircleAvatar(
                                 radius: isPortrait ? 30.r : 55.r,
-                                backgroundColor: settings.darkTheme
-                                    ? Colors.white
-                                    : Colors.black,
+                                backgroundColor: settings.darkTheme == null
+                                    ? MediaQuery.of(context)
+                                                .platformBrightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black
+                                    : settings.darkTheme!
+                                        ? Colors.white
+                                        : Colors.black,
                                 child: CircleAvatar(
-                                  backgroundColor: settings.darkTheme
-                                      ? Colors.black
-                                      : Colors.white,
+                                  backgroundColor: settings.darkTheme == null
+                                      ? MediaQuery.of(context)
+                                                  .platformBrightness ==
+                                              Brightness.dark
+                                          ? Colors.black
+                                          : Colors.white
+                                      : settings.darkTheme!
+                                          ? Colors.black
+                                          : Colors.white,
                                   radius: isPortrait ? 27.r : 51.r,
                                   child: CircleAvatar(
                                     backgroundColor: Colors.red,

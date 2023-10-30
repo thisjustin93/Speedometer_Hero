@@ -1,4 +1,4 @@
-package com.example.speedometer
+package com.deanjustin.speedometer
 
 import io.flutter.embedding.android.FlutterActivity
 

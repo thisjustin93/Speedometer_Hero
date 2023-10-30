@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -32,14 +37,14 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
     {"Cycle": Icons.directions_bike},
     {"None": null},
     {"Run": Icons.directions_run},
-    {"Hike": Icons.hiking_rounded},
-    {"Walk": Icons.directions_walk},
-    {"Snowboard": Icons.snowboarding},
-    {"Sail": Icons.sailing_outlined},
-    {"Skateboard": Icons.skateboarding},
-    {"Ski": Icons.downhill_skiing},
-    {"Crosscountry Ski": Icons.downhill_skiing},
-    {"Ship": Icons.sailing_outlined},
+    {"Motorcycle": Icons.two_wheeler},
+    {"Car": Icons.directions_car},
+    {"Train": Icons.directions_train},
+    {"Plane": Icons.flight},
+    {"Ship": Icons.sailing},
+    // {"Ski": Icons.downhill_skiing},
+    // {"Crosscountry Ski": Icons.downhill_skiing},
+    // {"Ship": Icons.sailing_outlined},
   ];
   @override
   Widget build(BuildContext context) {
@@ -64,18 +69,69 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                 color: Colors.red,
               ),
             ),
-          Container(
-            height: 70.h,
-            width: 70.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
-              image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/sessionpath.png',
+          Platform.isIOS
+              ? Container(
+                  height: 70.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  fit: BoxFit.cover),
-            ),
-          ),
+                  width: 70.h,
+                  child: AppleMap(
+                    initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                            widget.pedometerSession.path!.points.first.latitude,
+                            widget
+                                .pedometerSession.path!.points.first.longitude),
+                        zoom: 18),
+                    mapType: MapType.standard,
+                    annotations: Set()
+                      ..add(
+                        Annotation(
+                            annotationId: AnnotationId('start'),
+                            position: LatLng(
+                                widget.pedometerSession.path!.points.first
+                                    .latitude,
+                                widget.pedometerSession.path!.points.first
+                                    .longitude),
+                            icon: BitmapDescriptor.markerAnnotation),
+                      )
+                      ..add(
+                        Annotation(
+                            annotationId: AnnotationId('end'),
+                            position: LatLng(
+                                widget.pedometerSession.path!.points.last
+                                    .latitude,
+                                widget.pedometerSession.path!.points.last
+                                    .longitude),
+                            icon: BitmapDescriptor.markerAnnotation),
+                      ),
+                    polylines: Set<Polyline>.of([
+                      Polyline(
+                        polylineId: PolylineId(
+                            widget.pedometerSession.path!.polylineId.value),
+                        color: Colors.blue,
+                        points: List<LatLng>.from(
+                          widget.pedometerSession.path!.points.map(
+                            (e) => LatLng(e.latitude, e.longitude),
+                          ),
+                        ),
+                        width: 1,
+                      ),
+                    ]),
+                  ),
+                )
+              : Container(
+                  height: 70.h,
+                  width: 70.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.r),
+                    image: DecorationImage(
+                        image: AssetImage(
+                          'assets/images/sessionpath.png',
+                        ),
+                        fit: BoxFit.cover),
+                  ),
+                ),
           SizedBox(
             width: 15.w,
           ),
@@ -100,7 +156,9 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                       SizedBox(width: 4.w), // Adjust spacing as needed.
                       Text(
                         widget.pedometerSession.sessionTitle,
-                        style: context.textStyles.mThick(),
+                        style: context.textStyles
+                            .mThick()
+                            .copyWith(overflow: TextOverflow.fade),
                       ),
                     ],
                   ),
@@ -110,6 +168,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                   Text(
                     widget.pedometerSession.sessionTitle,
                     style: context.textStyles.mRegular(),
+                    overflow: TextOverflow.fade,
                   ),
                 Text(
                   DateFormat("MMMM d',' y, h':'mm a")
@@ -119,7 +178,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                   style: context.textStyles.sRegular(),
                 ),
                 Text(
-                  "${convertDistance(widget.pedometerSession.distanceInMeters, settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${settings.speedUnit == 'mph' ? "miles" : settings.speedUnit == 'kmph' ? "kilometers" : "meters"} \u2981 ${(widget.pedometerSession.sessionDuration.inSeconds / 60).toStringAsFixed(2)} minutes",
+                  "${convertDistance(widget.pedometerSession.distanceInMeters, settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : 'm').toStringAsFixed(1)} ${settings.speedUnit == 'mph' ? "miles" : settings.speedUnit == 'kmph' ? "kilometers" : settings.speedUnit == 'knots' ? "knots" : "meters"} \u2981 ${(widget.pedometerSession.sessionDuration.inSeconds / 60).toStringAsFixed(2)} minutes",
                   style: context.textStyles.sRegular(),
                 )
               ],

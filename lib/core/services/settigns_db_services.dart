@@ -13,15 +13,19 @@ class HiveSettingsDB {
   }
 
   Future<SettingsModel> getSettings(bool isDarkTheme) async {
-    
-
     final settingsBox = await Hive.openBox<SettingsModel>('settings');
     if (settingsBox.isNotEmpty) {
+      print('That called');
+
       return settingsBox.getAt(0)!;
     } else {
+      print('This called');
       await settingsBox.add(SettingsModel(darkTheme: isDarkTheme));
     }
-    return SettingsModel(darkTheme: isDarkTheme); // Return default settings if none found
+    print('Nothing called');
+
+    return SettingsModel(
+        darkTheme: isDarkTheme); // Return default settings if none found
   }
 
   Future updateSettings(SettingsModel newSettings) async {

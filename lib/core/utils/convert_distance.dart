@@ -6,6 +6,8 @@ double convertDistance(double distanceMeters, String toUnit) {
       return distanceMeters / 1609.34;
     case 'ft':
       return distanceMeters * 3.28084;
+    case 'knots':
+      return distanceMeters / 1852.0;
     case 'm':
       return distanceMeters;
     default:

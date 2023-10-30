@@ -24,20 +24,20 @@ class SwithListTile extends StatelessWidget {
               ? null
               : Border(bottom: BorderSide(color: Colors.grey))),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            type,
-            style: context.textStyles.mRegular(),
+          Expanded(
+            child: Text(
+              type,
+              style: context.textStyles.mRegular(),
+            ),
           ),
           CupertinoSwitch(
             value: type == "Show Compass"
                 ? settingProvider.settings.showCompass
                 : type == "Show Elevation"
                     ? settingProvider.settings.showElevation
-                    : type == "Show City Name"
-                        ? settingProvider.settings.showCityName
-                        : settingProvider.settings.darkTheme,
+                    : settingProvider.settings.showCityName,
             onChanged: (value) async {
               switch (type) {
                 case "Show Compass":
@@ -55,15 +55,18 @@ class SwithListTile extends StatelessWidget {
                       !settingProvider.settings.showCityName;
                   settingProvider.setAllUnits(settingProvider.settings);
                   break;
-                case "Dark Theme":
-                  settingProvider.settings.darkTheme =
-                      !settingProvider.settings.darkTheme;
-                  settingProvider.setAllUnits(settingProvider.settings);
-                  break;
+                // case "Dark Theme":
+                //   settingProvider.settings.darkTheme =
+                //       !settingProvider.settings.darkTheme;
+                //   settingProvider.setAllUnits(settingProvider.settings);
+                //   break;
                 default:
               }
               await HiveSettingsDB().updateSettings(settingProvider.settings);
             },
+          ),
+          SizedBox(
+            width: 10.w,
           ),
         ],
       ),

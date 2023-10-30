@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.0"
+  apple_maps_flutter:
+    dependency: "direct main"
+    description:
+      name: apple_maps_flutter
+      sha256: "3785518d2bf37066e920b055b171f76258e8937d9182946e5c3ba63614f28285"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   archive:
     dependency: transitive
     description:
@@ -217,6 +225,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.3"
+  davinci:
+    dependency: "direct main"
+    description:
+      name: davinci
+      sha256: "79a5f9d374cf81c24c74a4a3a38b773d53ecba0f30c999fe708578aa5064a69f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   fake_async:
     dependency: transitive
     description:
@@ -328,6 +344,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  gallery_saver:
+    dependency: transitive
+    description:
+      name: gallery_saver
+      sha256: df8b7e207ca12d64c71e0710a7ee3bc48aa7206d51cc720716fedb1543a66712
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
+  geocoding:
+    dependency: "direct main"
+    description:
+      name: geocoding
+      sha256: e1dc0ac56666d9ed1d5a9ae5543ce9eb5986db6209cc7600103487d09192059c
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
+  geocoding_android:
+    dependency: transitive
+    description:
+      name: geocoding_android
+      sha256: "609db1d71bc364dd9d0616f72a41c01e0c74f3a3807efb85e0d5a67e57baf50f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
+  geocoding_ios:
+    dependency: transitive
+    description:
+      name: geocoding_ios
+      sha256: c85495ce8fb34e4fbd2dd8fc5f79263d622d9f88c4af948c965daf6b27a7f3a1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
+  geocoding_platform_interface:
+    dependency: transitive
+    description:
+      name: geocoding_platform_interface
+      sha256: "8848605d307d844d89937cdb4b8ad7dfa880552078f310fa24d8a460f6dddab4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   geolocator:
     dependency: "direct main"
     description:
@@ -388,10 +444,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: f0b8d115a13ecf827013ec9fc883390ccc0e87a96ed5347a3114cac177ef18e8
+      sha256: "6b6f10f0ce3c42f6552d1c70d2c28d764cf22bb487f50f66cca31dcd5194f4d6"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "4.0.4"
   google_maps:
     dependency: transitive
     description:
@@ -492,10 +548,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "0.13.6"
   http_multi_server:
     dependency: transitive
     description:
@@ -536,6 +592,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  jiffy:
+    dependency: transitive
+    description:
+      name: jiffy
+      sha256: cc1d4b75016a9156c29b5d61f0c9176c3e0fb0580cc5a0e0422b5d2cab3fbfff
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
   js:
     dependency: transitive
     description:
@@ -648,6 +712,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  open_filex:
+    dependency: transitive
+    description:
+      name: open_filex
+      sha256: a6c95237767c5647e68b71a476602fcf4f1bfc530c126265e53addae22ef5fc2
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.3.4"
   package_config:
     dependency: transitive
     description:
@@ -832,6 +904,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  screenshot:
+    dependency: "direct dev"
+    description:
+      name: screenshot
+      sha256: "455284ff1f5b911d94a43c25e1385485cf6b4f288293eba68f15dad711c7b81c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   sensors_plus:
     dependency: "direct main"
     description:
@@ -961,10 +1041,10 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "164a66d2a7fa9972e2a4767fbbf9f42f9fab3fd3c4149a6db72f846d85686f86"
+      sha256: d3405e92dbfc1c68e55bf883fb9cd7e3dcae1f53eefd00b8b6b1803e474cf4d6
       url: "https://pub.dev"
     source: hosted
-    version: "23.1.40"
+    version: "23.1.42"
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:
@@ -973,6 +1053,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "23.1.40"
+  syncfusion_flutter_xlsio:
+    dependency: "direct dev"
+    description:
+      name: syncfusion_flutter_xlsio
+      sha256: "0c966adf30be10b71ceff4426dfa5bebb08fdcd06dcd1bbebbd4420d538f7585"
+      url: "https://pub.dev"
+    source: hosted
+    version: "23.1.42"
+  syncfusion_officechart:
+    dependency: "direct main"
+    description:
+      name: syncfusion_officechart
+      sha256: "63371e6e373df1f98a478abd800540f5e77996a205741d5281d9809253960337"
+      url: "https://pub.dev"
+    source: hosted
+    version: "23.1.42"
+  syncfusion_officecore:
+    dependency: transitive
+    description:
+      name: syncfusion_officecore
+      sha256: "86f07f46f5a81434418ea5ab560d4a6b1c2bd371545d6833d665fb49c9cffecf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "23.1.42"
   term_glyph:
     dependency: transitive
     description:

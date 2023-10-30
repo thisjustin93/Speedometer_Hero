@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:screenshot/screenshot.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,7 @@ import 'package:speedometer/core/utils/app_snackbar.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
+import 'package:syncfusion_flutter_charts/charts.dart' as chart;
 
 speedDataBottomSheet(BuildContext context, List<String> timestamp,
     List<double> speed, SettingsModel settings, PedometerSession session) {
@@ -46,7 +49,35 @@ speedDataBottomSheet(BuildContext context, List<String> timestamp,
                 style: context.textStyles.mThick(),
               ),
               trailing: IconButton(
-                onPressed: () {
+                onPressed: () async{
+                        final controller = ScreenshotController();
+
+                  final bytes =
+                            await controller.captureFromWidget(Material(
+                          child: chart.SfCartesianChart(
+                        primaryXAxis: chart.DateTimeAxis(
+                          majorGridLines: const chart.MajorGridLines(width: 0),
+                          minorGridLines: const chart.MinorGridLines(width: 0),
+                          isVisible: true,
+                        ),
+                        primaryYAxis: chart.NumericAxis(
+                          majorGridLines: const chart.MajorGridLines(width: 0),
+                          minorGridLines: const chart.MinorGridLines(width: 0),
+                          isVisible: true,
+                        ),
+                        series: <chart.ChartSeries>[
+                          chart.LineSeries<Position, DateTime>(
+                            dataSource: session.geoPositions ??
+                                [],
+                            xValueMapper: (Position position, _) =>
+                                position.timestamp,
+                            yValueMapper: (Position position, _) =>
+                                convertSpeed(
+                                    position.speed, settings.speedUnit),
+                          )
+                        ],
+                      ),
+                        ));
                   shareBottomSheet(context, session);
                 },
                 icon: Icon(
