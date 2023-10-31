@@ -332,7 +332,7 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                       child: TextField(
                         controller: noteController,
                         maxLines: 7,
-                        maxLength: Platform.isAndroid ? 200 : null,
+                        maxLength: 200 ,
                         style: context.textStyles.mRegular(),
                         onChanged: (value) {
                           setState(
@@ -352,7 +352,7 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                     SizedBox(
                       height: 10.h,
                     ),
-                    if (Platform.isAndroid)
+                   
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
