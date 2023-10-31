@@ -285,7 +285,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         ['Duration', formatDuration(session.sessionDuration)],
                         [
                           'Distance',
-                          "${convertDistance(session.distanceInMeters, settings.speedUnit == "mph" ? "mi" : settings.speedUnit == "kmph" ? "km" : settings.speedUnit == "m" ? "m" : "knots").toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "Mi" : settings.speedUnit == "kmph" ? "Km" : settings.speedUnit == "m" ? "Meters" : "Knots"}"
+                          "${convertDistance(session.distanceInMeters, settings.speedUnit == "mph" ? "mi" : settings.speedUnit == "kmph" ? "km" : settings.speedUnit == "knots" ? "knots" : "m").toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "Mi" : settings.speedUnit == "kmph" ? "Km" : settings.speedUnit == "knots" ? "Knots" : "Meters"}"
                         ],
                         [
                           'Started',
@@ -299,11 +299,11 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         ],
                         [
                           'Max Speed',
-                          "${convertSpeed(session.maxSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "m" ? "M" : "Knots"}"
+                          "${convertSpeed(session.maxSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M"}"
                         ],
                         [
                           'Avg Speed',
-                          "${convertSpeed(session.averageSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "m" ? "M" : "Knots"}"
+                          "${convertSpeed(session.averageSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M"}"
                         ],
                       ];
 
@@ -334,8 +334,8 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..cellStyle.bold = true
                           ..setText(typeValuePairs[i][1]);
                         // To make it look like merged
-                        sheet.getRangeByName('A$row:D$row').merge();
-                        sheet.getRangeByName('E$row:H$row').merge();
+                        // sheet.getRangeByName('A$row:D$row').merge();
+                        // sheet.getRangeByName('E$row:H$row').merge();
                       }
 // Set the headers for the data columns
                       final dataHeaders = [
@@ -344,7 +344,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         'Duration',
                         'Speed (${settings.speedUnit})',
                         'Altitude (${settings.elevationUnit})',
-                        'Distance (km)',
+                        'Distance (${settings.speedUnit == "mph" ? "Mi" : settings.speedUnit == "kmph" ? "Km" : settings.speedUnit == "knots" ? "Knots" : "Meters"})',
                         'Latitude (WGS84)',
                         'Longitude (WGS84)',
                       ];
@@ -360,8 +360,26 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       }
 
 // Add the data for each column (A9 to H9 and below) based on your geoPositions list
+                      var distance = 0.0;
                       for (var i = 0; i < session.geoPositions!.length; i++) {
                         final position = session.geoPositions![i];
+                        if (i > 0) {
+                          double distanceInMeters = Geolocator.distanceBetween(
+                            session.geoPositions![i - 1].latitude,
+                            session.geoPositions![i - 1].longitude,
+                            session.geoPositions![i].latitude,
+                            session.geoPositions![i].longitude,
+                          );
+                          distance += convertDistance(
+                              distanceInMeters,
+                              settings.speedUnit == "mph"
+                                  ? "mi"
+                                  : settings.speedUnit == "kmph"
+                                      ? "km"
+                                      : settings.speedUnit == "knots"
+                                          ? "knots"
+                                          : "m");
+                        }
 
                         // Adjust the indices and get the corresponding column letter for each data element
                         final index = (i + 1).toString();
@@ -371,11 +389,20 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                                 .timestamp!)); // You'll need to calculate this properly
                         final speed =
                             convertSpeed(position.speed, settings.speedUnit);
+                        // distance = convertDistance(
+                        //     distance,
+                        //     settings.speedUnit == "mph"
+                        //         ? "mi"
+                        //         : settings.speedUnit == "kmph"
+                        //             ? "km"
+                        //             : settings.speedUnit == "m"
+                        //                 ? "m"
+                        //                 : "knots");
                         final altitude = convertDistance(
                             position.altitude -
                                 session.geoPositions![0].altitude,
                             settings.elevationUnit);
-                        final distance = (i * 0.034);
+                        // final distance = (i * 0.034);
                         final latitude = position.latitude.toString();
                         final longitude = position.longitude.toString();
 
@@ -398,7 +425,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..setNumber(double.parse(altitude.toStringAsFixed(2)))
                           ..cellStyle.hAlign = xl.HAlignType.center;
                         sheet.getRangeByName('F${i + 11}')
-                          ..setNumber(double.parse(speed.toStringAsFixed(3)))
+                          ..setNumber(double.parse(distance.toStringAsFixed(3)))
                           ..cellStyle.hAlign = xl.HAlignType.center;
                         sheet.getRangeByName('G${i + 11}')
                           ..setText(latitude)
@@ -412,6 +439,14 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         sheet.autoFitColumn(i);
                         // sheet.get
                       }
+                      sheet
+                          .getRangeByName(
+                              "A1:H${session.geoPositions!.length + 10}")
+                          .cellStyle
+                          .borders
+                          .all
+                        ..colorRgb = Colors.black
+                        ..lineStyle = xl.LineStyle.thin;
                       xl.Style globalStyle = workbook.styles.add('style');
 //set all border line style.
                       globalStyle.borders.all.lineStyle = xl.LineStyle.thick;
@@ -431,7 +466,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       chart1.bottomRow = 23;
                       chart1.isSeriesInRows = false;
 // Set data range in the worksheet.
-                      print(10 + session.geoPositions!.length);
 
                       chart1.dataRange = sheet.getRangeByName(
                           'C10:D${10 + session.geoPositions!.length}');
@@ -448,12 +482,29 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       chart2.bottomRow = 38;
                       chart2.isSeriesInRows = false;
 // Set data range in the worksheet.
+                      sheet.getRangeByName('AY10')..setText("Duration");
 
+                      sheet.getRangeByName('AZ10')
+                        ..setText("Altitude (${settings.elevationUnit})");
+                      for (var i = 0; i < session.geoPositions!.length; i++) {
+                        sheet.getRangeByName('AY${i + 11}')
+                          ..setValue(formatDuration(session
+                              .geoPositions![i].timestamp!
+                              .difference(session.geoPositions![0].timestamp!)))
+                          ..cellStyle.hAlign = xl.HAlignType.center;
+                        sheet.getRangeByName('AZ${i + 11}')
+                          ..setNumber(convertDistance(
+                              double.parse(session.geoPositions![i].altitude
+                                  .toStringAsFixed(2)),
+                              settings.elevationUnit))
+                          ..cellStyle.hAlign = xl.HAlignType.center;
+                      }
                       chart2.dataRange = sheet.getRangeByName(
-                          'E10:E${10 + session.geoPositions!.length}');
-// set charts to worksheet.
+                          "AY10:AZ${10 + session.geoPositions!.length}");
                       chart2.linePatternColor = '#0000FF';
                       sheet.charts = charts;
+                      // sheet.deleteColumn(24);
+                      // sheet.deleteColumn(25);
                       // sheet.getRangeByName('A1').setText('Session ID');
                       // sheet.getRangeByName('B1').setText('Session Title');
                       // sheet.getRangeByName('C1').setText('Start Time');

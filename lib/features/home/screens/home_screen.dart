@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
-      intervalDuration: Duration(milliseconds: 100),
+      intervalDuration: Duration(seconds: 1),
     );
     final iosSettings = AppleSettings(
         accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
@@ -156,35 +156,35 @@ class _HomeScreenState extends State<HomeScreen> {
         .listen((Position position) {
       if (mounted) {
         geoPostions.add(position);
-        if (position.speed < 0) {
-          return;
-        } else {
-          if (currentPosition != null) {
-            double distanceInMeters = Geolocator.distanceBetween(
-              currentPosition!.latitude,
-              currentPosition!.longitude,
-              position.latitude,
-              position.longitude,
-            );
+        // if (position.speed < 0) {
+        //   return;
+        // } else {
+        if (currentPosition != null) {
+          double distanceInMeters = Geolocator.distanceBetween(
+            currentPosition!.latitude,
+            currentPosition!.longitude,
+            position.latitude,
+            position.longitude,
+          );
 
-            totalDistance += distanceInMeters;
-          }
-          if (startingAltitude == 0) {
-            startingAltitude = position.altitude;
-          }
-          endingAltitude = position.altitude;
-          pathPoints.add(LatLng(position.latitude, position.longitude));
-          currentPosition = position;
-
-          speed = position.speed;
-          if (speed > maxSpeed) {
-            maxSpeed = speed;
-          }
-          startingPosition ??= position;
-          if (DateTime.now().difference(startTime!).inSeconds % 3 == 0) {
-            getCityNameFromCoordinates(position);
-          }
+          totalDistance += distanceInMeters;
         }
+        if (startingAltitude == 0) {
+          startingAltitude = position.altitude;
+        }
+        endingAltitude = position.altitude;
+        pathPoints.add(LatLng(position.latitude, position.longitude));
+        currentPosition = position;
+
+        speed = position.speed;
+        if (speed > maxSpeed) {
+          maxSpeed = speed;
+        }
+        startingPosition ??= position;
+        if (DateTime.now().difference(startTime!).inSeconds % 3 == 0) {
+          getCityNameFromCoordinates(position);
+        }
+        // }
         avgSpeed = 0;
         for (var i in geoPostions) {
           avgSpeed = (avgSpeed + i.speed);
@@ -234,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
+
     List<Widget> fancyCards() {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
@@ -335,6 +336,8 @@ class _HomeScreenState extends State<HomeScreen> {
               : convertSpeed(avgSpeed, settings.speedUnit).toStringAsFixed(1),
           onPressed: () async {
             // geolocatorStream?.pause();
+            Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                .currentPedometerSession = null;
             Provider.of<RecordingProvider>(context, listen: false)
                 .stopRecording();
             endTime = null;
@@ -379,6 +382,10 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.blue,
             width: 5,
           ),
+        ),
+        SizedBox(
+          height: 10.h,
+          width: isPortrait ? 0 : 5,
         ),
       ];
     }
@@ -589,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen> {
             else {
               // maxSpeed = 0;
               // totalDistance = 0;
-              currentPosition = null;
+              // currentPosition = null;
               pauseTime = null;
               startTracking = true;
               endTime = null;

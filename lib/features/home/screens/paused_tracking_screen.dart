@@ -335,54 +335,58 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                           )
                         ],
                       ),
-                      SizedBox(
-                        height: isPortrait ? 50.h : 160.h,
-                        width: isPortrait ? 3.w : 2.w,
-                        child: Container(color: Colors.grey),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              currentPedometerSessionProvider
-                                      .currentPedometerSession!.pauseDuration +=
-                                  DateTime.now().difference(widget.pauseTime);
-                              Navigator.of(context).pop(true);
-                            },
-                            child: CircleAvatar(
-                                radius: isPortrait ? 30.r : 55.r,
-                                backgroundColor: settings.darkTheme == null
-                                    ? MediaQuery.of(context)
-                                                .platformBrightness ==
-                                            Brightness.dark
-                                        ? Colors.white
-                                        : Colors.black
-                                    : settings.darkTheme!
-                                        ? Colors.white
-                                        : Colors.black,
-                                child: CircleAvatar(
+                      Container(
+                          margin: EdgeInsets.only(top: 6.h),
+                          height: isPortrait ? 50.h : 160.h,
+                          width: isPortrait ? 3.w : 2.w,
+                          color: Colors.grey),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                currentPedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .pauseDuration +=
+                                    DateTime.now().difference(widget.pauseTime);
+                                Navigator.of(context).pop(true);
+                              },
+                              child: CircleAvatar(
+                                  radius: isPortrait ? 30.r : 55.r,
                                   backgroundColor: settings.darkTheme == null
                                       ? MediaQuery.of(context)
                                                   .platformBrightness ==
                                               Brightness.dark
-                                          ? Colors.black
-                                          : Colors.white
+                                          ? Colors.white
+                                          : Colors.black
                                       : settings.darkTheme!
-                                          ? Colors.black
-                                          : Colors.white,
-                                  radius: isPortrait ? 27.r : 51.r,
+                                          ? Colors.white
+                                          : Colors.black,
                                   child: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: isPortrait ? 23.r : 43.r,
-                                  ),
-                                )),
-                          ),
-                          Text(
-                            'Resume',
-                            style: context.textStyles.sRegular(),
-                          )
-                        ],
+                                    backgroundColor: settings.darkTheme == null
+                                        ? MediaQuery.of(context)
+                                                    .platformBrightness ==
+                                                Brightness.dark
+                                            ? Colors.black
+                                            : Colors.white
+                                        : settings.darkTheme!
+                                            ? Colors.black
+                                            : Colors.white,
+                                    radius: isPortrait ? 27.r : 51.r,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.red,
+                                      radius: isPortrait ? 23.r : 43.r,
+                                    ),
+                                  )),
+                            ),
+                            Text(
+                              'Resume',
+                              style: context.textStyles.sRegular(),
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),

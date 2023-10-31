@@ -259,8 +259,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       padding: EdgeInsets.only(left: 15.w),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(8.r)),
+                        borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
                             color: settings.darkTheme == null
                                 ? MediaQuery.of(context).platformBrightness ==
@@ -300,7 +299,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 ),
                                 SlidableAction(
                                   onPressed: (_) async {
-                                 
                                     shareBottomSheet(
                                         context,
                                         pedometerSessionProvider
@@ -405,6 +403,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         },
                       ),
                     ),
+              SizedBox(
+                height: 10.h,
+              ),
             ],
           ),
         ),

@@ -51,7 +51,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   checkSubscription() async {
-    SubscriptionStatus status = SubscriptionStatus.subscribed;
+    SubscriptionStatus status = SubscriptionStatus.notSubscribed;
     Future.delayed(
       Duration(milliseconds: 1),
       () {
