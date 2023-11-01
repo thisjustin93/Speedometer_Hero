@@ -471,6 +471,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           'C10:D${10 + session.geoPositions!.length}');
 // set charts to worksheet.
                       chart1.linePatternColor = '#0000FF';
+                      chart1.chartTitle = "Speed";
 // Add the chart.
                       final Chart chart2 = charts.add();
 
@@ -481,6 +482,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       chart2.rightColumn = 23;
                       chart2.bottomRow = 38;
                       chart2.isSeriesInRows = false;
+                      chart2.chartTitle = "Altitude";
 // Set data range in the worksheet.
                       sheet.getRangeByName('AY10')..setText("Duration");
 
@@ -503,6 +505,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           "AY10:AZ${10 + session.geoPositions!.length}");
                       chart2.linePatternColor = '#0000FF';
                       sheet.charts = charts;
+
                       // sheet.deleteColumn(24);
                       // sheet.deleteColumn(25);
                       // sheet.getRangeByName('A1').setText('Session ID');
