@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
     Future.delayed(
-      Duration(milliseconds: 500),
+      Duration(milliseconds: 100),
       () {
         subscriptionStatus =
             Provider.of<SubscriptionProvider>(context, listen: false).status;

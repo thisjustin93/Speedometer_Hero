@@ -212,12 +212,16 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       //     '#333F4F';
 
                       // Merge and set text for title cell.
-                      final xl.Range titleCell = sheet.getRangeByName('A1:H1');
+                      final xl.Range titleCell = sheet.getRangeByName('A1:I1');
                       sheet.getRangeByName('A1').setText(session.sessionTitle);
                       titleCell.merge();
-                      titleCell.cellStyle.fontSize = 25;
-                      titleCell.rowHeight = 30;
-                      titleCell.cellStyle.hAlign = xl.HAlignType.center;
+                      titleCell.cellStyle.fontSize = 30;
+                      titleCell.rowHeight = 40;
+                      titleCell.cellStyle
+                        ..hAlign = xl.HAlignType.center
+                        // ..fontSize = 30
+                        ..fontName = "Avenir Black Oblique"
+                        ..bold = true;
                       // final xl.Range durationCell =
                       //     sheet.getRangeByName('A3:D3');
                       // // durationCell.merge();
@@ -289,21 +293,21 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         ],
                         [
                           'Started',
-                          DateFormat('yyyy-MM-dd, HH:mm:ss')
+                          DateFormat('M/d/yy, h:mm:ss a')
                               .format(session.startTime!)
                         ],
                         [
                           'Ended',
-                          DateFormat('yyyy-MM-dd, HH:mm:ss')
+                          DateFormat('M/d/yy, h:mm:ss a')
                               .format(session.endTime!)
                         ],
                         [
                           'Max Speed',
-                          "${convertSpeed(session.maxSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M"}"
+                          "${convertSpeed(session.maxSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M/S"}"
                         ],
                         [
                           'Avg Speed',
-                          "${convertSpeed(session.averageSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M"}"
+                          "${convertSpeed(session.averageSpeedInMS, settings.speedUnit).toStringAsFixed(3)} ${settings.speedUnit == "mph" ? "MPH" : settings.speedUnit == "kmph" ? "KM/h" : settings.speedUnit == "knots" ? "Knots" : "M/S"}"
                         ],
                       ];
 
@@ -324,6 +328,9 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..merge()
                           ..cellStyle.hAlign = xl.HAlignType.center
                           ..cellStyle.bold = true
+                          ..cellStyle.fontSize = 15
+                          ..cellStyle.fontName = "Avenir Black Oblique"
+                          ..rowHeight = 20
                           ..setText(typeValuePairs[i][0]);
 
                         // Set value cell
@@ -332,6 +339,8 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..merge()
                           ..cellStyle.hAlign = xl.HAlignType.center
                           ..cellStyle.bold = true
+                          ..cellStyle.fontSize = 15
+                          ..rowHeight = 20
                           ..setText(typeValuePairs[i][1]);
                         // To make it look like merged
                         // sheet.getRangeByName('A$row:D$row').merge();
@@ -342,11 +351,11 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         'Index',
                         'Time',
                         'Duration',
-                        'Speed (${settings.speedUnit})',
-                        'Altitude (${settings.elevationUnit})',
-                        'Distance (${settings.speedUnit == "mph" ? "Mi" : settings.speedUnit == "kmph" ? "Km" : settings.speedUnit == "knots" ? "Knots" : "Meters"})',
-                        'Latitude (WGS84)',
-                        'Longitude (WGS84)',
+                        'Speed${'\n'}(${settings.speedUnit})',
+                        'Altitude${'\n'}(${settings.elevationUnit})',
+                        'Distance${'\n'}(${settings.speedUnit == "mph" ? "Mi" : settings.speedUnit == "kmph" ? "Km" : settings.speedUnit == "knots" ? "Knots" : "Meters"})',
+                        'Latitude\n(WGS84)',
+                        'Longitude\n(WGS84)',
                       ];
 
 // Set the headers in the eighth row (A8 to H8)
@@ -354,7 +363,13 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         final column = getExcelColumnName(i);
                         sheet.getRangeByName('${column}10')
                           ..setText(dataHeaders[i])
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.vAlign = xl.VAlignType.center
+                          ..cellStyle.fontSize = 12
+                          ..cellStyle.bold = true
+                          ..cellStyle.fontName = "Arial"
+                          ..rowHeight = 30;
+
                         //  sheet
                         // .getRangeByName('${column}10').cellStyle.hAlign=xl.HAlignType.center;
                       }
@@ -409,30 +424,46 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         // Set data for each column
                         sheet.getRangeByName('A${i + 11}')
                           ..setText(index)
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         print(timeStamp);
                         sheet.getRangeByName('B${i + 11}')
-                          ..setText(DateFormat('yyyy-MM-dd, HH:mm:ss')
-                              .format(timeStamp))
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..setText(
+                              DateFormat('M/d/yy, h:mm:ss a').format(timeStamp))
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('C${i + 11}')
                           ..setValue(duration)
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('D${i + 11}')
                           ..setNumber(double.parse(speed.toStringAsFixed(2)))
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('E${i + 11}')
                           ..setNumber(double.parse(altitude.toStringAsFixed(2)))
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('F${i + 11}')
                           ..setNumber(double.parse(distance.toStringAsFixed(3)))
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('G${i + 11}')
                           ..setText(latitude)
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         sheet.getRangeByName('H${i + 11}')
                           ..setText(longitude)
-                          ..cellStyle.hAlign = xl.HAlignType.center;
+                          ..cellStyle.hAlign = xl.HAlignType.center
+                          ..cellStyle.fontName = "Arial"
+                          ..cellStyle.fontSize = 11;
                         // Align them
                       }
                       for (var i = 1; i <= 100; i++) {
@@ -452,6 +483,13 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       globalStyle.borders.all.lineStyle = xl.LineStyle.thick;
 //set border color by hexa decimal.
                       globalStyle.borders.all.color = '#9954CC';
+                      sheet.setColumnWidthInPixels(1, 90);
+                      sheet.setColumnWidthInPixels(2, 200);
+                      sheet.setColumnWidthInPixels(4, 110);
+                      sheet.setColumnWidthInPixels(5, 110);
+                      sheet.setColumnWidthInPixels(6, 120);
+                      sheet.setColumnWidthInPixels(7, 130);
+                      sheet.setColumnWidthInPixels(8, 130);
                       // Create an instances of chart collection.
                       final ChartCollection charts = ChartCollection(sheet);
 
