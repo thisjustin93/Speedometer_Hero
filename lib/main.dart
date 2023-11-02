@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -62,14 +61,13 @@ class MyApp extends StatelessWidget {
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
                 DefaultCupertinoLocalizations.delegate,
-      // GlobalMaterialLocalizations.delegate,
-      // GlobalWidgetsLocalizations.delegate,
-      // GlobalCupertinoLocalizations.delegate,
-    ],
-
-supportedLocales: [
-      Locale('en', 'US'),
-    ],
+                // GlobalMaterialLocalizations.delegate,
+                // GlobalWidgetsLocalizations.delegate,
+                // GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                Locale('en', 'US'),
+              ],
               debugShowCheckedModeBanner: false,
               themeMode: settings.darkTheme == null
                   ? MediaQuery.of(context).platformBrightness == Brightness.dark
