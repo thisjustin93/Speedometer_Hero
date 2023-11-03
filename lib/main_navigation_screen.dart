@@ -123,6 +123,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       activeColor: Colors.red,
+                      border: Border.all(color: Colors.transparent),
                       // activeColor: recordingStarted ? Colors.grey : Colors.red,
                       currentIndex: pageIndex,
                       onTap: (value) {

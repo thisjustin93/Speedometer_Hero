@@ -267,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 if (settings.showCompass)
                   Positioned(
-                    top: isPortrait ? height * 0.02 : 0,
+                    top: isPortrait ? height * 0.035 : height * 0.05,
                     left: 0,
                     right: 0,
                     bottom: isPortrait ? null : 0,

@@ -25,12 +25,13 @@ class SpeedometerWidget extends StatelessWidget {
           // interval: 20,
           labelOffset: isPortrait ? 15 : 18,
           radiusFactor: isPortrait
-              ? height < 730
-                  ? height * 0.0015
-                  : height * 0.00125
+              ? height < 670
+                  ? 1.05
+                  : 1.1
               : height < 400
                   ? height * 0.0027
                   : height * 0.0024,
+          // radiusFactor: 1.1,
           pointers: <GaugePointer>[
             NeedlePointer(
                 value: speed,
