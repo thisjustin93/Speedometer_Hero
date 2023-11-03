@@ -140,15 +140,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 selectSessions = !selectSessions;
               });
             },
-            // onLongPress: () {
-            //   setState(() {
-            //     selectSessions = true;
-            //   });
-            // },
+            radius: 15,
+            borderRadius: BorderRadius.circular(20),
             child: Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                width: 50.w,
+                width: 60.w,
                 alignment: Alignment.center,
                 child: Text(
                   selectSessions ? "Done" : "Select",
@@ -157,6 +154,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ? Colors.red
                           : Theme.of(context).colorScheme.onPrimary),
                 )),
+          ),
+          SizedBox(
+            width: 15.w,
           )
         ],
       ),

@@ -24,61 +24,13 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xl;
 import 'package:syncfusion_officechart/officechart.dart';
 import 'package:intl/intl.dart';
 
-// import 'helper/save_file_mobile.dart'
-//     if (dart.library.html) 'helper/save_file_web.dart';
 shareBottomSheet(BuildContext context, PedometerSession session) async {
   var settings = Provider.of<UnitsProvider>(context, listen: false).settings;
   late GlobalKey<chart.SfCartesianChartState> _cartesianChartKey = GlobalKey();
 
-  // await Navigator.of(context).push<dynamic>(
-  //   MaterialPageRoute<dynamic>(
-  //     builder: (BuildContext context) {
-  //       return Scaffold(body: Image.memory(imageBytes));
-  //     },
-  //   ),
-  // );
   final chartkey = GlobalKey();
-  // Create a chart image
   final controller = ScreenshotController();
-  // var bytes = await controller.captureFromWidget(
-  //     context: context,
-  //    );
-  // Widget generateChartImage(List<Position>? positions, GlobalKey key) {
-  //   return chart.SfCartesianChart(
-  //     key: key,
-  //     primaryXAxis: chart.DateTimeAxis(
-  //       majorGridLines: const chart.MajorGridLines(width: 0),
-  //       minorGridLines: const chart.MinorGridLines(width: 0),
-  //       isVisible: true,
-  //     ),
-  //     primaryYAxis: chart.NumericAxis(
-  //       majorGridLines: const chart.MajorGridLines(width: 0),
-  //       minorGridLines: const chart.MinorGridLines(width: 0),
-  //       isVisible: true,
-  //     ),
-  //     series: <chart.ChartSeries>[
-  //       chart.LineSeries<Position, DateTime>(
-  //         dataSource: positions ?? [], // Use provided positions data
-  //         xValueMapper: (Position position, _) => position.timestamp,
-  //         yValueMapper: (Position position, _) =>
-  //             convertSpeed(position.speed, settings.speedUnit),
-  //       )
-  //     ],
-  //   );
-  // }
 
-  // Future<Uint8List> createImageFromWidget(Widget widget, GlobalKey key) async {
-  //   // final key = GlobalKey();
-  //   final binding =
-  //       WidgetsFlutterBinding.ensureInitialized() as WidgetsFlutterBinding;
-  //   final renderObject =
-  //       key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-  //   final image =
-  //       await renderObject.toImage(pixelRatio: binding.window.devicePixelRatio);
-  //   final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-  //   final buffer = byteData!.buffer.asUint8List();
-  //   return buffer;
-  // }
   String getExcelColumnName(int columnNumber) {
     final int firstChar = 'A'.codeUnitAt(0);
     final int alphabetSize = 26;
@@ -111,13 +63,14 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
   return showDialog(
       context: context,
       builder: (_) => AlertDialog(
+            surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.r)),
             backgroundColor: Theme.of(context).colorScheme.primary,
             titlePadding: EdgeInsets.only(top: 10.h),
             contentPadding: EdgeInsets.zero,
             insetPadding:
-                EdgeInsets.symmetric(horizontal: 13.w, vertical: 200.h),
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 220.h),
             title: Container(
               alignment: Alignment.center,
               height: 50.sp,
@@ -134,60 +87,18 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
               padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: 8.h,
+                  ),
                   Text(
                     'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                     textAlign: TextAlign.center,
-                    style: context.textStyles.mRegular(),
+                    style:
+                        context.textStyles.sRegular().copyWith(fontSize: 13.sp),
                   ),
                   SizedBox(
                     height: 10.h,
                   ),
-                  // Container(
-                  //   height: 80,
-                  //   width: 120,
-                  //   child: chart.SfCartesianChart(
-                  //     key: _cartesianChartKey,
-                  //     primaryXAxis: chart.DateTimeAxis(
-                  //       majorGridLines: chart.MajorGridLines(width: 0),
-                  //       minorGridLines: chart.MinorGridLines(width: 0),
-                  //       isVisible: true,
-                  //     ),
-                  //     primaryYAxis: chart.NumericAxis(
-                  //       majorGridLines: chart.MajorGridLines(width: 0),
-                  //       minorGridLines: chart.MinorGridLines(width: 0),
-                  //       isVisible: true,
-                  //     ),
-                  //     series: <chart.ChartSeries>[
-                  //       chart.LineSeries<Position, DateTime>(
-                  //         // markerSettings: chart.MarkerSettings(width: 1),
-                  //         // dataLabelSettings: chart.DataLabelSettings(
-                  //         //     textStyle:
-                  //         //         TextStyle(fontSize: 8.sp, color: Colors.red)),
-                  //         dataSource: session.geoPositions ?? [],
-                  //         xValueMapper: (Position position, _) =>
-                  //             position.timestamp,
-                  //         yValueMapper: (Position position, _) =>
-                  //             convertSpeed(position.speed, settings.speedUnit),
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () async {
-
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Color(0xffF82929),
-                  //       foregroundColor: Colors.white,
-                  //       fixedSize: Size(300.w, 40.h),
-                  //       shape: StadiumBorder()),
-                  //   child: Text(
-                  //     'Export Data',
-                  //     style: context.textStyles
-                  //         .mThick()
-                  //         .copyWith(color: Colors.white),
-                  //   ),
-                  // ),
                   ElevatedButton(
                     onPressed: () async {
                       final directory =
@@ -197,19 +108,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
 
                       final xl.Workbook workbook = xl.Workbook();
                       final xl.Worksheet sheet = workbook.worksheets[0];
-                      // sheet.getRangeByName('A1').columnWidth = 4.82;
-                      // sheet.getRangeByName('B1:C1').columnWidth = 13.82;
-                      // sheet.getRangeByName('D1').columnWidth = 13.20;
-                      // sheet.getRangeByName('E1').columnWidth = 7.50;
-                      // sheet.getRangeByName('F1').columnWidth = 9.73;
-                      // sheet.getRangeByName('G1').columnWidth = 8.82;
-                      // sheet.getRangeByName('H1').columnWidth = 4.46;
-// Set the title in a merged cell from A to H in the first row
-                      // Set background color for title cell.
-                      // sheet.getRangeByName('A1:Z100').cellStyle.backColor =
-                      //     '#ffffff';
-                      // sheet.getRangeByName('A1:H1').cellStyle.backColor =
-                      //     '#333F4F';
 
                       // Merge and set text for title cell.
                       final xl.Range titleCell = sheet.getRangeByName('A1:I1');
@@ -219,72 +117,9 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       titleCell.rowHeight = 40;
                       titleCell.cellStyle
                         ..hAlign = xl.HAlignType.center
-                        // ..fontSize = 30
                         ..fontName = "Avenir Black Oblique"
                         ..bold = true;
-                      // final xl.Range durationCell =
-                      //     sheet.getRangeByName('A3:D3');
-                      // // durationCell.merge();
-                      // durationCell.cellStyle.fontSize = 10;
-                      // durationCell.rowHeight = 18;
-                      // durationCell.cellStyle.hAlign = xl.HAlignType.center;
 
-                      // final xl.Range distanceCell =
-                      //     sheet.getRangeByName('A4:D4');
-
-                      // final xl.Range startedCell =
-                      //     sheet.getRangeByName('A5:D5');
-                      // // durationCell.autoFitRows();
-                      // // durationCell.autoFitColumns();
-
-                      // sheet.getRangeByName('A3').setText("Distance");
-
-                      // sheet.getRangeByName('A2').setText("Duration");
-
-                      // sheet.getRangeByName('A4').setText("Started");
-
-                      // distanceCell.merge();
-                      // durationCell.merge();
-                      // startedCell.merge();
-                      // for (var i = 0; i < distanceCell.cells.length; i++) {
-                      //   print(distanceCell.cells[i].getText());
-                      //   print(durationCell.cells[i].getText());
-                      //   print(startedCell.cells[i].getText());
-                      // }
-                      // startedCell.cellStyle.hAlign = xl.HAlignType.center;
-                      // startedCell.cellStyle.vAlign = xl.VAlignType.center;
-                      // distanceCell.cellStyle.hAlign = xl.HAlignType.center;
-                      // distanceCell.cellStyle.vAlign = xl.VAlignType.center;
-                      // durationCell.cellStyle.hAlign = xl.HAlignType.center;
-                      // durationCell.cellStyle.vAlign = xl.VAlignType.center;
-
-                      // setMainDetail(sheet, 'A3:D3', 3, 'Duration',
-                      //     formatDuration(session.sessionDuration));
-                      // setMainDetail(sheet, 'A4:D4', 4, 'Distance',
-                      //     '${convertDistance(session.distanceInMeters, 'km').toString()} km');
-                      // setMainDetail(sheet, 'A5:D5', 5, 'Started',
-                      //     session.startTime!.toIso8601String());
-                      // setMainDetail(sheet, 'A6:D6', 6, 'Ended',
-                      //     session.endTime!.toIso8601String());
-                      // setMainDetail(sheet, 'A7:D7', 7, 'Max Speed',
-                      //     '${convertSpeed(session.maxSpeedInMS, 'kmph').toString()} km/h');
-                      // setMainDetail(sheet, 'A8:D8', 8, 'Avg Speed',
-                      //     '${convertSpeed(session.averageSpeedInMS, 'kmph').toString()} km/h');
-                      // sheet
-                      //     .getRangeByName('A1:H1')
-                      //     .setText(session.sessionTitle);
-                      // sheet.getRangeByIndex(1, 1, 1, 9).merge();
-                      // sheet.getRangeByIndex(1, 1, 1, 9).rowHeight = 30;
-                      // sheet.getRangeByName('A1:H1').cellStyle
-                      //   ..bold = true
-                      //   ..fontSize =
-                      //       13 // You can adjust the font size as needed
-                      //   ..hAlign = xl.HAlignType.center
-                      //   ..vAlign = xl.VAlignType.center
-                      //   ..backColor = '#C0C0C0'; // Gray background
-
-// Set type and value pairs for each of the 6 sections
-// DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(timeStamp)
                       final typeValuePairs = [
                         ['Duration', formatDuration(session.sessionDuration)],
                         [
@@ -342,9 +177,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..cellStyle.fontSize = 15
                           ..rowHeight = 20
                           ..setText(typeValuePairs[i][1]);
-                        // To make it look like merged
-                        // sheet.getRangeByName('A$row:D$row').merge();
-                        // sheet.getRangeByName('E$row:H$row').merge();
                       }
 // Set the headers for the data columns
                       final dataHeaders = [
@@ -369,9 +201,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..cellStyle.bold = true
                           ..cellStyle.fontName = "Arial"
                           ..rowHeight = 30;
-
-                        //  sheet
-                        // .getRangeByName('${column}10').cellStyle.hAlign=xl.HAlignType.center;
                       }
 
 // Add the data for each column (A9 to H9 and below) based on your geoPositions list
@@ -404,15 +233,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                                 .timestamp!)); // You'll need to calculate this properly
                         final speed =
                             convertSpeed(position.speed, settings.speedUnit);
-                        // distance = convertDistance(
-                        //     distance,
-                        //     settings.speedUnit == "mph"
-                        //         ? "mi"
-                        //         : settings.speedUnit == "kmph"
-                        //             ? "km"
-                        //             : settings.speedUnit == "m"
-                        //                 ? "m"
-                        //                 : "knots");
+
                         final altitude = convertDistance(
                             position.altitude -
                                 session.geoPositions![0].altitude,
@@ -544,83 +365,9 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                       chart2.linePatternColor = '#0000FF';
                       sheet.charts = charts;
 
-                      // sheet.deleteColumn(24);
-                      // sheet.deleteColumn(25);
-                      // sheet.getRangeByName('A1').setText('Session ID');
-                      // sheet.getRangeByName('B1').setText('Session Title');
-                      // sheet.getRangeByName('C1').setText('Start Time');
-                      // sheet.getRangeByName('D1').setText('End Time');
-                      // sheet.getRangeByName('E1').setText('Speed (m/s)');
-                      // sheet.getRangeByName('F1').setText('Max Speed (m/s)');
-                      // sheet.getRangeByName('G1').setText('Average Speed (m/s)');
-                      // sheet.getRangeByName('H1').setText('Start Latitude');
-                      // sheet.getRangeByName('I1').setText('Start Longitude');
-                      // sheet.getRangeByName('J1').setText('End Latitude');
-                      // sheet.getRangeByName('K1').setText('End Longitude');
-                      // sheet.getRangeByName('L1').setText('Distance (Meters)');
-                      // sheet.getRangeByName('M1').setText('Altitude');
-                      // sheet.getRangeByName('N1').setText('Activity Type');
-                      // sheet.getRangeByName('O1').setText('Note');
-
-                      // final rowData = [
-                      //   session.sessionId,
-                      //   session.sessionTitle,
-                      //   session.startTime?.toIso8601String(),
-                      //   session.endTime?.toIso8601String(),
-                      //   session.speedInMS,
-                      //   session.maxSpeedInMS,
-                      //   session.averageSpeedInMS,
-                      //   session.startPoint?.latitude,
-                      //   session.startPoint?.longitude,
-                      //   session.endPoint?.latitude,
-                      //   session.endPoint?.longitude,
-                      //   session.distanceInMeters,
-                      //   session.altitude,
-                      //   session.activityType,
-                      //   session.note,
-                      // ];
-                      // final columnNames = [
-                      //   'A',
-                      //   'B',
-                      //   'C',
-                      //   'D',
-                      //   'E',
-                      //   'F',
-                      //   'G',
-                      //   'H',
-                      //   'I',
-                      //   'J',
-                      //   'K',
-                      //   'L',
-                      //   'M',
-                      //   'N',
-                      //   'O'
-                      // ];
-                      // for (var i = 0; i < rowData.length; i++) {
-                      //   sheet
-                      //       .getRangeByName('${columnNames[i]}2')
-                      //       .setText(rowData[i].toString());
-                      // }
-                      // final ui.Image data = await _cartesianChartKey
-                      //     .currentState!
-                      //     .toImage(pixelRatio: 3.0);
-
-                      // final ByteData? bytes =
-                      //     await data.toByteData(format: ui.ImageByteFormat.png);
-                      // final Uint8List imageBytes = bytes!.buffer.asUint8List(
-                      //     bytes.offsetInBytes, bytes.lengthInBytes);
-                      // final imageBase64 =
-                      //     base64Encode(Uint8List.fromList(imageBytes!));
-
-                      // final row = rowData.length +
-                      //     2; // Choose the row where you want to insert the image
-                      // sheet.getRangeByName('A$row').setText(imageBase64);
                       final List<int> excelBytes =
                           workbook.saveAsStream().toList();
-                      // final File file = File(excelFilePath);
                       await file.writeAsBytes(excelBytes);
-                      // final xl.Picture picture =
-                      //     sheet.pictures.addStream(5, 10, imageBytes);
                       final newbytes = workbook.saveAsStream();
 
                       File(file.path).writeAsBytesSync(newbytes);
@@ -643,7 +390,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           .copyWith(color: Colors.white),
                     ),
                   ),
-
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -656,64 +402,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
               ),
             ),
           ));
-}
-
-/// Creates an image from the given widget by first spinning up a element and render tree,
-/// then waiting for the given [wait] amount of time and then creating an image via a [RepaintBoundary].
-///
-/// The final image will be of size [imageSize] and the the widget will be layout, ... with the given [logicalSize].
-Future<Uint8List> createImageFromWidget(Widget widget,
-    {required Duration wait,
-    required Size logicalSize,
-    required Size imageSize}) async {
-  final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-  logicalSize ??= ui.window.physicalSize / ui.window.devicePixelRatio;
-  imageSize ??= ui.window.physicalSize;
-
-  assert(logicalSize.aspectRatio == imageSize.aspectRatio);
-
-  final RenderView renderView = RenderView(
-    view: ui.window,
-    child: RenderPositionedBox(
-        alignment: Alignment.center, child: repaintBoundary),
-    configuration: ViewConfiguration(
-      size: logicalSize,
-      devicePixelRatio: 1.0,
-    ),
-  );
-  WidgetsFlutterBinding.ensureInitialized();
-  final PipelineOwner pipelineOwner = PipelineOwner();
-  final BuildOwner buildOwner = BuildOwner();
-
-  pipelineOwner.rootNode = renderView;
-  renderView.prepareInitialFrame();
-
-  final RenderObjectToWidgetElement<RenderBox> rootElement =
-      RenderObjectToWidgetAdapter<RenderBox>(
-    container: repaintBoundary,
-    child: widget,
-  ).attachToRenderTree(buildOwner);
-
-  buildOwner.buildScope(rootElement);
-
-  if (wait != null) {
-    await Future.delayed(wait);
-  }
-
-  buildOwner.buildScope(rootElement);
-  buildOwner.finalizeTree();
-
-  pipelineOwner.flushLayout();
-  pipelineOwner.flushCompositingBits();
-  pipelineOwner.flushPaint();
-
-  final ui.Image image = await repaintBoundary.toImage(
-      pixelRatio: imageSize.width / logicalSize.width);
-  final ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.png);
-
-  return byteData!.buffer.asUint8List();
 }
 
 String formatDuration(Duration duration) {

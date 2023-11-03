@@ -10,6 +10,7 @@ import 'package:speedometer/features/settings/screens/change_elevationunit_scree
 import 'package:speedometer/features/settings/screens/change_speedunit_screen.dart';
 import 'package:speedometer/features/settings/screens/change_theme_screen.dart';
 import 'package:speedometer/features/settings/widgets/switch_listtile_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Unit {
   late String key;
@@ -63,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         .status ==
                     SubscriptionStatus.notSubscribed)
                   Container(
-                    height: 200.h,
+                    height: 180.h,
                     width: double.maxFinite,
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     decoration: BoxDecoration(
@@ -95,21 +96,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             size: 30.sp,
                           ),
                         ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
                         Text(
                           'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                           textAlign: TextAlign.center,
-                          style: context.textStyles.mRegular(),
+                          style: context.textStyles
+                              .mRegular()
+                              .copyWith(fontSize: 13.sp),
                         ),
                         SizedBox(
                           height: 15.h,
                         ),
-                        ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                fixedSize: Size(270.w, 40.h)),
-                            child: const Text("Remove Ads"))
+                        InkWell(
+                          child: Container(
+                            height: 32.h,
+                            width: 280  .w,
+                            decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(25.r)),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Remove Ads",
+                              style: context.textStyles.mRegular().copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -391,7 +406,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 15.h,
+                  height: 10.h,
                 ),
                 InkWell(
                   onTap: () {
@@ -470,7 +485,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: 15.h,
+                  height: 10.h,
                 ),
                 // Container(
                 //   decoration: BoxDecoration(
@@ -537,68 +552,96 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: Column(
                     children: [
-                      Container(
-                        height: 50.h,
-                        padding: EdgeInsets.only(top: 5.h),
-                        decoration: const BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.mail_outline,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Send Feedback',
-                                style: context.textStyles.mRegular(),
+                      InkWell(
+                        onTap: () async {
+                          final Uri _emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            path:
+                                'saad.zareef1212@gmail.com', // Replace with the recipient's email address
+                            query: 'subject=Feedback on Speedometer GPS App',
+                          );
+
+                          if (await canLaunchUrl(_emailLaunchUri)) {
+                            await launchUrl(_emailLaunchUri);
+                          } else {
+                            throw 'Could not launch email';
+                          }
+                        },
+                        child: Container(
+                          height: 50.h,
+                          padding: EdgeInsets.only(top: 5.h),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.mail_outline,
+                                color: Colors.red,
                               ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              size: 35.sp,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                          ],
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Send Feedback',
+                                  style: context.textStyles.mRegular(),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                size: 35.sp,
+                              ),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      Container(
-                        height: 50.h,
-                        padding: EdgeInsets.only(top: 5.h),
-                        decoration: const BoxDecoration(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey))),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.privacy_tip_rounded,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Privacy Policy',
-                                style: context.textStyles.mRegular(),
+                      InkWell(
+                        onTap: () async {
+                          final Uri _emailLaunchUri = Uri.parse(
+                              "https://gist.github.com/thisjustin93/5dba4ba4df80ad4999da751cef10ad95");
+
+                          if (await canLaunchUrl(_emailLaunchUri)) {
+                            await launchUrl(_emailLaunchUri);
+                          } else {
+                            throw 'Could not launch email';
+                          }
+                        },
+                        child: Container(
+                          height: 50.h,
+                          padding: EdgeInsets.only(top: 5.h),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.grey))),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.privacy_tip_rounded,
+                                color: Colors.red,
                               ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              size: 35.sp,
-                            ),
-                            SizedBox(
-                              width: 10.w,
-                            ),
-                          ],
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Privacy Policy',
+                                  style: context.textStyles.mRegular(),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                size: 35.sp,
+                              ),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       InkWell(
