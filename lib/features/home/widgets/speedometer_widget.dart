@@ -40,7 +40,9 @@ class SpeedometerWidget extends StatelessWidget {
                 needleStartWidth: 0.5,
                 needleEndWidth: 3.w,
                 needleColor: Colors.red,
-                knobStyle: KnobStyle(knobRadius: 0.09))
+                knobStyle: KnobStyle(
+                    // knobRadius: 0.09,
+                    color: Theme.of(context).colorScheme.onPrimary))
           ],
           axisLineStyle: AxisLineStyle(
               thicknessUnit: GaugeSizeUnit.factor,

@@ -15,7 +15,7 @@ import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
-import 'package:clipboard/clipboard.dart';
+// import 'package:clipboard/clipboard.dart';
 import 'package:speedometer/core/utils/app_snackbar.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';

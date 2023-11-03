@@ -33,10 +33,10 @@ class CompassWidget extends StatelessWidget {
             //         ? height * 0.0027
             //         : height * 0.0024,
             radiusFactor: isPortrait
-                ? height < 0
+                ? height > 400
                     ? height * 0.0005
                     : height * 0.0004
-                : height < 400
+                : height <= 400
                     ? height * 0.001
                     : height * 0.0008,
             // radiusFactor: isPortrait ? 0.35.r : 0.8.r,

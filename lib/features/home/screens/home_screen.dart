@@ -245,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return Container(
             height: height < 730 ? height * 0.53 : height * 0.43,
             width: isPortrait ? width * 1 : height * 1,
+            // padding: EdgeInsets.only(top: 10.h),
             child: Stack(
               children: [
                 if (settings.showCityName)
@@ -277,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 Positioned(
-                  top: isPortrait ? height * 0.02 : height * 0.05,
+                  top: isPortrait ? height * 0.035 : height * 0.05,
                   left: 0,
                   right: 0,
                   bottom: isPortrait ? null : 0,
