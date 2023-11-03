@@ -7,16 +7,24 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 class SpeedometerWidget extends StatelessWidget {
   double altitude;
   double speed;
-  SpeedometerWidget({super.key, required this.altitude, required this.speed});
+  double height;
+  double width;
+  SpeedometerWidget(
+      {super.key,
+      required this.altitude,
+      required this.speed,
+      required this.height,
+      required this.width});
 
   @override
   Widget build(BuildContext context) {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    var width = MediaQuery.sizeOf(context).width;
-    var height = MediaQuery.sizeOf(context).height;
-
+    // var width = MediaQuery.sizeOf(context).width;
+    // var height = MediaQuery.sizeOf(context).height;
+    print(MediaQuery.sizeOf(context).width);
+    print(MediaQuery.sizeOf(context).height);
     return SfRadialGauge(
       axes: <RadialAxis>[
         RadialAxis(
@@ -24,14 +32,14 @@ class SpeedometerWidget extends StatelessWidget {
           maximum: settings.maximumGaugeSpeed.toDouble(),
           // interval: 20,
           labelOffset: isPortrait ? 15 : 18,
-          radiusFactor: isPortrait
-              ? height < 670
-                  ? 1.05
-                  : 1.1
-              : height < 400
-                  ? height * 0.0027
-                  : height * 0.0024,
-          // radiusFactor: 1.1,
+          // radiusFactor: isPortrait
+          //     ? height < 670
+          //         ? 1.05
+          //         : 1.1
+          //     : height < 400
+          //         ? height * 0.0027
+          //         : height * 0.0024,
+          radiusFactor: width <= 380 ? 1.05 : 1.1,
           pointers: <GaugePointer>[
             NeedlePointer(
                 value: speed,

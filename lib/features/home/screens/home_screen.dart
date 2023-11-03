@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     speed = 0;
     maxSpeed = 0;
     totalDistance = 0;
-    currentPosition = null;
+    // currentPosition = null;
     pauseTime = null;
     endTime = null;
     startingAltitude = 0;
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
     speed = 0;
     maxSpeed = 0;
     totalDistance = 0;
-    currentPosition = null;
+    // currentPosition = null;
     pauseTime = null;
     endTime = null;
     startingAltitude = 0;
@@ -283,6 +283,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   right: 0,
                   bottom: isPortrait ? null : 0,
                   child: SpeedometerWidget(
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
                     speed: convertSpeed(speed, settings.speedUnit),
                     altitude: geoPostions.isNotEmpty
                         ? convertDistance(
@@ -379,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
           position: currentPosition,
           polyline: Polyline(
             polylineId: PolylineId('1'),
-            points: List<LatLng>.from(pathPoints),
+            points: startTracking ? List<LatLng>.from(pathPoints) : [],
             color: Colors.blue,
             width: 5,
           ),
@@ -519,7 +521,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 avgSpeed = 0;
                 speed = 0;
                 maxSpeed = 0;
-                currentPosition = null;
+                // pathPoints.clear();
+                // currentPosition = null;
                 pauseTime = null;
                 startTracking = false;
                 setState(() {});
@@ -643,7 +646,7 @@ class _HomeScreenState extends State<HomeScreen> {
               radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
                 backgroundColor: startTracking
-                    ? DateTime.now().difference(startTime!).inSeconds % 2 == 0
+                    ? DateTime.now().second % 2 == 0
                         ? Colors.red
                         : Color(0xffFD8282)
                     : Color(0xffF82929),

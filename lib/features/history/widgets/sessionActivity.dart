@@ -79,45 +79,54 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                   child: AppleMap(
                     initialCameraPosition: CameraPosition(
                         target: LatLng(
-                            widget.pedometerSession.path!.points.first.latitude,
-                            widget
-                                .pedometerSession.path!.points.first.longitude),
+                            widget.pedometerSession.path!.points.isEmpty
+                                ? widget.pedometerSession.startPoint!.latitude
+                                : widget.pedometerSession.path!.points.first
+                                    .latitude,
+                            widget.pedometerSession.path!.points.isEmpty
+                                ? widget.pedometerSession.startPoint!.longitude
+                                : widget.pedometerSession.path!.points.first
+                                    .longitude),
                         zoom: 18),
                     mapType: MapType.standard,
-                    annotations: Set()
-                      ..add(
-                        Annotation(
-                            annotationId: AnnotationId('start'),
-                            position: LatLng(
-                                widget.pedometerSession.path!.points.first
-                                    .latitude,
-                                widget.pedometerSession.path!.points.first
-                                    .longitude),
-                            icon: BitmapDescriptor.markerAnnotation),
-                      )
-                      ..add(
-                        Annotation(
-                            annotationId: AnnotationId('end'),
-                            position: LatLng(
-                                widget.pedometerSession.path!.points.last
-                                    .latitude,
-                                widget.pedometerSession.path!.points.last
-                                    .longitude),
-                            icon: BitmapDescriptor.markerAnnotation),
-                      ),
-                    polylines: Set<Polyline>.of([
-                      Polyline(
-                        polylineId: PolylineId(
-                            widget.pedometerSession.path!.polylineId.value),
-                        color: Colors.blue,
-                        points: List<LatLng>.from(
-                          widget.pedometerSession.path!.points.map(
-                            (e) => LatLng(e.latitude, e.longitude),
-                          ),
-                        ),
-                        width: 1,
-                      ),
-                    ]),
+                    annotations: widget.pedometerSession.path!.points.isEmpty
+                        ? null
+                        : (Set()
+                          ..add(
+                            Annotation(
+                                annotationId: AnnotationId('start'),
+                                position: LatLng(
+                                    widget.pedometerSession.path!.points.first
+                                        .latitude,
+                                    widget.pedometerSession.path!.points.first
+                                        .longitude),
+                                icon: BitmapDescriptor.markerAnnotation),
+                          )
+                          ..add(
+                            Annotation(
+                                annotationId: AnnotationId('end'),
+                                position: LatLng(
+                                    widget.pedometerSession.path!.points.last
+                                        .latitude,
+                                    widget.pedometerSession.path!.points.last
+                                        .longitude),
+                                icon: BitmapDescriptor.markerAnnotation),
+                          )),
+                    polylines: widget.pedometerSession.path!.points.isEmpty
+                        ? null
+                        : Set<Polyline>.of([
+                            Polyline(
+                              polylineId: PolylineId(widget
+                                  .pedometerSession.path!.polylineId.value),
+                              color: Colors.blue,
+                              points: List<LatLng>.from(
+                                widget.pedometerSession.path!.points.map(
+                                  (e) => LatLng(e.latitude, e.longitude),
+                                ),
+                              ),
+                              width: 1,
+                            ),
+                          ]),
                   ),
                 )
               : Container(

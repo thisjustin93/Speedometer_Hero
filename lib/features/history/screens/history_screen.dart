@@ -132,6 +132,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         toolbarHeight: 40.h,
+        actionsIconTheme: IconThemeData(fill: 1),
         actions: [
           InkWell(
             onTap: () {
@@ -145,8 +146,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             //   });
             // },
             child: Container(
-                decoration: BoxDecoration(shape: BoxShape.circle),
-                width: 70.w,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                width: 50.w,
                 alignment: Alignment.center,
                 child: Text(
                   selectSessions ? "Done" : "Select",
@@ -258,18 +260,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       width: double.maxFinite,
                       padding: EdgeInsets.only(left: 15.w),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        // color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                            color: settings.darkTheme == null
-                                ? MediaQuery.of(context).platformBrightness ==
-                                        Brightness.dark
-                                    ? Color(0xff1c1c1e)
-                                    : Color(0xffc6c6c6)
-                                : settings.darkTheme!
-                                    ? Color(0xff1c1c1e)
-                                    : Color(0xffc6c6c6),
-                            width: 2.sp),
+                        // border: Border.all(
+                        //     color: settings.darkTheme == null
+                        //         ? MediaQuery.of(context).platformBrightness ==
+                        //                 Brightness.dark
+                        //             ? Color(0xff1c1c1e)
+                        //             : Color(0xffc6c6c6)
+                        //         : settings.darkTheme!
+                        //             ? Color(0xff1c1c1e)
+                        //             : Color(0xffc6c6c6),
+                        //     width: 2.sp),
                       ),
                       child: ListView.builder(
                         shrinkWrap: true,

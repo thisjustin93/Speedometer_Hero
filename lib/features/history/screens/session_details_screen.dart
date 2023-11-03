@@ -223,10 +223,14 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                             child: AppleMap(
                               initialCameraPosition: CameraPosition(
                                   target: LatLng(
-                                      widget
-                                          .session.path!.points.first.latitude,
-                                      widget.session.path!.points.first
-                                          .longitude),
+                                      widget.session.path!.points.isEmpty
+                                          ? widget.session.startPoint!.latitude
+                                          : widget.session.path!.points.first
+                                              .latitude,
+                                      widget.session.path!.points.isEmpty
+                                          ? widget.session.startPoint!.longitude
+                                          : widget.session.path!.points.first
+                                              .longitude),
                                   zoom: 20),
                               zoomGesturesEnabled: true,
                               gestureRecognizers:
@@ -237,41 +241,48 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               ].toSet(),
                               mapType: MapType.standard,
                               scrollGesturesEnabled: true,
-                              annotations: Set()
-                                ..add(
-                                  Annotation(
-                                      annotationId: AnnotationId('start'),
-                                      position: LatLng(
-                                          widget.session.path!.points.first
-                                              .latitude,
-                                          widget.session.path!.points.first
-                                              .longitude),
-                                      icon: BitmapDescriptor.markerAnnotation),
-                                )
-                                ..add(
-                                  Annotation(
-                                      annotationId: AnnotationId('end'),
-                                      position: LatLng(
-                                          widget.session.path!.points.last
-                                              .latitude,
-                                          widget.session.path!.points.last
-                                              .longitude),
-                                      icon: BitmapDescriptor.markerAnnotation),
-                                ),
-                              polylines: Set<Polyline>.of([
-                                Polyline(
-                                  polylineId: PolylineId(
-                                      widget.session.path!.polylineId.value),
-                                  // color: widget.session.path!.color,
-                                  color: Colors.blue,
-                                  points: List<LatLng>.from(
-                                    widget.session.path!.points.map(
-                                      (e) => LatLng(e.latitude, e.longitude),
-                                    ),
-                                  ),
-                                  width: 3,
-                                ),
-                              ]),
+                              annotations: widget.session.path!.points.isEmpty
+                                  ? null
+                                  : (Set()
+                                    ..add(
+                                      Annotation(
+                                          annotationId: AnnotationId('start'),
+                                          position: LatLng(
+                                              widget.session.path!.points.first
+                                                  .latitude,
+                                              widget.session.path!.points.first
+                                                  .longitude),
+                                          icon: BitmapDescriptor
+                                              .markerAnnotation),
+                                    )
+                                    ..add(
+                                      Annotation(
+                                          annotationId: AnnotationId('end'),
+                                          position: LatLng(
+                                              widget.session.path!.points.last
+                                                  .latitude,
+                                              widget.session.path!.points.last
+                                                  .longitude),
+                                          icon: BitmapDescriptor
+                                              .markerAnnotation),
+                                    )),
+                              polylines: widget.session.path!.points.isEmpty
+                                  ? null
+                                  : Set<Polyline>.of([
+                                      Polyline(
+                                        polylineId: PolylineId(widget
+                                            .session.path!.polylineId.value),
+                                        // color: widget.session.path!.color,
+                                        color: Colors.blue,
+                                        points: List<LatLng>.from(
+                                          widget.session.path!.points.map(
+                                            (e) =>
+                                                LatLng(e.latitude, e.longitude),
+                                          ),
+                                        ),
+                                        width: 3,
+                                      ),
+                                    ]),
                             ),
                           )
                         : Image.asset(

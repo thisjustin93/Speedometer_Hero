@@ -311,14 +311,14 @@ class _FancyCardState extends State<FancyCard> {
                         ),
                       ),
                       Positioned(
-                        bottom: 8,
-                        left: 20,
+                        bottom: 23.h,
+                        left: 5.w,
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: Colors.white.withOpacity(0.6),
                           ),
-                          height: 45.h,
+                          height: 40.h,
                           width: 80.w,
                           alignment: Alignment.center,
                           child: Text(
@@ -327,13 +327,10 @@ class _FancyCardState extends State<FancyCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontStyle: FontStyle.normal,
-                              fontSize: 40.sp,
+                              fontSize: 35.sp,
                               decoration: TextDecoration.none,
                               letterSpacing: 0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  .withOpacity(0.5),
+                              color: Colors.black.withOpacity(0.6),
                             ),
                           ),
                         ),
@@ -392,10 +389,7 @@ class _FancyCardState extends State<FancyCard> {
                           fontSize: 40.sp,
                           decoration: TextDecoration.none,
                           letterSpacing: 0,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimary
-                              .withOpacity(0.7),
+                          color: Colors.black.withOpacity(0.7),
                         ),
                       ),
                     ),

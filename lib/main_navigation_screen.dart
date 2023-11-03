@@ -139,14 +139,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       iconSize: 35.sp,
                       items: [
                         BottomNavigationBarItem(
-                          // label: 'Home',
-                          icon: !recordingStarted
-                              ? Icon(Icons.home_outlined)
-                              : Icon(Icons.assistant_navigation),
-                        ),
+                            // label: 'Home',
+                            icon: Icon(Icons.home)
+                            // icon: !recordingStarted
+                            //     ? Icon(Icons.home)
+                            //     : Icon(Icons.assistant_navigation),
+                            ),
                         BottomNavigationBarItem(
                           // label: "Data",
-                          icon: Icon(Icons.article_outlined),
+                          icon: Icon(Icons.article),
                         ),
                         BottomNavigationBarItem(
                           // label: 'Settings',
