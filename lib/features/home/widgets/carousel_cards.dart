@@ -77,7 +77,7 @@ class _FancyCardState extends State<FancyCard> {
                   ? 320.w
                   : (MediaQuery.of(context).size.width * 0.46),
               padding: isPortrait
-                  ? EdgeInsets.symmetric(horizontal: 5.w)
+                  ? EdgeInsets.symmetric(horizontal: 5)
                   : EdgeInsets.only(
                       top: (height * 0.1),
                       left: width * 0.02,

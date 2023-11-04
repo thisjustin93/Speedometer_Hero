@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         .status ==
                     SubscriptionStatus.notSubscribed)
                   Container(
-                    height: 180.h,
+                    height: 200.h,
                     width: double.maxFinite,
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
                     decoration: BoxDecoration(
@@ -82,6 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           width: 2.sp),
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           margin: EdgeInsets.only(top: 5.h),
@@ -112,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         InkWell(
                           child: Container(
                             height: 32.h,
-                            width: 280  .w,
+                            width: 280.w,
                             decoration: BoxDecoration(
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(25.r)),

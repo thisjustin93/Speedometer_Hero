@@ -255,156 +255,137 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         style: context.textStyles.mRegular(),
                       ),
                     )
-                  : Container(
-                      height: 290.h,
-                      width: double.maxFinite,
-                      padding: EdgeInsets.only(left: 15.w),
-                      decoration: BoxDecoration(
-                        // color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(8.r),
-                        // border: Border.all(
-                        //     color: settings.darkTheme == null
-                        //         ? MediaQuery.of(context).platformBrightness ==
-                        //                 Brightness.dark
-                        //             ? Color(0xff1c1c1e)
-                        //             : Color(0xffc6c6c6)
-                        //         : settings.darkTheme!
-                        //             ? Color(0xff1c1c1e)
-                        //             : Color(0xffc6c6c6),
-                        //     width: 2.sp),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount:
-                            pedometerSessionProvider.pedometerSessions.length,
-                        itemBuilder: (__, index) {
-                          return Slidable(
-                            key: ValueKey(0),
-                            endActionPane: ActionPane(
-                              motion: DrawerMotion(),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (context) async {
-                                    editBottomSheet(
-                                      context,
-                                      pedometerSessionProvider
-                                          .pedometerSessions[index],
-                                      () {},
-                                    );
-                                    // await HiveDatabaseServices().updateSession(index, updatedSession)
-                                  },
-                                  backgroundColor: Color(0xFFC6C6C6),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.edit_note,
-                                  padding: EdgeInsets.all(5.sp),
-                                ),
-                                SlidableAction(
-                                  onPressed: (_) async {
-                                    shareBottomSheet(
-                                        context,
-                                        pedometerSessionProvider
-                                            .pedometerSessions[index]);
-                                  },
-                                  // onPressed: (context) {
-                                  //   // Dialog when click share button
-                                  //   shareBottomSheet(
-                                  //       context,
-                                  //       pedometerSessionProvider
-                                  //           .pedometerSessions[index]);
-                                  // },
-                                  backgroundColor: Color(0xFF00BF63),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.file_upload_outlined,
-                                  padding: EdgeInsets.all(5.sp),
-
-                                  // label: 'Save',
-                                ),
-                                SlidableAction(
-                                  onPressed: (context) async {
-                                    await HiveDatabaseServices().deleteSession(
-                                        pedometerSessionProvider
-                                            .pedometerSessions[index]
-                                            .sessionId);
-
-                                    List<PedometerSession> sessions =
-                                        await HiveDatabaseServices()
-                                            .getAllSessions();
-
-                                    Provider.of<PedoMeterSessionProvider>(
-                                            context,
-                                            listen: false)
-                                        .updatePedometerSessionList(sessions);
-
-                                    setState(() {});
-                                  },
-                                  backgroundColor: Color(0xFFFF0000),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete_outline,
-                                  padding: EdgeInsets.all(5.sp),
-
-                                  // label: 'Save',
-                                ),
-                              ],
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(PageRouteBuilder(
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      SessionDetailsScreen(
-                                          session: pedometerSessionProvider
-                                              .pedometerSessions[index]),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    var begin = Offset(1.0, 0.0);
-                                    var end = Offset.zero;
-                                    var curve = Curves.ease;
-                                    var tween = Tween(begin: begin, end: end)
-                                        .chain(CurveTween(curve: curve));
-
-                                    return SlideTransition(
-                                      position: animation.drive(tween),
-                                      child: child,
-                                    );
-                                  },
-                                ))
-                                    .then((value) {
-                                  assignData();
-                                  setState(() {});
-                                });
-                              },
-                              // child: widget,
-                              child: SessionActivityTile(
-                                  pedometerSession: pedometerSessionProvider
+                  : ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    itemCount:
+                        pedometerSessionProvider.pedometerSessions.length,
+                    itemBuilder: (__, index) {
+                      return Slidable(
+                        key: ValueKey(0),
+                        endActionPane: ActionPane(
+                          motion: DrawerMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                editBottomSheet(
+                                  context,
+                                  pedometerSessionProvider
                                       .pedometerSessions[index],
-                                  tileIndex: index,
-                                  tilesLength: matchingActivity.length,
-                                  showCheckBox: selectSessions,
-                                  deleteSession: () async {
-                                    await HiveDatabaseServices().deleteSession(
-                                        pedometerSessionProvider
-                                            .pedometerSessions[index]
-                                            .sessionId);
-
-                                    List<PedometerSession> sessions =
-                                        await HiveDatabaseServices()
-                                            .getAllSessions();
-                                    Provider.of<PedoMeterSessionProvider>(
-                                            context,
-                                            listen: false)
-                                        .updatePedometerSessionList(sessions);
-                                    assignData();
-                                    setState(() {});
-                                  }
-                                  // selectedSessions: selectedSessionsIndex,
-                                  ),
+                                  () {},
+                                );
+                                // await HiveDatabaseServices().updateSession(index, updatedSession)
+                              },
+                              backgroundColor: Color(0xFFC6C6C6),
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit_note,
+                              padding: EdgeInsets.all(5.sp),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                            SlidableAction(
+                              onPressed: (_) async {
+                                shareBottomSheet(
+                                    context,
+                                    pedometerSessionProvider
+                                        .pedometerSessions[index]);
+                              },
+                              // onPressed: (context) {
+                              //   // Dialog when click share button
+                              //   shareBottomSheet(
+                              //       context,
+                              //       pedometerSessionProvider
+                              //           .pedometerSessions[index]);
+                              // },
+                              backgroundColor: Color(0xFF00BF63),
+                              foregroundColor: Colors.white,
+                              icon: Icons.file_upload_outlined,
+                              padding: EdgeInsets.all(5.sp),
+
+                              // label: 'Save',
+                            ),
+                            SlidableAction(
+                              onPressed: (context) async {
+                                await HiveDatabaseServices().deleteSession(
+                                    pedometerSessionProvider
+                                        .pedometerSessions[index]
+                                        .sessionId);
+
+                                List<PedometerSession> sessions =
+                                    await HiveDatabaseServices()
+                                        .getAllSessions();
+
+                                Provider.of<PedoMeterSessionProvider>(
+                                        context,
+                                        listen: false)
+                                    .updatePedometerSessionList(sessions);
+
+                                setState(() {});
+                              },
+                              backgroundColor: Color(0xFFFF0000),
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete_outline,
+                              padding: EdgeInsets.all(5.sp),
+
+                              // label: 'Save',
+                            ),
+                          ],
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(PageRouteBuilder(
+                              pageBuilder: (context, animation,
+                                      secondaryAnimation) =>
+                                  SessionDetailsScreen(
+                                      session: pedometerSessionProvider
+                                          .pedometerSessions[index]),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                var begin = Offset(1.0, 0.0);
+                                var end = Offset.zero;
+                                var curve = Curves.ease;
+                                var tween = Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: curve));
+
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              },
+                            ))
+                                .then((value) {
+                              assignData();
+                              setState(() {});
+                            });
+                          },
+                          // child: widget,
+                          child: SessionActivityTile(
+                              pedometerSession: pedometerSessionProvider
+                                  .pedometerSessions[index],
+                              tileIndex: index,
+                              tilesLength: matchingActivity.length,
+                              showCheckBox: selectSessions,
+                              deleteSession: () async {
+                                await HiveDatabaseServices().deleteSession(
+                                    pedometerSessionProvider
+                                        .pedometerSessions[index]
+                                        .sessionId);
+
+                                List<PedometerSession> sessions =
+                                    await HiveDatabaseServices()
+                                        .getAllSessions();
+                                Provider.of<PedoMeterSessionProvider>(
+                                        context,
+                                        listen: false)
+                                    .updatePedometerSessionList(sessions);
+                                assignData();
+                                setState(() {});
+                              }
+                              // selectedSessions: selectedSessionsIndex,
+                              ),
+                        ),
+                      );
+                    },
+                  ),
               SizedBox(
                 height: 10.h,
               ),

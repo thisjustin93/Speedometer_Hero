@@ -70,7 +70,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
             titlePadding: EdgeInsets.only(top: 10.h),
             contentPadding: EdgeInsets.zero,
             insetPadding:
-                EdgeInsets.symmetric(horizontal: 10.w, vertical: 220.h),
+                EdgeInsets.symmetric(horizontal: 13.w, vertical: 220.h),
             title: Container(
               alignment: Alignment.center,
               height: 50.sp,
@@ -248,7 +248,6 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ..cellStyle.hAlign = xl.HAlignType.center
                           ..cellStyle.fontName = "Arial"
                           ..cellStyle.fontSize = 11;
-                        print(timeStamp);
                         sheet.getRangeByName('B${i + 11}')
                           ..setText(
                               DateFormat('M/d/yy, h:mm:ss a').format(timeStamp))

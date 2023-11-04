@@ -239,11 +239,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: height < 730 ? height * 0.53 : height * 0.43,
+            maxHeight: height < 730 ? height * 0.55 : height * 0.43,
             maxWidth: isPortrait ? width * 1 : height * 1,
           );
           return Container(
-            height: height < 730 ? height * 0.53 : height * 0.43,
+            height: height < 730 ? height * 0.56 : height * 0.43,
             width: isPortrait ? width * 1 : height * 1,
             // padding: EdgeInsets.only(top: 10.h),
             child: Stack(
@@ -626,12 +626,16 @@ class _HomeScreenState extends State<HomeScreen> {
             radius: isPortrait ? 24.r : 45.r,
             backgroundColor: settings.darkTheme == null
                 ? MediaQuery.of(context).platformBrightness == Brightness.dark
-                    ? Colors.white
+                    ? !startTracking
+                        ? Colors.white
+                        : Color(0xffF82929)
                     : !startTracking
                         ? Colors.black
                         : Color(0xffF82929)
                 : settings.darkTheme!
-                    ? Colors.white
+                    ? !startTracking
+                        ? Colors.white
+                        : Color(0xffF82929)
                     : !startTracking
                         ? Colors.black
                         : Color(0xffF82929),

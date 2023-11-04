@@ -21,10 +21,6 @@ class SpeedometerWidget extends StatelessWidget {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-    // var width = MediaQuery.sizeOf(context).width;
-    // var height = MediaQuery.sizeOf(context).height;
-    print(MediaQuery.sizeOf(context).width);
-    print(MediaQuery.sizeOf(context).height);
     return SfRadialGauge(
       axes: <RadialAxis>[
         RadialAxis(
@@ -39,7 +35,8 @@ class SpeedometerWidget extends StatelessWidget {
           //     : height < 400
           //         ? height * 0.0027
           //         : height * 0.0024,
-          radiusFactor: width <= 380 ? 1.05 : 1.1,
+          radiusFactor: width <= 380 ? 1 : 1.1,
+          // radiusFactor: 1,
           pointers: <GaugePointer>[
             NeedlePointer(
                 value: speed,
