@@ -10,6 +10,8 @@
 		<string>This app needs access to location when in the background.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>This app needs access to location when open and in the background.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We require access to your photo library for features provided by some of the libraries we use. We will never access your photos without your explicit permission.</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
