@@ -117,7 +117,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
           style: context.textStyles.mThick(),
         ),
         centerTitle: true,
-        actionsIconTheme: const IconThemeData(),
         actions: [
           InkWell(
             onTap: () async {
@@ -129,6 +128,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 },
               );
             },
+            borderRadius: BorderRadius.circular(20),
             child: Icon(
               Icons.edit_note,
               size: 28.sp,
@@ -136,12 +136,13 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
             ),
           ),
           SizedBox(
-            width: 5.w,
+            width: 10.w,
           ),
           InkWell(
             onTap: () async {
               shareBottomSheet(context, widget.session);
             },
+            borderRadius: BorderRadius.circular(20),
             child: Icon(
               Icons.file_upload_outlined,
               size: 28.sp,
@@ -174,6 +175,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
+                height: 433.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -301,7 +303,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       itemBuilder: (context, index) {
                         return Container(
                           padding: EdgeInsets.symmetric(
-                              vertical: 6.h, horizontal: 15.w),
+                              vertical: 5.h, horizontal: 15.w),
                           child: Column(
                             children: [
                               Row(
@@ -358,7 +360,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 ),
               ),
               SizedBox(
-                height: 15.h,
+                height: 10.h,
               ),
               InkWell(
                 onTap: () {
@@ -410,7 +412,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 ),
               ),
               SizedBox(
-                height: 15.h,
+                height: 10.h,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -428,6 +430,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
+                height: 245.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -501,7 +504,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 ),
               ),
               SizedBox(
-                height: 15.h,
+                height: 10.h,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -519,6 +522,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
+                height: 191.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -582,7 +586,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
               if (widget.session.note != null &&
                   widget.session.note!.isNotEmpty) ...[
                 SizedBox(
-                  height: 20.h,
+                  height: 10.h,
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -614,7 +618,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 ),
               ],
               SizedBox(
-                height: 20.h,
+                height: 10.h,
               ),
               InkWell(
                 onTap: () async {
