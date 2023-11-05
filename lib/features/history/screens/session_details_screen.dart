@@ -175,7 +175,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
-                height: 433.h,
+                // height: 433.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -296,65 +296,71 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     SizedBox(
                       height: 5.h,
                     ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 4,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 5.h, horizontal: 15.w),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        tileData[index]['icon'],
-                                        color: Colors.red,
-                                        size: 25.sp,
-                                      ),
-                                      SizedBox(
-                                        width: 8.w,
-                                      ),
-                                      Text(
-                                        tileData[index]['activityType'],
-                                        style: context.textStyles.mRegular(),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    tileData[index]['activityType'] ==
-                                            'Top Duration'
-                                        ? '  ${durationInMinutes(tileData[index]['value']).toStringAsFixed(1)}  ${tileData[index]['valueUnit']}'
-                                        : tileData[index]['activityType'] ==
-                                                'Top Distance'
-                                            ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : settings.speedUnit == "knots" ? "knots" : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
-                                            : tileData[index]['activityType'] ==
-                                                    'Max Speed'
-                                                ? '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
-                                                : '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}', // Top Average Speed
-                                    style: context.textStyles.sRegular(),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 30.w, top: 10.h),
-                                child: index < 3
-                                    ? Divider(
-                                        height: 2.h,
-                                        color: const Color(0xffB1B0B2),
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    Container(
+                      height: 175.h,
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 5.h, horizontal: 15.w),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          tileData[index]['icon'],
+                                          color: Colors.red,
+                                          size: 25.sp,
+                                        ),
+                                        SizedBox(
+                                          width: 8.w,
+                                        ),
+                                        Text(
+                                          tileData[index]['activityType'],
+                                          style: context.textStyles.mRegular(),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      tileData[index]['activityType'] ==
+                                              'Top Duration'
+                                          ? '  ${durationInMinutes(tileData[index]['value']).toStringAsFixed(1)}  ${tileData[index]['valueUnit']}'
+                                          : tileData[index]['activityType'] ==
+                                                  'Top Distance'
+                                              ? '  ${convertDistance(tileData[index]['value'], settings.speedUnit == 'mph' ? 'mi' : settings.speedUnit == 'kmph' ? 'km' : settings.speedUnit == "knots" ? "knots" : 'm').toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
+                                              : tileData[index]
+                                                          ['activityType'] ==
+                                                      'Max Speed'
+                                                  ? '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}'
+                                                  : '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}', // Top Average Speed
+                                      style: context.textStyles.sRegular(),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 30.w, top: 10.h),
+                                  child: index < 3
+                                      ? Divider(
+                                          height: 2.h,
+                                          color: const Color(0xffB1B0B2),
+                                        )
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -430,7 +436,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
-                height: 245.h,
+                // height: 245.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -462,43 +468,47 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     SizedBox(
                       height: 5.h,
                     ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 2,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 6.h, horizontal: 15.w),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    tileData[index]['activityType'],
-                                    style: context.textStyles.mRegular(),
-                                  ),
-                                  Text(
-                                    '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}', // Top Average Speed
-                                    style: context.textStyles.sRegular(),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 30.w, top: 10.h),
-                                child: index < 1
-                                    ? Divider(
-                                        height: 2.h,
-                                        color: const Color(0xffB1B0B2),
-                                      )
-                                    : null,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    Container(
+                      height: 75.h,
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 2,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6.h, horizontal: 15.w),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      tileData[index]['activityType'],
+                                      style: context.textStyles.mRegular(),
+                                    ),
+                                    Text(
+                                      '  ${convertSpeed(tileData[index]['value'], settings.speedUnit).toStringAsFixed(1)} ${tileData[index]['valueUnit']}', // Top Average Speed
+                                      style: context.textStyles.sRegular(),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 30.w, top: 10.h),
+                                  child: index < 1
+                                      ? Divider(
+                                          height: 2.h,
+                                          color: const Color(0xffB1B0B2),
+                                        )
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

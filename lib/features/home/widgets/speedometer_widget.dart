@@ -35,7 +35,11 @@ class SpeedometerWidget extends StatelessWidget {
           //     : height < 400
           //         ? height * 0.0027
           //         : height * 0.0024,
-          radiusFactor: width <= 380 ? 1 : 1.1,
+          radiusFactor: width <= 380
+              ? 1
+              : width > 380 && width <= 430
+                  ? 1.2
+                  : 1.1,
           // radiusFactor: 1,
           pointers: <GaugePointer>[
             NeedlePointer(

@@ -328,6 +328,7 @@ class _FancyCardState extends State<FancyCard> {
                               fontWeight: FontWeight.w500,
                               fontStyle: FontStyle.normal,
                               fontSize: 35.sp,
+                              height: 1,
                               decoration: TextDecoration.none,
                               letterSpacing: 0,
                               color: Colors.black.withOpacity(0.6),

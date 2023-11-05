@@ -90,10 +90,19 @@ class _HomeScreenState extends State<HomeScreen> {
             Provider.of<SubscriptionProvider>(context, listen: false).status;
       },
     );
-    Provider.of<PedoMeterSessionProvider>(context, listen: false)
-        .startTracking();
+    if (!Provider.of<PedoMeterSessionProvider>(context, listen: false)
+        .isTracking) {
+      Future.delayed(
+        Duration(seconds: 1),
+        () {
+          Provider.of<PedoMeterSessionProvider>(context, listen: false)
+              .startTracking();
+        },
+      );
+    }
+
     // pedometerSessionProvider = Provider.of<PedoMeterSessionProvider>(context);
-    setState(() {});
+    // setState(() {});
     super.initState();
   }
 
@@ -266,7 +275,11 @@ class _HomeScreenState extends State<HomeScreen> {
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
+      // print(pedometerSessionProvider.currentPedometerSession != null);
+      // print(
+      //     pedometerSessionProvider.currentPedometerSession!.startTime != null);
       print('something');
+
       setDataFromProvider(pedometerSessionProvider.currentPedometerSession!);
     }
     var settings = Provider.of<UnitsProvider>(context).settings;
@@ -360,19 +373,19 @@ class _HomeScreenState extends State<HomeScreen> {
           //         : Duration.zero,
           duration: startTime == DateTime(30000)
               ? Duration(seconds: -99)
-              : startTime != null &&
-                      pedometerSessionProvider.currentPedometerSession != null
-                  ? endTime != null
-                      ? endTime!
-                          .subtract(pedometerSessionProvider
-                              .currentPedometerSession!.pauseDuration)
-                          .difference(startTime!)
-                      : pedometerSessionProvider.currentPedometerSession != null
-                          ? DateTime.now()
-                              .subtract(pedometerSessionProvider
-                                  .currentPedometerSession!.pauseDuration)
-                              .difference(startTime!)
-                          : DateTime.now().difference(startTime!)
+              : pedometerSessionProvider.currentPedometerSession != null &&
+                      pedometerSessionProvider.startTime != null
+                  ?
+                  // endTime != null
+                  //     ? endTime!
+                  //         .subtract(pedometerSessionProvider
+                  //             .currentPedometerSession!.pauseDuration)
+                  //         .difference(startTime!)
+                  //     :
+                  DateTime.now()
+                      .subtract(pedometerSessionProvider
+                          .currentPedometerSession!.pauseDuration)
+                      .difference(pedometerSessionProvider.startTime!)
                   : Duration.zero,
           distanceCovered: totalDistance == -99
               ? '--'
@@ -391,8 +404,12 @@ class _HomeScreenState extends State<HomeScreen> {
               : convertSpeed(avgSpeed, settings.speedUnit).toStringAsFixed(1),
           onPressed: () async {
             // geolocatorStream?.pause();
+            pedometerSessionProvider.isTracking = false;
+            await pedometerSessionProvider.geolocatorStream!.cancel();
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
                 .currentPedometerSession = null;
+            Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                .startTime = null;
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
                 .pauseTime = null;
             Provider.of<RecordingProvider>(context, listen: false)
@@ -438,7 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
             polyline: Polyline(
               polylineId: PolylineId(
                   pedometerSessionProvider.currentPedometerSession!.sessionId),
-              points: startTracking
+              points: pedometerSessionProvider.isTracking
                   ? pedometerSessionProvider
                       .currentPedometerSession!.geoPositions!
                       .map((position) {
@@ -497,8 +514,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (pedometerSessionProvider.geolocatorStream != null &&
               !(pedometerSessionProvider.geolocatorStream!.isPaused) &&
-              startTracking) {
-            startTracking = false;
+              pedometerSessionProvider.isTracking) {
+            pedometerSessionProvider.isTracking = false;
             pedometerSessionProvider.pauseTracking();
             Navigator.of(context)
                 .push(PageRouteBuilder(
@@ -507,10 +524,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       pauseTime: DateTime.now(),
                       avgSpeed: avgSpeed,
                       maxSpeed: maxSpeed,
-                      duration: endTime!
+                      duration: DateTime.now()!
                           .subtract(pedometerSessionProvider
                               .currentPedometerSession!.pauseDuration)
-                          .difference(startTime!),
+                          .difference(pedometerSessionProvider.startTime!),
                       distance: totalDistance),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -526,12 +543,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ))
-                .then((value) {
+                .then((value) async {
               // Checks for when we return from Pause Screen
               bool? isContinue = value;
               if (isContinue != null && isContinue) {
                 Provider.of<RecordingProvider>(context, listen: false)
                     .startRecording();
+                pedometerSessionProvider.isTracking = true;
                 Provider.of<PedoMeterSessionProvider>(context, listen: false)
                     .startTracking();
                 // endTime = null;
@@ -543,6 +561,9 @@ class _HomeScreenState extends State<HomeScreen> {
               } else {
                 startingAltitude = 0;
                 endingAltitude = 0;
+                await pedometerSessionProvider.geolocatorStream!.cancel();
+                pedometerSessionProvider.isTracking = false;
+                pedometerSessionProvider.startTime = null;
                 pedometerSessionProvider.currentPedometerSession = null;
                 pedometerSessionProvider.pauseTime = null;
 
@@ -645,20 +666,29 @@ class _HomeScreenState extends State<HomeScreen> {
               geolocatorStream != null ? geolocatorStream!.pause() : null;
               Provider.of<PedoMeterSessionProvider>(context, listen: false)
                   .currentPedometerSession = null;
+              Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                  .startTime = null;
+              Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                  .pauseTime = null;
               startTime = DateTime(30000);
+              setState(() {});
               // startTime = null;
               speed = -99;
               avgSpeed = -99;
               maxSpeed = -99;
               totalDistance = -99;
               await Future.delayed(Duration(seconds: 1));
+              startTime = DateTime.now();
               speed = 0;
               maxSpeed = 0;
               avgSpeed = 0;
               totalDistance = 0;
               // currentPosition = null;
               Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                  .isTracking = true;
+              Provider.of<PedoMeterSessionProvider>(context, listen: false)
                   .startTracking();
+
               // _startTracking();
             }
           }

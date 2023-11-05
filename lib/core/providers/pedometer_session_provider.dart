@@ -10,8 +10,10 @@ import 'package:location/location.dart' as location;
 class PedoMeterSessionProvider extends ChangeNotifier {
   List<PedometerSession> pedometerSessions = [];
   PedometerSession? currentPedometerSession;
-
+  bool isTracking = false;
   DateTime? pauseTime;
+  DateTime? startTime;
+
   void setCurrentPedometerSession(PedometerSession pedometerSession) {
     currentPedometerSession = pedometerSession;
     notifyListeners();
@@ -26,7 +28,24 @@ class PedoMeterSessionProvider extends ChangeNotifier {
   StreamSubscription<Position>? geolocatorStream;
 
   void startTracking() async {
-    print('a111111111111');
+    if (currentPedometerSession == null) {
+      currentPedometerSession = PedometerSession(
+          sessionId: DateTime.now().toString(),
+          sessionTitle: "",
+          geoPositions: [await Geolocator.getCurrentPosition()]);
+      if (currentPedometerSession!.geoPositions == null) {
+        currentPedometerSession!.geoPositions = [
+          await Geolocator.getCurrentPosition()
+        ];
+      }
+    }
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      notifyListeners();
+    });
+    if (startTime == null) {
+      startTime = DateTime.now();
+      notifyListeners();
+    }
     geolocatorStream = null;
     var status = await Geolocator.checkPermission();
 
@@ -64,6 +83,11 @@ class PedoMeterSessionProvider extends ChangeNotifier {
           sessionId: DateTime.now().toString(),
           sessionTitle: "",
         );
+        // if (currentPedometerSession!.geoPositions == null) {
+        //   currentPedometerSession!.geoPositions = [
+        //     await Geolocator.getCurrentPosition()
+        //   ];
+        // }
       }
       currentPedometerSession!.speedInMS = position.speed;
       if (currentPedometerSession!.geoPositions == null) {
@@ -71,7 +95,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
         currentPedometerSession!.geoPositions = [position];
       }
       currentPedometerSession!.geoPositions!.add(position);
-      print(currentPedometerSession!.geoPositions!.length);
 
       notifyListeners();
     });
@@ -79,9 +102,11 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       currentPedometerSession!.pauseDuration +=
           DateTime.now().difference(pauseTime!);
     }
+    notifyListeners();
   }
 
   void pauseTracking() {
+    isTracking = false;
     if (geolocatorStream != null) {
       geolocatorStream!.pause();
       pauseTime = DateTime.now();
@@ -92,6 +117,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
 
   Future<void> stopTracking(
       double speed, double avgSpeed, double maxSpeed, double distance) async {
+    isTracking = false;
     if (geolocatorStream != null) {
       var id = DateTime.now().toString();
       currentPedometerSession!.sessionId = id;
@@ -116,9 +142,11 @@ class PedoMeterSessionProvider extends ChangeNotifier {
           currentPedometerSession!.geoPositions!.last.altitude -
               currentPedometerSession!.geoPositions!.first.altitude;
       currentPedometerSession!.sessionDuration =
-          currentPedometerSession!.geoPositions!.last.timestamp!.difference(
-                  currentPedometerSession!.geoPositions!.first.timestamp!) -
+          DateTime.now().difference(startTime!) -
               currentPedometerSession!.pauseDuration;
+      // currentPedometerSession!.geoPositions!.last.timestamp!.difference(
+      //         currentPedometerSession!.geoPositions!.first.timestamp!) -
+      //     currentPedometerSession!.pauseDuration;
       currentPedometerSession!.speedInMS = speed;
       currentPedometerSession!.path = Polyline(
         polylineId: PolylineId(id), // Provide a unique ID
