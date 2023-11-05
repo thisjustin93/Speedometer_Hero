@@ -297,7 +297,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       height: 5.h,
                     ),
                     Container(
-                      height: 175.h,
+                      height: 190.h,
                       child: ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -469,7 +469,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                       height: 5.h,
                     ),
                     Container(
-                      height: 75.h,
+                      height: 80.h,
                       child: ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -532,7 +532,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     width: 2,
                   ),
                 ),
-                height: 191.h,
+                // height: 191.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

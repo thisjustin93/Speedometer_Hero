@@ -93,8 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!Provider.of<PedoMeterSessionProvider>(context, listen: false)
         .isTracking) {
       Future.delayed(
-        Duration(seconds: 1),
-        () {
+        Duration(seconds: 0),
+        () async {
+          // await
+          // getPermissions();
+
           Provider.of<PedoMeterSessionProvider>(context, listen: false)
               .startTracking();
         },
@@ -117,6 +120,28 @@ class _HomeScreenState extends State<HomeScreen> {
     var status = await permission.Permission.location.status;
     if (status.isDenied || status.isPermanentlyDenied || status.isRestricted) {
       await permission.Permission.location.request();
+    }
+  }
+
+// getPermissions
+  getPermissions() async {
+    var status = await Geolocator.checkPermission();
+
+    if (status == LocationPermission.denied ||
+        status == LocationPermission.deniedForever ||
+        status == LocationPermission.unableToDetermine) {
+      await Geolocator.requestPermission();
+    }
+
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!isLocationServiceEnabled) {
+      final result = await location.Location().requestService();
+      if (result == true) {
+        print('Service has been enabled');
+      } else {
+        print('Service has not been enabled');
+      }
     }
   }
 
@@ -272,14 +297,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
+    print(MediaQuery.sizeOf(context));
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
-      // print(pedometerSessionProvider.currentPedometerSession != null);
-      // print(
-      //     pedometerSessionProvider.currentPedometerSession!.startTime != null);
-      print('something');
-
       setDataFromProvider(pedometerSessionProvider.currentPedometerSession!);
     }
     var settings = Provider.of<UnitsProvider>(context).settings;

@@ -28,6 +28,25 @@ class PedoMeterSessionProvider extends ChangeNotifier {
   StreamSubscription<Position>? geolocatorStream;
 
   void startTracking() async {
+      var status = await Geolocator.checkPermission();
+
+    if (status == LocationPermission.denied ||
+        status == LocationPermission.deniedForever ||
+        status == LocationPermission.unableToDetermine) {
+      await Geolocator.requestPermission();
+    }
+
+    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!isLocationServiceEnabled) {
+      final result = await location.Location().requestService();
+      if (result == true) {
+        print('Service has been enabled');
+      } else {
+        print('Service has not been enabled');
+      }
+    }
+
     if (currentPedometerSession == null) {
       currentPedometerSession = PedometerSession(
           sessionId: DateTime.now().toString(),
@@ -47,25 +66,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       notifyListeners();
     }
     geolocatorStream = null;
-    var status = await Geolocator.checkPermission();
-
-    if (status == LocationPermission.denied ||
-        status == LocationPermission.deniedForever ||
-        status == LocationPermission.unableToDetermine) {
-      await Geolocator.requestPermission();
-    }
-
-    bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!isLocationServiceEnabled) {
-      final result = await location.Location().requestService();
-      if (result == true) {
-        print('Service has been enabled');
-      } else {
-        print('Service has not been enabled');
-      }
-    }
-
+  
     final geolocator = Geolocator();
 
     // List<LatLng> points = []

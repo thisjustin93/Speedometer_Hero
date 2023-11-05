@@ -18,6 +18,7 @@ class SpeedometerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.sizeOf(context).width);
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
@@ -37,9 +38,11 @@ class SpeedometerWidget extends StatelessWidget {
           //         : height * 0.0024,
           radiusFactor: width <= 380
               ? 1
-              : width > 380 && width <= 430
-                  ? 1.2
-                  : 1.1,
+              : width > 380 && width <= 415
+                  ? 1.15
+                  : width > 415 && width <= 445
+                      ? 1.2
+                      : 1.1,
           // radiusFactor: 1,
           pointers: <GaugePointer>[
             NeedlePointer(
@@ -98,7 +101,7 @@ class SpeedometerWidget extends StatelessWidget {
                     ),
                   ])),
                   angle: 90,
-                  positionFactor: 1.6),
+                  positionFactor: 1.5),
           ],
         ),
       ],
