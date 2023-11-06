@@ -324,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
             maxHeight: width <= 380
                 ? height * 0.55
                 : width <= 420
-                    ? height * 0.43
+                    ? height * 0.47
                     : height * 0.55,
             maxWidth: isPortrait
                 ? width * 1
@@ -336,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: width <= 380
                 ? height * 0.55
                 : width <= 420
-                    ? height * 0.43
+                    ? height * 0.47
                     : height * 0.55,
             width: isPortrait
                 ? width * 1
