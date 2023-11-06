@@ -311,12 +311,38 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            maxHeight: height < 730 ? height * 0.55 : height * 0.43,
-            maxWidth: isPortrait ? width * 1 : height * 1,
+            //  width <= 380
+            //   ? 1
+            //   : width > 380 && width <= 415
+            //       ? 1.15
+            //       : width > 415 && width <= 445
+            //           ? 1.2
+            //           : width > 445 && width <= 490
+            //               ? 1.35
+
+            // maxHeight: height < 730 ? height * 0.55 : height * 0.43,
+            maxHeight: width <= 380
+                ? height * 0.55
+                : width <= 420
+                    ? height * 0.43
+                    : height * 0.55,
+            maxWidth: isPortrait
+                ? width * 1
+                : height <= 420
+                    ? height * 1
+                    : height * 1.2,
           );
           return Container(
-            height: height < 730 ? height * 0.56 : height * 0.43,
-            width: isPortrait ? width * 1 : height * 1,
+            height: width <= 380
+                ? height * 0.55
+                : width <= 420
+                    ? height * 0.43
+                    : height * 0.55,
+            width: isPortrait
+                ? width * 1
+                : height <= 420
+                    ? height * 1
+                    : height * 1.2,
             // padding: EdgeInsets.only(top: 10.h),
             child: Stack(
               children: [
@@ -324,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Positioned(
                     top: isPortrait
                         ? (constraints.maxHeight * 0.22)
-                        : (constraints.maxHeight * 0.3),
+                        : (constraints.maxHeight * 0.38),
                     left: 0,
                     right: 0,
                     bottom: isPortrait ? null : 0,
@@ -339,7 +365,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 if (settings.showCompass)
                   Positioned(
-                    top: isPortrait ? height * 0.035 : height * 0.05,
+                    // top: isPortrait ? height * 0.035 : height * 0.05,
+                    top: isPortrait
+                        ? width < 420
+                            ? height * 0.035
+                            : height * 0.08
+                        : height * 0.05,
                     left: 0,
                     right: 0,
                     bottom: isPortrait ? null : 0,
@@ -350,7 +381,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 Positioned(
-                  top: isPortrait ? height * 0.035 : height * 0.05,
+                  top: isPortrait
+                      ? width < 420
+                          ? height * 0.035
+                          : height * 0.08
+                      : height * 0.05,
                   left: 0,
                   right: 0,
                   bottom: isPortrait ? null : 0,
