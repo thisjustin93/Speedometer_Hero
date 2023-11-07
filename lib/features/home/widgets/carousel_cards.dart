@@ -65,180 +65,170 @@ class _FancyCardState extends State<FancyCard> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return widget.googleMapAPI.isEmpty
-        ? Card(
+        ? Container(
             color: Theme.of(context).colorScheme.background,
-            borderOnForeground: false,
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            child: Container(
-              color: Theme.of(context).colorScheme.background,
-              height: isPortrait ? 310.h : 230.h,
-              width: isPortrait
-                  ? 320.w
-                  : (MediaQuery.of(context).size.width * 0.46),
-              padding: isPortrait
-                  ? EdgeInsets.symmetric(horizontal: 5)
-                  : EdgeInsets.only(
-                      top: (height * 0.1),
-                      left: width * 0.02,
-                      right: width * 0.02),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                          color: settings.darkTheme == null
-                              ? MediaQuery.of(context).platformBrightness ==
-                                      Brightness.dark
-                                  ? Color(0xff1c1c1e)
-                                  : Color(0xffc6c6c6)
-                              : settings.darkTheme!
-                                  ? Color(0xff1c1c1e)
-                                  : Color(0xffc6c6c6),
-                          width: isPortrait ? 2.sp : 1.sp),
-                    ),
-                    // width: isPortrait ? null : 170.w,
-                    height: isPortrait ? 140.h : 280.h,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 35.w,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: isPortrait ? 12.sp : 0.sp,
-                            ),
-                            Text(
-                              settings.speedUnit == 'mph'
-                                  ? 'MPH'
-                                  : settings.speedUnit == 'kmph'
-                                      ? "KMPH"
-                                      : settings.speedUnit == 'knots'
-                                          ? "KNOTS"
-                                          : "M/S",
-                              style: context.textStyles.mRegular().copyWith(
-                                  fontSize: isPortrait ? null : 10.sp),
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            Text(
-                              widget.speed,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: isPortrait ? 100.sp : 50.sp,
-                                  height: 0.7),
-                            )
-                          ],
-                        ),
-                        IconButton(
-                            alignment: Alignment.center,
-                            constraints: BoxConstraints(
-                                maxHeight: 35.sp, maxWidth: 35.sp),
-                            icon: Transform.flip(
-                              flipX: true,
-                              child: Transform.rotate(
-                                angle: -0.4,
-                                child: Icon(
-                                  Icons.replay,
-                                  size: isPortrait ? 30.sp : 20.sp,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
+            height: isPortrait ? 310.h : 230.h,
+            width:
+                isPortrait ? 320.w : (MediaQuery.of(context).size.width * 0.46),
+            padding: isPortrait
+                ? EdgeInsets.symmetric(horizontal: 5.w)
+                : EdgeInsets.only(
+                    top: (height * 0.1),
+                    left: width * 0.02,
+                    right: width * 0.02),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                        color: settings.darkTheme == null
+                            ? MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6)
+                            : settings.darkTheme!
+                                ? Color(0xff1c1c1e)
+                                : Color(0xffc6c6c6),
+                        width: isPortrait ? 2.sp : 1.sp),
+                  ),
+                  // width: isPortrait ? null : 170.w,
+                  height: isPortrait ? 140.h : 280.h,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 35.w,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: isPortrait ? 12.sp : 0.sp,
+                          ),
+                          Text(
+                            settings.speedUnit == 'mph'
+                                ? 'MPH'
+                                : settings.speedUnit == 'kmph'
+                                    ? "KMPH"
+                                    : settings.speedUnit == 'knots'
+                                        ? "KNOTS"
+                                        : "M/S",
+                            style: context.textStyles
+                                .mRegular()
+                                .copyWith(fontSize: isPortrait ? null : 10.sp),
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Text(
+                            widget.speed,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.w900,
+                                fontSize: isPortrait ? 100.sp : 50.sp,
+                                height: 0.7),
+                          )
+                        ],
+                      ),
+                      IconButton(
+                          alignment: Alignment.center,
+                          constraints:
+                              BoxConstraints(maxHeight: 35.sp, maxWidth: 35.sp),
+                          icon: Transform.flip(
+                            flipX: true,
+                            child: Transform.rotate(
+                              angle: -0.4,
+                              child: Icon(
+                                Icons.replay,
+                                size: isPortrait ? 30.sp : 20.sp,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
-                            onPressed: widget.onPressed
-                            // size: 35.sp,
-                            )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: isPortrait ? 4.sp : 2.sp,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MeasurementBox(
-                          boxType: 'Max Speed',
-                          measurement: widget.maxSpeed,
-                          measurementUnit: widget.maxSpeed == '--'
-                              ? ''
-                              : settings.speedUnit == "mph"
-                                  ? 'MPH'
-                                  : settings.speedUnit == 'kmph'
-                                      ? 'KM/H'
-                                      : settings.speedUnit == 'knots'
-                                          ? "KNOTS"
-                                          : 'M/S'),
-                      MeasurementBox(
-                          boxType: 'Avg Speed',
-                          measurement: widget.avgSpeed,
-                          // measurement: distanceCovered == 0 ||
-                          //         duration == Duration.zero
-                          //     ? 0
-                          //     : distanceCovered /
-                          //         (duration.inSeconds /
-                          //             (settings.speedUnit == 'mps' ? 1 : 3600)),
-                          measurementUnit: widget.maxSpeed == '--'
-                              ? ''
-                              : settings.speedUnit == "mph"
-                                  ? 'MPH'
-                                  : settings.speedUnit == 'kmph'
-                                      ? 'KM/H'
-                                      : settings.speedUnit == 'knots'
-                                          ? "KNOTS"
-                                          : 'M/S'),
+                          ),
+                          onPressed: widget.onPressed
+                          // size: 35.sp,
+                          )
                     ],
                   ),
-                  SizedBox(
-                    height: isPortrait ? 4.sp : 2.sp,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MeasurementBox(
-                          boxType: 'Distance',
-                          measurement: widget.distanceCovered,
-                          measurementUnit: widget.maxSpeed == '--'
-                              ? ''
-                              : settings.speedUnit == "mph"
-                                  ? 'Mi'
-                                  : settings.speedUnit == 'kmph'
-                                      ? 'KM'
-                                      : settings.speedUnit == 'knots'
-                                          ? "KNOTS"
-                                          : 'M'),
-                      MeasurementBox(
-                          boxType: 'Duration',
-                          measurement: widget.duration.inSeconds.toString(),
-                          measurementUnit: ''),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: isPortrait ? 4.sp : 2.sp,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    MeasurementBox(
+                        boxType: 'Max Speed',
+                        measurement: widget.maxSpeed,
+                        measurementUnit: widget.maxSpeed == '--'
+                            ? ''
+                            : settings.speedUnit == "mph"
+                                ? 'MPH'
+                                : settings.speedUnit == 'kmph'
+                                    ? 'KM/H'
+                                    : settings.speedUnit == 'knots'
+                                        ? "KNOTS"
+                                        : 'M/S'),
+                    MeasurementBox(
+                        boxType: 'Avg Speed',
+                        measurement: widget.avgSpeed,
+                        // measurement: distanceCovered == 0 ||
+                        //         duration == Duration.zero
+                        //     ? 0
+                        //     : distanceCovered /
+                        //         (duration.inSeconds /
+                        //             (settings.speedUnit == 'mps' ? 1 : 3600)),
+                        measurementUnit: widget.maxSpeed == '--'
+                            ? ''
+                            : settings.speedUnit == "mph"
+                                ? 'MPH'
+                                : settings.speedUnit == 'kmph'
+                                    ? 'KM/H'
+                                    : settings.speedUnit == 'knots'
+                                        ? "KNOTS"
+                                        : 'M/S'),
+                  ],
+                ),
+                SizedBox(
+                  height: isPortrait ? 4.sp : 2.sp,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    MeasurementBox(
+                        boxType: 'Distance',
+                        measurement: widget.distanceCovered,
+                        measurementUnit: widget.maxSpeed == '--'
+                            ? ''
+                            : settings.speedUnit == "mph"
+                                ? 'Mi'
+                                : settings.speedUnit == 'kmph'
+                                    ? 'KM'
+                                    : settings.speedUnit == 'knots'
+                                        ? "KNOTS"
+                                        : 'M'),
+                    MeasurementBox(
+                        boxType: 'Duration',
+                        measurement: widget.duration.inSeconds.toString(),
+                        measurementUnit: ''),
+                  ],
+                ),
+              ],
             ),
           )
         : widget.position != null && Platform.isIOS
             ? Container(
                 padding: isPortrait
                     ? EdgeInsets.symmetric(horizontal: 5.w)
-                    : isPortrait
-                        ? EdgeInsets.symmetric(horizontal: 5.w)
-                        : EdgeInsets.only(
-                            top: (height * 0.1),
-                            // left: width * 0.02,
-                            right: width * 0.02,
-                            bottom: height * 0.06),
+                    : EdgeInsets.only(
+                        top: (height * 0.1),
+                        // left: width * 0.02,
+                        right: width * 0.02,
+                        bottom: height * 0.06),
                 height: 300.h,
                 // width: isPortrait ? 320.w : 180.w,
                 child: Container(
@@ -311,7 +301,7 @@ class _FancyCardState extends State<FancyCard> {
                         ),
                       ),
                       Positioned(
-                        bottom: 23.h,
+                        bottom: 28.h,
                         left: 5.w,
                         child: Container(
                           decoration: BoxDecoration(

@@ -37,7 +37,7 @@ class SpeedometerWidget extends StatelessWidget {
           //         ? height * 0.0027
           //         : height * 0.0024,
           radiusFactor: width <= 380
-              ? 1
+              ? 1.04
               : width > 380 && width <= 415
                   ? 1.1
                   : width > 415 && width <= 445

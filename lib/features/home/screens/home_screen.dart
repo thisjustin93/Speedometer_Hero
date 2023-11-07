@@ -97,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
         () async {
           // await
           // getPermissions();
-
           Provider.of<PedoMeterSessionProvider>(context, listen: false)
               .startTracking();
         },
@@ -462,6 +461,12 @@ class _HomeScreenState extends State<HomeScreen> {
             // geolocatorStream?.pause();
             pedometerSessionProvider.isTracking = false;
             await pedometerSessionProvider.geolocatorStream!.cancel();
+            // currentPosition = await Geolocator.getCurrentPosition();
+            currentPosition =
+                Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                    .currentPedometerSession!
+                    .geoPositions!
+                    .first;
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
                 .currentPedometerSession = null;
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
@@ -499,29 +504,36 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 10.h,
           width: isPortrait ? 0 : 5,
         ),
-        if (pedometerSessionProvider.currentPedometerSession != null)
-          FancyCard(
-            speed: speed == -99
-                ? '--'
-                : convertSpeed(speed, settings.speedUnit).toStringAsFixed(0),
-            cardIndex: 1,
-            googleMapAPI: 'assets/images/map.png',
-            position: pedometerSessionProvider
-                .currentPedometerSession!.geoPositions!.last,
-            polyline: Polyline(
-              polylineId: PolylineId(
-                  pedometerSessionProvider.currentPedometerSession!.sessionId),
-              points: pedometerSessionProvider.isTracking
-                  ? pedometerSessionProvider
-                      .currentPedometerSession!.geoPositions!
-                      .map((position) {
-                      return LatLng(position.latitude, position.longitude);
-                    }).toList()
-                  : [],
-              color: Colors.blue,
-              width: 5,
-            ),
+        // if (pedometerSessionProvider.currentPedometerSession != null)
+        FancyCard(
+          speed: speed == -99
+              ? '--'
+              : convertSpeed(speed, settings.speedUnit).toStringAsFixed(0),
+          cardIndex: 1,
+          googleMapAPI: 'assets/images/map.png',
+          position: pedometerSessionProvider.currentPedometerSession != null
+              ? pedometerSessionProvider
+                  .currentPedometerSession!.geoPositions!.last
+              : currentPosition,
+          polyline: Polyline(
+            polylineId: PolylineId(
+                pedometerSessionProvider.currentPedometerSession != null
+                    ? pedometerSessionProvider
+                        .currentPedometerSession!.sessionId
+                    : ''),
+            points: pedometerSessionProvider.currentPedometerSession != null
+                ? pedometerSessionProvider.isTracking
+                    ? pedometerSessionProvider
+                        .currentPedometerSession!.geoPositions!
+                        .map((position) {
+                        return LatLng(position.latitude, position.longitude);
+                      }).toList()
+                    : []
+                : [],
+            color: Colors.blue,
+            width: 5,
           ),
+        ),
         SizedBox(
           height: 10.h,
           width: isPortrait ? 0 : 5,
@@ -559,6 +571,11 @@ class _HomeScreenState extends State<HomeScreen> {
           : FloatingActionButtonLocation.endTop,
       floatingActionButton: InkWell(
         onTap: () async {
+          currentPosition =
+              Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                  .currentPedometerSession!
+                  .geoPositions!
+                  .first;
           if (Provider.of<RecordingProvider>(context, listen: false)
               .recordingStarted) {
             Provider.of<RecordingProvider>(context, listen: false)
@@ -571,6 +588,8 @@ class _HomeScreenState extends State<HomeScreen> {
           if (pedometerSessionProvider.geolocatorStream != null &&
               !(pedometerSessionProvider.geolocatorStream!.isPaused) &&
               pedometerSessionProvider.isTracking) {
+            // currentPosition = await Geolocator.getCurrentPosition();
+
             pedometerSessionProvider.isTracking = false;
             pedometerSessionProvider.pauseTracking();
             Navigator.of(context)
