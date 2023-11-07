@@ -27,6 +27,7 @@ import 'package:speedometer/features/home/widgets/compass_widget.dart';
 import 'package:speedometer/features/home/widgets/speedometer_widget.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
 import 'package:geolocator/geolocator.dart';
+import 'package:wakelock/wakelock.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -487,6 +488,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   .currentPedometerSession!.geoPositions!.first;
               setState(() {});
             }
+            await Wakelock.disable();
 
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
                 .currentPedometerSession = null;
@@ -615,6 +617,8 @@ class _HomeScreenState extends State<HomeScreen> {
             // currentPosition = await Geolocator.getCurrentPosition();
 
             pedometerSessionProvider.isTracking = false;
+            await Wakelock.disable();
+
             pedometerSessionProvider.pauseTracking();
             Navigator.of(context)
                 .push(PageRouteBuilder(
@@ -646,6 +650,8 @@ class _HomeScreenState extends State<HomeScreen> {
               // Checks for when we return from Pause Screen
               bool? isContinue = value;
               if (isContinue != null && isContinue) {
+                await Wakelock.enable();
+
                 Provider.of<RecordingProvider>(context, listen: false)
                     .startRecording();
                 pedometerSessionProvider.isTracking = true;
@@ -660,6 +666,8 @@ class _HomeScreenState extends State<HomeScreen> {
               } else {
                 startingAltitude = 0;
                 endingAltitude = 0;
+                await Wakelock.disable();
+
                 await pedometerSessionProvider.geolocatorStream!.cancel();
                 pedometerSessionProvider.isTracking = false;
                 pedometerSessionProvider.startTime = null;
@@ -785,6 +793,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // currentPosition = null;
               Provider.of<PedoMeterSessionProvider>(context, listen: false)
                   .isTracking = true;
+              await Wakelock.enable();
               Provider.of<PedoMeterSessionProvider>(context, listen: false)
                   .startTracking();
 

@@ -58,6 +58,7 @@ dependencies:
   davinci: ^2.1.1
   syncfusion_officechart: ^23.1.42
   url_launcher: ^6.2.1
+  wakelock: ^0.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
