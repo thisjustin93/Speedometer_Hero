@@ -18,7 +18,6 @@ class SpeedometerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.sizeOf(context).width);
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;

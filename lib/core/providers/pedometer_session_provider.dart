@@ -28,7 +28,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
   StreamSubscription<Position>? geolocatorStream;
 
   void startTracking() async {
-      var status = await Geolocator.checkPermission();
+    var status = await Geolocator.checkPermission();
 
     if (status == LocationPermission.denied ||
         status == LocationPermission.deniedForever ||
@@ -66,7 +66,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       notifyListeners();
     }
     geolocatorStream = null;
-  
+
     final geolocator = Geolocator();
 
     // List<LatLng> points = []
@@ -92,7 +92,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       }
       currentPedometerSession!.speedInMS = position.speed;
       if (currentPedometerSession!.geoPositions == null) {
-        print(currentPedometerSession!.geoPositions == null);
         currentPedometerSession!.geoPositions = [position];
       }
       currentPedometerSession!.geoPositions!.add(position);

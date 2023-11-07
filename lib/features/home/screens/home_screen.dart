@@ -59,6 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
   // var pedometerSessionProvider;
   @override
   void initState() {
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
+    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
     Future.delayed(
       Duration(milliseconds: 1000),
       () {
@@ -97,8 +106,17 @@ class _HomeScreenState extends State<HomeScreen> {
         () async {
           // await
           // getPermissions();
+          // startTracking = Provider.of<PedoMeterSessionProvider>(context,
+          //                 listen: false)
+          //             .geolocatorStream !=
+          //         null &&
+          //     !(Provider.of<PedoMeterSessionProvider>(context, listen: false)
+          //         .geolocatorStream!
+          //         .isPaused);
+          // if (!startTracking) {
           Provider.of<PedoMeterSessionProvider>(context, listen: false)
               .startTracking();
+          // }
         },
       );
     }
@@ -296,7 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
-    print(MediaQuery.sizeOf(context));
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
@@ -606,7 +623,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       pauseTime: DateTime.now(),
                       avgSpeed: avgSpeed,
                       maxSpeed: maxSpeed,
-                      duration: DateTime.now()!
+                      duration: DateTime.now()
                           .subtract(pedometerSessionProvider
                               .currentPedometerSession!.pauseDuration)
                           .difference(pedometerSessionProvider.startTime!),
@@ -780,17 +797,17 @@ class _HomeScreenState extends State<HomeScreen> {
             radius: isPortrait ? 24.r : 45.r,
             backgroundColor: settings.darkTheme == null
                 ? MediaQuery.of(context).platformBrightness == Brightness.dark
-                    ? !startTracking
+                    ? !pedometerSessionProvider.isTracking
                         ? Colors.white
                         : Color(0xffF82929)
-                    : !startTracking
+                    : !pedometerSessionProvider.isTracking
                         ? Colors.black
                         : Color(0xffF82929)
                 : settings.darkTheme!
-                    ? !startTracking
+                    ? !pedometerSessionProvider.isTracking
                         ? Colors.white
                         : Color(0xffF82929)
-                    : !startTracking
+                    : !pedometerSessionProvider.isTracking
                         ? Colors.black
                         : Color(0xffF82929),
             child: CircleAvatar(
@@ -803,7 +820,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Colors.white,
               radius: isPortrait ? 21.r : 40.r,
               child: CircleAvatar(
-                backgroundColor: startTracking
+                backgroundColor: pedometerSessionProvider.isTracking
                     ? DateTime.now().second % 2 == 0
                         ? Colors.red
                         : Color(0xffFD8282)
