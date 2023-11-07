@@ -322,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // maxHeight: height < 730 ? height * 0.55 : height * 0.43,
             maxHeight: width <= 380
                 ? height * 0.55
-                : width <= 420
+                : width <= 430
                     ? height * 0.47
                     : height * 0.55,
             maxWidth: isPortrait
@@ -334,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return Container(
             height: width <= 380
                 ? height * 0.55
-                : width <= 420
+                : width <= 430
                     ? height * 0.47
                     : height * 0.55,
             width: isPortrait
@@ -462,11 +462,15 @@ class _HomeScreenState extends State<HomeScreen> {
             pedometerSessionProvider.isTracking = false;
             await pedometerSessionProvider.geolocatorStream!.cancel();
             // currentPosition = await Geolocator.getCurrentPosition();
-            currentPosition =
-                Provider.of<PedoMeterSessionProvider>(context, listen: false)
-                    .currentPedometerSession!
-                    .geoPositions!
-                    .first;
+            if (pedometerSessionProvider.currentPedometerSession != null &&
+                pedometerSessionProvider
+                        .currentPedometerSession!.geoPositions !=
+                    null) {
+              currentPosition = pedometerSessionProvider
+                  .currentPedometerSession!.geoPositions!.first;
+              setState(() {});
+            }
+
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
                 .currentPedometerSession = null;
             Provider.of<PedoMeterSessionProvider>(context, listen: false)
@@ -571,11 +575,14 @@ class _HomeScreenState extends State<HomeScreen> {
           : FloatingActionButtonLocation.endTop,
       floatingActionButton: InkWell(
         onTap: () async {
-          currentPosition =
-              Provider.of<PedoMeterSessionProvider>(context, listen: false)
-                  .currentPedometerSession!
-                  .geoPositions!
-                  .first;
+          if (pedometerSessionProvider.currentPedometerSession != null &&
+              pedometerSessionProvider.currentPedometerSession!.geoPositions !=
+                  null) {
+            currentPosition = pedometerSessionProvider
+                .currentPedometerSession!.geoPositions!.first;
+            setState(() {});
+          }
+
           if (Provider.of<RecordingProvider>(context, listen: false)
               .recordingStarted) {
             Provider.of<RecordingProvider>(context, listen: false)
