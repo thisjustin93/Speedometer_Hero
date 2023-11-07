@@ -38,7 +38,7 @@ dependencies:
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
   flutter_slidable: ^3.0.0
-  share_plus: ^7.1.0
+  share_plus: ^6.3.4
   apple_maps_flutter: ^1.2.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -58,7 +58,7 @@ dependencies:
   davinci: ^2.1.1
   syncfusion_officechart: ^23.1.42
   url_launcher: ^6.2.1
-  wakelock: ^0.4.0
+  wakelock: ^0.6.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
