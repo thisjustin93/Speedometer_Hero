@@ -557,8 +557,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () async {
                           final Uri _emailLaunchUri = Uri(
                             scheme: 'mailto',
-                            path:
-                                'saad.zareef1212@gmail.com', // Replace with the recipient's email address
+                            path: 'carpediem.bk@outlook.com',
                             query: 'subject=Feedback on Speedometer GPS App',
                           );
 
