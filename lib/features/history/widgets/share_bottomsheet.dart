@@ -91,7 +91,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                     height: 8.h,
                   ),
                   Text(
-                    'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
+                    'Buy the premium version of GPS Speedometer Plus to unlock the full experience incl. no ads, unlimited activity history & ability to export data',
                     textAlign: TextAlign.center,
                     style:
                         context.textStyles.sRegular().copyWith(fontSize: 13.sp),

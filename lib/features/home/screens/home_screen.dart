@@ -60,15 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // var pedometerSessionProvider;
   @override
   void initState() {
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
-    print('casdfdsfdsfdsfdsfdfdsfdfdsflld');
     Future.delayed(
       Duration(milliseconds: 1000),
       () {
@@ -315,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
+  
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
@@ -338,11 +330,19 @@ class _HomeScreenState extends State<HomeScreen> {
             //               ? 1.35
 
             // maxHeight: height < 730 ? height * 0.55 : height * 0.43,
-            maxHeight: width <= 380
-                ? height * 0.55
-                : width <= 430
-                    ? height * 0.47
-                    : height * 0.55,
+            maxHeight: width <= 370 && height >= 820
+                ? height * 0.43
+                : width <= 360 && height >= 700
+                    ? height * 0.5
+                    : width <= 360 && height <= 700
+                        ? height * 0.57
+                        : width <= 380
+                            ? height * 0.55
+                            : width <= 415
+                                ? height * 0.43
+                                : width <= 430
+                                    ? height * 0.47
+                                    : height * 0.57,
             maxWidth: isPortrait
                 ? width * 1
                 : height <= 420
@@ -350,11 +350,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     : height * 1.2,
           );
           return Container(
-            height: width <= 380
-                ? height * 0.55
-                : width <= 430
-                    ? height * 0.47
-                    : height * 0.55,
+            height: width <= 370 && height >= 820
+                ? height * 0.43
+                : width <= 360 && height >= 700
+                    ? height * 0.5
+                    : width <= 360 && height <= 700
+                        ? height * 0.57
+                        : width <= 380
+                            ? height * 0.55
+                            : width <= 415
+                                ? height * 0.43
+                                : width <= 430
+                                    ? height * 0.47
+                                    : height * 0.57,
             width: isPortrait
                 ? width * 1
                 : height <= 420
@@ -410,12 +418,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: constraints.maxHeight,
                     width: constraints.maxWidth,
                     speed: convertSpeed(speed, settings.speedUnit),
-                    altitude: geoPostions.isNotEmpty
-                        ? convertDistance(
-                            geoPostions.last.altitude -
-                                geoPostions.first.altitude,
-                            settings.elevationUnit)
-                        : 0,
+                    altitude:
+                        pedometerSessionProvider.currentPedometerSession !=
+                                    null &&
+                                pedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .geoPositions !=
+                                    null
+                            ? convertDistance(
+                                pedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .geoPositions!
+                                        .last
+                                        .altitude -
+                                    pedometerSessionProvider
+                                        .currentPedometerSession!
+                                        .geoPositions!
+                                        .first
+                                        .altitude,
+                                settings.elevationUnit)
+                            : 0,
                   ),
                 ),
               ],

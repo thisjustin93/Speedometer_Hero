@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -69,80 +70,83 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                 color: Colors.red,
               ),
             ),
-          Platform.isIOS
-              ? Container(
-                  height: 70.h,
-                  decoration: BoxDecoration(),
-                  width: 70.h,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.r),
-                    child: AppleMap(
-                      initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                              widget.pedometerSession.path!.points.isEmpty
-                                  ? widget.pedometerSession.startPoint!.latitude
-                                  : widget.pedometerSession.path!.points.first
-                                      .latitude,
-                              widget.pedometerSession.path!.points.isEmpty
-                                  ? widget
-                                      .pedometerSession.startPoint!.longitude
-                                  : widget.pedometerSession.path!.points.first
-                                      .longitude),
-                          zoom: 18),
-                      mapType: MapType.standard,
-                      annotations: widget.pedometerSession.path!.points.isEmpty
-                          ? null
-                          : (Set()
-                            ..add(
-                              Annotation(
-                                  annotationId: AnnotationId('start'),
-                                  position: LatLng(
-                                      widget.pedometerSession.path!.points.first
-                                          .latitude,
-                                      widget.pedometerSession.path!.points.first
-                                          .longitude),
-                                  icon: BitmapDescriptor.markerAnnotation),
-                            )
-                            ..add(
-                              Annotation(
-                                  annotationId: AnnotationId('end'),
-                                  position: LatLng(
-                                      widget.pedometerSession.path!.points.last
-                                          .latitude,
-                                      widget.pedometerSession.path!.points.last
-                                          .longitude),
-                                  icon: BitmapDescriptor.markerAnnotation),
-                            )),
-                      polylines: widget.pedometerSession.path!.points.isEmpty
-                          ? null
-                          : Set<Polyline>.of([
-                              Polyline(
-                                polylineId: PolylineId(widget
-                                    .pedometerSession.path!.polylineId.value),
-                                color: Colors.blue,
-                                points: List<LatLng>.from(
-                                  widget.pedometerSession.path!.points.map(
-                                    (e) => LatLng(e.latitude, e.longitude),
-                                  ),
-                                ),
-                                width: 1,
-                              ),
-                            ]),
-                    ),
+          // Platform.isIOS
+          //     ? Container(
+          //         height: 70.h,
+          //         decoration: BoxDecoration(),
+          //         width: 70.h,
+          //         child: ClipRRect(
+          //           borderRadius: BorderRadius.circular(10.r),
+          //           child: AppleMap(
+          //             initialCameraPosition: CameraPosition(
+          //                 target: LatLng(
+          //                     widget.pedometerSession.path!.points.isEmpty
+          //                         ? widget.pedometerSession.startPoint!.latitude
+          //                         : widget.pedometerSession.path!.points.first
+          //                             .latitude,
+          //                     widget.pedometerSession.path!.points.isEmpty
+          //                         ? widget
+          //                             .pedometerSession.startPoint!.longitude
+          //                         : widget.pedometerSession.path!.points.first
+          //                             .longitude),
+          //                 zoom: 18),
+          //             mapType: MapType.standard,
+          //             annotations: widget.pedometerSession.path!.points.isEmpty
+          //                 ? null
+          //                 : (Set()
+          //                   ..add(
+          //                     Annotation(
+          //                         annotationId: AnnotationId('start'),
+          //                         position: LatLng(
+          //                             widget.pedometerSession.path!.points.first
+          //                                 .latitude,
+          //                             widget.pedometerSession.path!.points.first
+          //                                 .longitude),
+          //                         icon: BitmapDescriptor.markerAnnotation),
+          //                   )
+          //                   ..add(
+          //                     Annotation(
+          //                         annotationId: AnnotationId('end'),
+          //                         position: LatLng(
+          //                             widget.pedometerSession.path!.points.last
+          //                                 .latitude,
+          //                             widget.pedometerSession.path!.points.last
+          //                                 .longitude),
+          //                         icon: BitmapDescriptor.markerAnnotation),
+          //                   )),
+          //             polylines: widget.pedometerSession.path!.points.isEmpty
+          //                 ? null
+          //                 : Set<Polyline>.of([
+          //                     Polyline(
+          //                       polylineId: PolylineId(widget
+          //                           .pedometerSession.path!.polylineId.value),
+          //                       color: Colors.blue,
+          //                       points: List<LatLng>.from(
+          //                         widget.pedometerSession.path!.points.map(
+          //                           (e) => LatLng(e.latitude, e.longitude),
+          //                         ),
+          //                       ),
+          //                       width: 1,
+          //                     ),
+          //                   ]),
+          //           ),
+          //         ),
+          //       )
+          // :
+          Container(
+            height: 70.h,
+            width: 70.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.r),
+              image: DecorationImage(
+                  image: AssetImage(
+                    Random().nextInt(2) == 0
+                        ? "assets/images/map.png"
+                        : 'assets/images/sessionpath.png',
                   ),
-                )
-              : Container(
-                  height: 70.h,
-                  width: 70.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.r),
-                    image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/sessionpath.png',
-                        ),
-                        fit: BoxFit.cover),
-                  ),
-                ),
+                  fit: BoxFit.cover),
+            ),
+          ),
           SizedBox(
             width: 15.w,
           ),

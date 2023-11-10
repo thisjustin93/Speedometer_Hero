@@ -58,9 +58,9 @@ class PedoMeterSessionProvider extends ChangeNotifier {
         ];
       }
     }
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      notifyListeners();
-    });
+    // Timer.periodic(Duration(seconds: 1), (timer) {
+    //   notifyListeners();
+    // });
     if (startTime == null) {
       startTime = DateTime.now();
       notifyListeners();
@@ -72,10 +72,11 @@ class PedoMeterSessionProvider extends ChangeNotifier {
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
-      intervalDuration: Duration(seconds: 1),
+      intervalDuration: Duration(seconds: 2),
     );
     final iosSettings = AppleSettings(
-        accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
+        accuracy: LocationAccuracy.bestForNavigation,
+        allowBackgroundLocationUpdates: true);
     final settings = Platform.isAndroid ? androidSettings : iosSettings;
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
@@ -84,11 +85,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
           sessionId: DateTime.now().toString(),
           sessionTitle: "",
         );
-        // if (currentPedometerSession!.geoPositions == null) {
-        //   currentPedometerSession!.geoPositions = [
-        //     await Geolocator.getCurrentPosition()
-        //   ];
-        // }
       }
       currentPedometerSession!.speedInMS = position.speed;
       if (currentPedometerSession!.geoPositions == null) {

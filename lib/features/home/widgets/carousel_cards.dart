@@ -69,9 +69,9 @@ class _FancyCardState extends State<FancyCard> {
             color: Theme.of(context).colorScheme.background,
             height: isPortrait ? 310.h : 230.h,
             width:
-                isPortrait ? 320.w : (MediaQuery.of(context).size.width * 0.46),
+                isPortrait ? 130.w : (MediaQuery.of(context).size.width * 0.46),
             padding: isPortrait
-                ? EdgeInsets.symmetric(horizontal: 5.w)
+                ? EdgeInsets.symmetric(horizontal: width * 0.015)
                 : EdgeInsets.only(
                     top: (height * 0.1),
                     left: width * 0.02,
