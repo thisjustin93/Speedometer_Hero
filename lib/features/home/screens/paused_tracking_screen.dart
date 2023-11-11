@@ -168,12 +168,12 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                             Polyline(
                               polylineId: PolylineId(
                                   currentPedometerSessionProvider
-                                      .currentPedometerSession!
-                                      .path!
-                                      .polylineId
-                                      .value),
-                              color: currentPedometerSessionProvider
-                                  .currentPedometerSession!.path!.color,
+                                              .currentPedometerSession !=
+                                          null
+                                      ? currentPedometerSessionProvider
+                                          .currentPedometerSession!.sessionId
+                                      : ''),
+                              color: Colors.blue,
                               points: List<LatLng>.from(
                                 currentPedometerSessionProvider
                                     .currentPedometerSession!.geoPositions!
@@ -287,6 +287,9 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                                   .updatePedometerSessionList(
                                       currentPedometerSessionProvider
                                           .pedometerSessions);
+                              await currentPedometerSessionProvider
+                                  .geolocatorStream!
+                                  .cancel();
                               Navigator.of(context).pop();
                             },
                             child: Container(
@@ -311,7 +314,10 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              await currentPedometerSessionProvider
+                                  .geolocatorStream!
+                                  .cancel();
                               Navigator.of(context).pop();
                             },
                             child: Container(
@@ -348,6 +354,9 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
                                 //         .currentPedometerSession!
                                 //         .pauseDuration +=
                                 //     DateTime.now().difference(widget.pauseTime);
+                                await currentPedometerSessionProvider
+                                    .geolocatorStream!
+                                    .cancel();
                                 Navigator.of(context).pop(true);
                               },
                               child: CircleAvatar(
