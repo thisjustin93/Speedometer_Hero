@@ -72,11 +72,10 @@ class PedoMeterSessionProvider extends ChangeNotifier {
     // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
-      intervalDuration: Duration(seconds: 2),
+      intervalDuration: Duration(milliseconds: 500),
     );
     final iosSettings = AppleSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
-        allowBackgroundLocationUpdates: true);
+        accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
     final settings = Platform.isAndroid ? androidSettings : iosSettings;
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
