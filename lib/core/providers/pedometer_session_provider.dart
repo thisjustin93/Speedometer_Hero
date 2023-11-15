@@ -16,6 +16,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
 
   void setCurrentPedometerSession(PedometerSession pedometerSession) {
     currentPedometerSession = pedometerSession;
+
     notifyListeners();
   }
 
@@ -25,7 +26,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  StreamSubscription<Position>? geolocatorStream;
+  late StreamSubscription<Position>? geolocatorStream;
 
   void startTracking() async {
     var status = await Geolocator.checkPermission();
@@ -58,9 +59,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
         ];
       }
     }
-    // Timer.periodic(Duration(seconds: 1), (timer) {
-    //   notifyListeners();
-    // });
     if (startTime == null) {
       startTime = DateTime.now();
       notifyListeners();
@@ -68,8 +66,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
     geolocatorStream = null;
 
     final geolocator = Geolocator();
-
-    // List<LatLng> points = []
     final androidSettings = AndroidSettings(
       accuracy: LocationAccuracy.best,
       intervalDuration: Duration(milliseconds: 500),
@@ -77,8 +73,15 @@ class PedoMeterSessionProvider extends ChangeNotifier {
     final iosSettings = AppleSettings(
         accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
     final settings = Platform.isAndroid ? androidSettings : iosSettings;
+    if (geolocatorStream != null && geolocatorStream!.isPaused) {
+      geolocatorStream!.resume();
+    }
     geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
         .listen((Position position) {
+      if (geolocatorStream!.isPaused) {
+        return;
+      }
+      print(position.speed);
       if (currentPedometerSession == null) {
         currentPedometerSession = PedometerSession(
           sessionId: DateTime.now().toString(),
@@ -106,12 +109,14 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       geolocatorStream!.pause();
       pauseTime = DateTime.now();
     }
-
+    print("ISPAUSED:${geolocatorStream!.isPaused}");
     notifyListeners();
   }
 
   Future<void> stopTracking(
       double speed, double avgSpeed, double maxSpeed, double distance) async {
+    await geolocatorStream!.cancel();
+
     isTracking = false;
     if (geolocatorStream != null) {
       var id = DateTime.now().toString();
@@ -156,7 +161,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       currentPedometerSession!.note = '';
       currentPedometerSession!.geoPositions =
           currentPedometerSession!.geoPositions;
-      await geolocatorStream!.cancel();
     }
     notifyListeners();
   }

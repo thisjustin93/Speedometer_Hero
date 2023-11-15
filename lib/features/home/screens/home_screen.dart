@@ -616,6 +616,10 @@ class _HomeScreenState extends State<HomeScreen> {
           : FloatingActionButtonLocation.endTop,
       floatingActionButton: InkWell(
         onTap: () async {
+          if (!(pedometerSessionProvider.isTracking) &&
+              pedometerSessionProvider.geolocatorStream != null) {
+            await pedometerSessionProvider.geolocatorStream!.cancel();
+          }
           if (pedometerSessionProvider.currentPedometerSession != null &&
               pedometerSessionProvider.currentPedometerSession!.geoPositions !=
                   null) {
