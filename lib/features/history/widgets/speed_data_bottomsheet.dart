@@ -12,8 +12,12 @@ import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
+import 'package:speedometer/core/services/firebase_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
+import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 // import 'package:clipboard/clipboard.dart';
 import 'package:speedometer/core/utils/app_snackbar.dart';
@@ -49,36 +53,43 @@ speedDataBottomSheet(BuildContext context, List<String> timestamp,
                 style: context.textStyles.mThick(),
               ),
               trailing: IconButton(
-                onPressed: () async{
-                        final controller = ScreenshotController();
-
-                  final bytes =
-                            await controller.captureFromWidget(Material(
-                          child: chart.SfCartesianChart(
-                        primaryXAxis: chart.DateTimeAxis(
-                          majorGridLines: const chart.MajorGridLines(width: 0),
-                          minorGridLines: const chart.MinorGridLines(width: 0),
-                          isVisible: true,
+                onPressed: () async {
+                  if (Provider.of<SubscriptionProvider>(context, listen: false)
+                          .status ==
+                      SubscriptionStatus.notSubscribed) {
+                    try {
+                      var user =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .user;
+                      final paymentDone =
+                          await StripePayment().makePayment("499"); //4.99
+                      if (paymentDone) {
+                        user!.isUserSubscribed = true;
+                        await FirebaseServices().updateUser(user);
+                        Provider.of<SubscriptionProvider>(context,
+                                listen: false)
+                            .setSubscriptionStatus(
+                                SubscriptionStatus.subscribed);
+                        // share it
+                        shareBottomSheet(context, session);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Payment could not be proceed"),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      print("error payment:$e");
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString()),
                         ),
-                        primaryYAxis: chart.NumericAxis(
-                          majorGridLines: const chart.MajorGridLines(width: 0),
-                          minorGridLines: const chart.MinorGridLines(width: 0),
-                          isVisible: true,
-                        ),
-                        series: <chart.ChartSeries>[
-                          chart.LineSeries<Position, DateTime>(
-                            dataSource: session.geoPositions ??
-                                [],
-                            xValueMapper: (Position position, _) =>
-                                position.timestamp,
-                            yValueMapper: (Position position, _) =>
-                                convertSpeed(
-                                    position.speed, settings.speedUnit),
-                          )
-                        ],
-                      ),
-                        ));
-                  shareBottomSheet(context, session);
+                      );
+                    }
+                  } else {
+                    shareBottomSheet(context, session);
+                  }
                 },
                 icon: Icon(
                   Icons.file_upload_outlined,

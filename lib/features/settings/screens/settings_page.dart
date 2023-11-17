@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
+import 'package:speedometer/core/services/firebase_services.dart';
+import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
+import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
 import 'package:speedometer/features/settings/screens/change_elevationunit_screen.dart';
 import 'package:speedometer/features/settings/screens/change_speedunit_screen.dart';
 import 'package:speedometer/features/settings/screens/change_theme_screen.dart';
@@ -111,6 +115,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 15.h,
                         ),
                         InkWell(
+                          onTap: () async {
+                            if (Provider.of<SubscriptionProvider>(context,
+                                        listen: false)
+                                    .status ==
+                                SubscriptionStatus.notSubscribed) {
+                              try {
+                                var user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .user;
+                                final paymentDone = await StripePayment()
+                                    .makePayment("499"); //4.99
+                                if (paymentDone) {
+                                  user!.isUserSubscribed = true;
+                                  await FirebaseServices().updateUser(user);
+                                  Provider.of<SubscriptionProvider>(context,
+                                          listen: false)
+                                      .setSubscriptionStatus(
+                                          SubscriptionStatus.subscribed);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Congratulations. You are now a Premium user"),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text("Payment could not be proceed"),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print("error payment:$e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                           child: Container(
                             height: 32.h,
                             width: 280.w,

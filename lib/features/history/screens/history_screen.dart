@@ -10,8 +10,12 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
+import 'package:speedometer/core/services/firebase_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
+import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/styling/sizes.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
@@ -304,10 +308,58 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 ),
                                 SlidableAction(
                                   onPressed: (_) async {
-                                    shareBottomSheet(
-                                        context,
-                                        pedometerSessionProvider
-                                            .pedometerSessions[index]);
+                                    if (Provider.of<SubscriptionProvider>(
+                                                context,
+                                                listen: false)
+                                            .status ==
+                                        SubscriptionStatus.notSubscribed) {
+                                      try {
+                                        var user = Provider.of<UserProvider>(
+                                                context,
+                                                listen: false)
+                                            .user;
+                                        final paymentDone =
+                                            await StripePayment()
+                                                .makePayment("499"); //4.99
+                                        if (paymentDone) {
+                                          user!.isUserSubscribed = true;
+                                          await FirebaseServices()
+                                              .updateUser(user);
+                                          Provider.of<SubscriptionProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .setSubscriptionStatus(
+                                                  SubscriptionStatus
+                                                      .subscribed);
+                                          // share it
+                                          shareBottomSheet(
+                                              context,
+                                              pedometerSessionProvider
+                                                  .pedometerSessions[index]);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  "Payment could not be proceed"),
+                                            ),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        print("error payment:$e");
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(e.toString()),
+                                          ),
+                                        );
+                                      }
+                                    }else{
+                                       shareBottomSheet(
+                                              context,
+                                              pedometerSessionProvider
+                                                  .pedometerSessions[index]);
+                                    }
                                   },
                                   // onPressed: (context) {
                                   //   // Dialog when click share button

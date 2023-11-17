@@ -8,8 +8,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
+import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
+import 'package:speedometer/core/services/firebase_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
+import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
@@ -140,7 +144,41 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
           ),
           InkWell(
             onTap: () async {
-              shareBottomSheet(context, widget.session);
+              if (Provider.of<SubscriptionProvider>(context, listen: false)
+                      .status ==
+                  SubscriptionStatus.notSubscribed) {
+                try {
+                  var user =
+                      Provider.of<UserProvider>(context, listen: false).user;
+                  final paymentDone =
+                      await StripePayment().makePayment("499"); //4.99
+                  if (paymentDone) {
+                    user!.isUserSubscribed = true;
+                    await FirebaseServices().updateUser(user);
+                    Provider.of<SubscriptionProvider>(context, listen: false)
+                        .setSubscriptionStatus(SubscriptionStatus.subscribed);
+                    // share it
+                    shareBottomSheet(context, widget.session);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Payment could not be proceed"),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  print("error payment:$e");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                    ),
+                  );
+                }
+              }else{
+                 shareBottomSheet(
+                                              context,widget.session);
+              }
+              // shareBottomSheet(context, widget.session);
             },
             borderRadius: BorderRadius.circular(20),
             child: Icon(

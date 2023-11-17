@@ -11,12 +11,17 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
+import 'package:speedometer/core/services/firebase_services.dart';
+import 'package:speedometer/core/services/payment_services.dart';
+import 'package:speedometer/core/services/purchase_api.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
@@ -60,12 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // var pedometerSessionProvider;
   @override
   void initState() {
-    Future.delayed(
-      Duration(milliseconds: 1000),
-      () {
-        FlutterNativeSplash.remove();
-      },
-    );
     // checkAndRequestLocationPermission();
     startTime = DateTime.now();
     speed = 0;
@@ -96,25 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
       Future.delayed(
         Duration(seconds: 0),
         () async {
-          // await
-          // getPermissions();
-          // startTracking = Provider.of<PedoMeterSessionProvider>(context,
-          //                 listen: false)
-          //             .geolocatorStream !=
-          //         null &&
-          //     !(Provider.of<PedoMeterSessionProvider>(context, listen: false)
-          //         .geolocatorStream!
-          //         .isPaused);
-          // if (!startTracking) {
           Provider.of<PedoMeterSessionProvider>(context, listen: false)
               .startTracking();
-          // }
         },
       );
     }
-
-    // pedometerSessionProvider = Provider.of<PedoMeterSessionProvider>(context);
-    // setState(() {});
     super.initState();
   }
 
@@ -153,91 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
   }
-
-  // Get Device Moving Speed
-  // void _startTracking() async {
-  //   geolocatorStream = null;
-  //   var status = await Geolocator.checkPermission();
-
-  //   if (status == LocationPermission.denied ||
-  //       status == LocationPermission.deniedForever ||
-  //       status == LocationPermission.unableToDetermine) {
-  //     await Geolocator.requestPermission();
-  //   }
-
-  //   bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-
-  //   if (!isLocationServiceEnabled) {
-  //     final result = await location.Location().requestService();
-  //     if (result == true) {
-  //       print('Service has been enabled');
-  //     } else {
-  //       print('Service has not been enabled');
-  //     }
-  //   }
-
-  //   final geolocator = Geolocator();
-
-  //   // List<LatLng> points = []
-  //   final androidSettings = AndroidSettings(
-  //     accuracy: LocationAccuracy.best,
-  //     intervalDuration: Duration(seconds: 1),
-  //   );
-  //   final iosSettings = AppleSettings(
-  //       accuracy: LocationAccuracy.best, allowBackgroundLocationUpdates: true);
-  //   final settings = Platform.isAndroid ? androidSettings : iosSettings;
-  //   startTime = DateTime.now();
-  //   speed = 0;
-  //   maxSpeed = 0;
-  //   totalDistance = 0;
-  //   // currentPosition = null;
-  //   pauseTime = null;
-  //   endTime = null;
-  //   startingAltitude = 0;
-  //   endingAltitude = 0;
-  //   geolocatorStream = Geolocator.getPositionStream(locationSettings: settings)
-  //       .listen((Position position) {
-  //     if (mounted) {
-  //       geoPostions.add(position);
-  //       // if (position.speed < 0) {
-  //       //   return;
-  //       // } else {
-  //       if (currentPosition != null) {
-  //         double distanceInMeters = Geolocator.distanceBetween(
-  //           currentPosition!.latitude,
-  //           currentPosition!.longitude,
-  //           position.latitude,
-  //           position.longitude,
-  //         );
-
-  //         totalDistance += distanceInMeters;
-  //       }
-  //       if (startingAltitude == 0) {
-  //         startingAltitude = position.altitude;
-  //       }
-  //       endingAltitude = position.altitude;
-  //       pathPoints.add(LatLng(position.latitude, position.longitude));
-  //       currentPosition = position;
-
-  //       speed = position.speed;
-  //       if (speed > maxSpeed) {
-  //         maxSpeed = speed;
-  //       }
-  //       startingPosition ??= position;
-  //       if (DateTime.now().difference(startTime!).inSeconds % 3 == 0) {
-  //         getCityNameFromCoordinates(position);
-  //       }
-  //       // }
-  //       avgSpeed = 0;
-  //       for (var i in geoPostions) {
-  //         avgSpeed = (avgSpeed + i.speed);
-  //       }
-  //       avgSpeed /= geoPostions.length;
-
-  //       setState(() {});
-  //     }
-  //   });
-  // }
 
   Future<String> getCityNameFromCoordinates(Position position) async {
     try {
@@ -300,6 +200,26 @@ class _HomeScreenState extends State<HomeScreen> {
     // assign start and end time
     startTime = session.geoPositions!.first.timestamp;
     endTime = session.geoPositions!.last.timestamp;
+  }
+
+  Future fetchOffers() async {
+    final offerings = await PurchaseApi.fetchOffers();
+    if (offerings.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("No Plans Found"),
+        ),
+      );
+    } else {
+      // final packages = offerings
+      //     .map((offer) => offer.availablePackages)
+      //     .expand((pair) => pair)
+      //     .toList();
+      //     Utils.showSheet(context,(context)=>PaywallWidget(packages:packages,title:"Upgrade to Premium",description:"Upgrade to a new plan to "))
+      final offer = offerings.first;
+
+      print("offer: $offer");
+    }
   }
 
   @override
@@ -754,7 +674,44 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 10.h,
                           ),
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              try {
+                                // await Purchases.purchaseStoreProduct(StoreProduct(
+                                //     "id",
+                                //     "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //     'Speedometer GPS Premium',
+                                //     4.99,
+                                //     "\$4.99",
+                                //     "USD"));
+                                var user = Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .user;
+                                final paymentDone = await StripePayment()
+                                    .makePayment("499"); //4.99
+                                if (paymentDone) {
+                                  user!.isUserSubscribed = true;
+                                  await FirebaseServices().updateUser(user);
+                                  Provider.of<SubscriptionProvider>(context,
+                                          listen: false)
+                                      .setSubscriptionStatus(
+                                          SubscriptionStatus.subscribed);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text("Payment could not be proceed"),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                  ),
+                                );
+                              }
+                              Navigator.pop(context);
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xffF82929),
                                 foregroundColor: Colors.white,
@@ -864,244 +821,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )),
       ),
-
-      // floatingActionButton: InkWell(
-      //   onTap: () async {
-      //     if (Provider.of<RecordingProvider>(context, listen: false)
-      //         .recordingStarted) {
-      //       Provider.of<RecordingProvider>(context, listen: false)
-      //           .stopRecording();
-      //     } else {
-      //       Provider.of<RecordingProvider>(context, listen: false)
-      //           .startRecording();
-      //     }
-
-      //     if (startTracking && !(geolocatorStream!.isPaused)) {
-      //       String sessionId = DateTime.now().toString();
-      //       startTracking = false;
-      //       endTime = DateTime.now();
-      //       pauseTime = DateTime.now();
-      //       // geolocatorStream?.cancel();
-      //       geolocatorStream?.pause();
-      //       pedometerSessionProvider.setCurrentPedometerSession(
-      //         PedometerSession(
-      //           sessionId: DateTime.now().toString(),
-      //           sessionTitle: DateFormat('MM/dd/yy HH:mm')
-      //               .format(DateTime.parse(sessionId))
-      //               .toString(),
-      //           averageSpeedInMS:
-      //               totalDistance / endTime!.difference(startTime!).inSeconds,
-      //           distanceInMeters: totalDistance,
-      //           endPoint: LatLng(
-      //               currentPosition!.latitude, currentPosition!.longitude),
-      //           startPoint: LatLng(
-      //               startingPosition!.latitude, startingPosition!.longitude),
-      //           startTime: startTime,
-      //           endTime: endTime,
-      //           pauseDuration:
-      //               pedometerSessionProvider.currentPedometerSession == null
-      //                   ? Duration.zero
-      //                   : pedometerSessionProvider
-      //                       .currentPedometerSession!.pauseDuration,
-      //           maxSpeedInMS: maxSpeed,
-      //           altitude: endingAltitude - startingAltitude,
-      //           sessionDuration:
-      //               pedometerSessionProvider.currentPedometerSession == null
-      //                   ? endTime!.difference(startTime!)
-      //                   : endTime!.difference(startTime!) -
-      //                       pedometerSessionProvider
-      //                           .currentPedometerSession!.pauseDuration,
-      //           speedInMS: speed,
-      //           path: Polyline(
-      //             polylineId: PolylineId(sessionId), // Provide a unique ID
-      //             // points: List<LatLng>.from(pathPoints), // Set the path points
-      //             points: pathPoints,
-      //             color: Colors.blue, // Set the color of the polyline
-      //             width: 5, // Set the width of the polyline
-      //           ),
-      //           activityType: '',
-      //           note: '',
-      //           geoPositions: geoPostions,
-      //         ),
-      //       );
-      //       Navigator.of(context)
-      //           .push(PageRouteBuilder(
-      //         pageBuilder: (context, animation, secondaryAnimation) =>
-      //             PausedTrackingScreen(pauseTime: DateTime.now()),
-      //         transitionsBuilder:
-      //             (context, animation, secondaryAnimation, child) {
-      //           var begin = Offset(1.0, 0.0);
-      //           var end = Offset.zero;
-      //           var curve = Curves.ease;
-      //           var tween = Tween(begin: begin, end: end)
-      //               .chain(CurveTween(curve: curve));
-
-      //           return SlideTransition(
-      //             position: animation.drive(tween),
-      //             child: child,
-      //           );
-      //         },
-      //       ))
-      //           .then((value) {
-      //         // Checks for when we return from Pause Screen
-      //         bool? isContinue = value;
-      //         if (isContinue != null && isContinue) {
-      //           Provider.of<RecordingProvider>(context, listen: false)
-      //               .startRecording();
-      //           endTime = null;
-      //           pauseTime = null;
-      //           startTracking = true;
-      //           // _startTracking();
-      //           geolocatorStream!.resume();
-      //           setState(() {});
-      //         } else {
-      //           startingAltitude = 0;
-      //           endingAltitude = 0;
-      //           pedometerSessionProvider.currentPedometerSession = null;
-      //           startTime = null;
-      //           endTime = null;
-      //           startingPosition = null;
-      //           totalDistance = 0;
-      //           avgSpeed = 0;
-      //           speed = 0;
-      //           maxSpeed = 0;
-      //           // pathPoints.clear();
-      //           // currentPosition = null;
-      //           pauseTime = null;
-      //           startTracking = false;
-      //           setState(() {});
-      //         }
-      //       });
-      //     } else {
-      //       // to start tracking but if not subscribed then show a dialog to subscribe
-      //       if (pedometerSessionProvider.pedometerSessions.length >= 8 &&
-      //           subscriptionStatus == SubscriptionStatus.notSubscribed) {
-      //         showDialog(
-      //           context: context,
-      //           builder: (context) {
-      //             return AlertDialog(
-      //               backgroundColor: Theme.of(context).colorScheme.primary,
-      //               shape: RoundedRectangleBorder(
-      //                   borderRadius: BorderRadius.circular(5.r)),
-      //               titlePadding: EdgeInsets.only(top: 10.h),
-      //               contentPadding: EdgeInsets.zero,
-      //               insetPadding:
-      //                   EdgeInsets.symmetric(horizontal: 10.w, vertical: 215.h),
-      //               title: Container(
-      //                 alignment: Alignment.center,
-      //                 height: 50.sp,
-      //                 width: 50.sp,
-      //                 decoration: BoxDecoration(
-      //                     color: Color(0xffF82929), shape: BoxShape.circle),
-      //                 child: Icon(
-      //                   Icons.shopping_cart,
-      //                   color: Colors.white,
-      //                   size: 30.sp,
-      //                 ),
-      //               ),
-      //               content: Container(
-      //                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-      //                 child: Column(
-      //                   children: [
-      //                     Text(
-      //                       'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
-      //                       textAlign: TextAlign.center,
-      //                       style: context.textStyles.mRegular(),
-      //                     ),
-      //                     SizedBox(
-      //                       height: 10.h,
-      //                     ),
-      //                     ElevatedButton(
-      //                       onPressed: () {},
-      //                       style: ElevatedButton.styleFrom(
-      //                           backgroundColor: Color(0xffF82929),
-      //                           foregroundColor: Colors.white,
-      //                           fixedSize: Size(300.w, 40.h),
-      //                           shape: StadiumBorder()),
-      //                       child: Text(
-      //                         'Unlimited Activity History',
-      //                         style: context.textStyles
-      //                             .mThick()
-      //                             .copyWith(color: Colors.white),
-      //                       ),
-      //                     ),
-      //                     TextButton(
-      //                         onPressed: () {
-      //                           Navigator.of(context).pop();
-      //                         },
-      //                         child: Text(
-      //                           "Cancel",
-      //                           style: context.textStyles.mRegular(),
-      //                         ))
-      //                   ],
-      //                 ),
-      //               ),
-      //             );
-      //           },
-      //         );
-      //       }
-      //       // When Subscribed, the start recording
-      //       else {
-      //         // maxSpeed = 0;
-      //         // totalDistance = 0;
-      //         // currentPosition = null;
-      //         pauseTime = null;
-      //         startTracking = true;
-      //         endTime = null;
-      //         pathPoints.clear();
-
-      //         startingAltitude = 0;
-      //         endingAltitude = 0;
-      //         // -99 is a code speed to show the speed as -- for a second. Per clients request
-      //         geolocatorStream != null ? geolocatorStream!.pause() : null;
-      //         startTime = DateTime(30000);
-      //         // startTime = null;
-      //         speed = -99;
-      //         avgSpeed = -99;
-      //         maxSpeed = -99;
-      //         totalDistance = -99;
-      //         await Future.delayed(Duration(seconds: 1));
-      //         _startTracking();
-      //       }
-      //     }
-      //     setState(() {});
-      //   },
-      //   child: CircleAvatar(
-      //       radius: isPortrait ? 24.r : 45.r,
-      //       backgroundColor: settings.darkTheme == null
-      //           ? MediaQuery.of(context).platformBrightness == Brightness.dark
-      //               ? !startTracking
-      //                   ? Colors.white
-      //                   : Color(0xffF82929)
-      //               : !startTracking
-      //                   ? Colors.black
-      //                   : Color(0xffF82929)
-      //           : settings.darkTheme!
-      //               ? !startTracking
-      //                   ? Colors.white
-      //                   : Color(0xffF82929)
-      //               : !startTracking
-      //                   ? Colors.black
-      //                   : Color(0xffF82929),
-      //       child: CircleAvatar(
-      //         backgroundColor: settings.darkTheme == null
-      //             ? MediaQuery.of(context).platformBrightness == Brightness.dark
-      //                 ? Colors.black
-      //                 : Colors.white
-      //             : settings.darkTheme!
-      //                 ? Colors.black
-      //                 : Colors.white,
-      //         radius: isPortrait ? 21.r : 40.r,
-      //         child: CircleAvatar(
-      //           backgroundColor: startTracking
-      //               ? DateTime.now().second % 2 == 0
-      //                   ? Colors.red
-      //                   : Color(0xffFD8282)
-      //               : Color(0xffF82929),
-      //           radius: isPortrait ? 18.r : 35.r,
-      //         ),
-      //       )),
-      // ),
     );
   }
 }

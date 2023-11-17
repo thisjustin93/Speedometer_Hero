@@ -9,16 +9,25 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
+import 'package:speedometer/core/models/UserModel.dart';
 import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
+import 'package:speedometer/core/services/auth_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
+import 'package:speedometer/features/Auth/auth_screen.dart';
 import 'package:speedometer/main_navigation_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  Stripe.publishableKey =
+      'pk_test_51MPPCnGWLLYsWJjCn0ju2BWyRqRz6g0VQPIadKpFZMPi0TvpvDn3qMXyTKJQrPN4JkY3epO8dEEqtV9PTvpEzO8H00NvCXVwqj';
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
@@ -39,6 +48,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        StreamProvider<UserModel>.value(
+          initialData: UserModel(userId: '0'),
+          value: AuthService().user,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
         ChangeNotifierProvider(
           create: (context) => PedoMeterSessionProvider(),
         ),
@@ -106,7 +122,7 @@ class MyApp extends StatelessWidget {
                   ),
                   visualDensity: VisualDensity.defaultDensityForPlatform(
                       TargetPlatform.iOS)),
-              home: MainNavigationScreen(),
+              home: AuthScreen(),
             );
           }),
     );

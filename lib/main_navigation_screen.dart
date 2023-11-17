@@ -10,6 +10,7 @@ import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
+import 'package:speedometer/core/providers/user_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
@@ -51,7 +52,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   checkSubscription() async {
-    SubscriptionStatus status = SubscriptionStatus.subscribed;
+    SubscriptionStatus status =
+        Provider.of<UserProvider>(context, listen: false)
+                .user!
+                .isUserSubscribed!
+            ? SubscriptionStatus.subscribed
+            : SubscriptionStatus.notSubscribed;
     Future.delayed(
       Duration(milliseconds: 1),
       () {
