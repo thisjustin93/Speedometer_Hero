@@ -676,34 +676,49 @@ class _HomeScreenState extends State<HomeScreen> {
                           ElevatedButton(
                             onPressed: () async {
                               try {
-                                await Purchases.purchaseStoreProduct(StoreProduct(
+                                await Purchases.purchasePackage(Package(
                                     "one_time_subscription",
-                                    "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                    'Speedometer GPS Premium',
-                                    4.99,
-                                    "\$4.99",
-                                    "USD"));
-                              //   var user = Provider.of<UserProvider>(context,
-                              //           listen: false)
-                              //       .user;
-                              //   final paymentDone = await StripePayment()
-                              //       .makePayment("499"); //4.99
-                              //   if (paymentDone) {
-                              //     user!.isUserSubscribed = true;
-                              //     await FirebaseServices().updateUser(user);
-                              //     Provider.of<SubscriptionProvider>(context,
-                              //             listen: false)
-                              //         .setSubscriptionStatus(
-                              //             SubscriptionStatus.subscribed);
-                              //   } else {
-                              //     ScaffoldMessenger.of(context).showSnackBar(
-                              //       SnackBar(
-                              //         content:
-                              //             Text("Payment could not be proceed"),
-                              //       ),
-                              //     );
-                              //   }
+                                    PackageType.lifetime,
+                                    StoreProduct(
+                                        "one_time_subscription",
+                                        "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                        'Speedometer GPS Premium',
+                                        4.99,
+                                        "\$4.99",
+                                        "USD"),
+                                    "one_time_subscription"));
+                                // print(abc);
+                                // await Purchases.purchaseProduct(
+                                //     "one_time_subscription");
+                                // await Purchases.purchaseStoreProduct(StoreProduct(
+                                //     "one_time_subscription",
+                                //     "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //     'Speedometer GPS Premium',
+                                //     4.99,
+                                //     "\$4.99",
+                                //     "USD"));
+                                //   var user = Provider.of<UserProvider>(context,
+                                //           listen: false)
+                                //       .user;
+                                //   final paymentDone = await StripePayment()
+                                //       .makePayment("499"); //4.99
+                                //   if (paymentDone) {
+                                //     user!.isUserSubscribed = true;
+                                //     await FirebaseServices().updateUser(user);
+                                //     Provider.of<SubscriptionProvider>(context,
+                                //             listen: false)
+                                //         .setSubscriptionStatus(
+                                //             SubscriptionStatus.subscribed);
+                                //   } else {
+                                //     ScaffoldMessenger.of(context).showSnackBar(
+                                //       SnackBar(
+                                //         content:
+                                //             Text("Payment could not be proceed"),
+                                //       ),
+                                //     );
+                                //   }
                               } catch (e) {
+                                print(e.toString());
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(e.toString()),

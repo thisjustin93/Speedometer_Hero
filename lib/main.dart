@@ -25,11 +25,13 @@ import 'package:speedometer/main_navigation_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-final _configuration = PurchasesConfiguration("appl_UiHwurGoOoLHVmcJurfVXQHmtRT");
+final _configuration =
+    PurchasesConfiguration("appl_UiHwurGoOoLHVmcJurfVXQHmtRT");
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Purchases.configure(_configuration);
   await Firebase.initializeApp();
+  await Purchases.configure(_configuration);
+
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
