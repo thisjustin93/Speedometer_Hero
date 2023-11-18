@@ -314,37 +314,37 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             .status ==
                                         SubscriptionStatus.notSubscribed) {
                                       try {
-                                        var user = Provider.of<UserProvider>(
-                                                context,
-                                                listen: false)
-                                            .user;
-                                        final paymentDone =
-                                            await StripePayment()
-                                                .makePayment("499"); //4.99
-                                        if (paymentDone) {
-                                          user!.isUserSubscribed = true;
-                                          await FirebaseServices()
-                                              .updateUser(user);
-                                          Provider.of<SubscriptionProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .setSubscriptionStatus(
-                                                  SubscriptionStatus
-                                                      .subscribed);
-                                          // share it
-                                          shareBottomSheet(
-                                              context,
-                                              pedometerSessionProvider
-                                                  .pedometerSessions[index]);
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  "Payment could not be proceed"),
-                                            ),
-                                          );
-                                        }
+                                        // var user = Provider.of<UserProvider>(
+                                        //         context,
+                                        //         listen: false)
+                                        //     .user;
+                                        // final paymentDone =
+                                        //     await StripePayment()
+                                        //         .makePayment("499"); //4.99
+                                        // if (paymentDone) {
+                                        //   user!.isUserSubscribed = true;
+                                        //   await FirebaseServices()
+                                        //       .updateUser(user);
+                                        //   Provider.of<SubscriptionProvider>(
+                                        //           context,
+                                        //           listen: false)
+                                        //       .setSubscriptionStatus(
+                                        //           SubscriptionStatus
+                                        //               .subscribed);
+                                        //   // share it
+                                        //   shareBottomSheet(
+                                        //       context,
+                                        //       pedometerSessionProvider
+                                        //           .pedometerSessions[index]);
+                                        // } else {
+                                        //   ScaffoldMessenger.of(context)
+                                        //       .showSnackBar(
+                                        //     SnackBar(
+                                        //       content: Text(
+                                        //           "Payment could not be proceed"),
+                                        //     ),
+                                        //   );
+                                        // }
                                       } catch (e) {
                                         print("error payment:$e");
                                         ScaffoldMessenger.of(context)

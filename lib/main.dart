@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/models/purchases_configuration.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
 import 'package:speedometer/core/models/UserModel.dart';
@@ -23,11 +25,11 @@ import 'package:speedometer/main_navigation_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
+final _configuration = PurchasesConfiguration("appl_UiHwurGoOoLHVmcJurfVXQHmtRT");
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await Purchases.configure(_configuration);
   await Firebase.initializeApp();
-  Stripe.publishableKey =
-      'pk_test_51MPPCnGWLLYsWJjCn0ju2BWyRqRz6g0VQPIadKpFZMPi0TvpvDn3qMXyTKJQrPN4JkY3epO8dEEqtV9PTvpEzO8H00NvCXVwqj';
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
