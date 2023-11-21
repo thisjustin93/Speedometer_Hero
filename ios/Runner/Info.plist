@@ -37,8 +37,6 @@
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location in the background.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We require access to your photo library for features provided by some of the libraries we use. We will never access your photos without your explicit permission.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
