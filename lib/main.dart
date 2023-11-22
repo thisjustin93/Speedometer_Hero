@@ -23,7 +23,6 @@ import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/features/Auth/auth_screen.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 
 final _configuration =
     PurchasesConfiguration("appl_UiHwurGoOoLHVmcJurfVXQHmtRT");
