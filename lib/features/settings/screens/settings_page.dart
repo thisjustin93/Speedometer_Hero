@@ -121,6 +121,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .status ==
                                 SubscriptionStatus.notSubscribed) {
                               try {
+                                  await Purchases.purchasePackage(Package(
+                                    "one_time_subscription",
+                                    PackageType.lifetime,
+                                    StoreProduct(
+                                        "one_time_subscription",
+                                        "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                        'Speedometer GPS Premium',
+                                        4.99,
+                                        "\$4.99",
+                                        "USD"),
+                                    "one_time_subscription"));
                                 // var user = Provider.of<UserProvider>(context,
                                 //         listen: false)
                                 //     .user;
