@@ -23,25 +23,6 @@
           "other_platform_oauth_client": []
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:835893085781:android:a65e1c1c268f9a780c36dc",
-        "android_client_info": {
-          "package_name": "com.example.testprojecttoseewhatschanged"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC-sYNuFs5Xx1ds5bivGprpX7-1DX0cXh8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
     }
   ],
   "configuration_version": "1"
