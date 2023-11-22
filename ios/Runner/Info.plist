@@ -20,6 +20,8 @@
 	<string>APPL</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera for profile picture and other usages.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to upload pictures you select.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
