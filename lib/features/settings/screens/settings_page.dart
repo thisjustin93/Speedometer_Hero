@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
@@ -121,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .status ==
                                 SubscriptionStatus.notSubscribed) {
                               try {
-                                  await Purchases.purchasePackage(Package(
+                                await Purchases.purchasePackage(Package(
                                     "one_time_subscription",
                                     PackageType.lifetime,
                                     StoreProduct(
