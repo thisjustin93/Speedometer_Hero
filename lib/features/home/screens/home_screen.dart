@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // var pedometerSessionProvider;
   @override
   void initState() {
+    FlutterNativeSplash.remove();
     // checkAndRequestLocationPermission();
     startTime = DateTime.now();
     speed = 0;
@@ -676,17 +677,31 @@ class _HomeScreenState extends State<HomeScreen> {
                           ElevatedButton(
                             onPressed: () async {
                               try {
-                                await Purchases.purchasePackage(Package(
-                                    "one_time_subscription",
-                                    PackageType.lifetime,
-                                    StoreProduct(
-                                        "one_time_subscription",
-                                        "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                        'Speedometer GPS Premium',
-                                        4.99,
-                                        "\$4.99",
-                                        "USD"),
-                                    "one_time_subscription"));
+                                await Purchases.purchaseProduct(
+                                        "onetimesubscription")
+                                    .then((value) {
+                                  Provider.of<SubscriptionProvider>(context,
+                                          listen: false)
+                                      .setSubscriptionStatus(
+                                          SubscriptionStatus.subscribed);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Congratulations. You are now a Premium user"),
+                                    ),
+                                  );
+                                });
+                                // await Purchases.purchasePackage(Package(
+                                //     "one_time_subscription",
+                                //     PackageType.lifetime,
+                                //     StoreProduct(
+                                //         "one_time_subscription",
+                                //         "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //         'Speedometer GPS Premium',
+                                //         4.99,
+                                //         "\$4.99",
+                                //         "USD"),
+                                //     "one_time_subscription"));
                                 // print(abc);
                                 // await Purchases.purchaseProduct(
                                 //     "one_time_subscription");

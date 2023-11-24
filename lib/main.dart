@@ -22,13 +22,13 @@ import 'package:speedometer/core/services/auth_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/features/Auth/auth_screen.dart';
 import 'package:speedometer/main_navigation_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 final _configuration =
-    PurchasesConfiguration("appl_UiHwurGoOoLHVmcJurfVXQHmtRT");
+    PurchasesConfiguration("appl_SgQrZhZNqvduAiFlRmemlsIzffi");
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   await Purchases.configure(_configuration);
 
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -51,13 +51,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        StreamProvider<UserModel>.value(
-          initialData: UserModel(userId: '0'),
-          value: AuthService().user,
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-        ),
+        // StreamProvider<UserModel>.value(
+        //   initialData: UserModel(userId: '0'),
+        //   value: AuthService().user,
+        // ),
+        // ChangeNotifierProvider(
+        //   create: (context) => UserProvider(),
+        // ),
         ChangeNotifierProvider(
           create: (context) => PedoMeterSessionProvider(),
         ),
@@ -125,7 +125,7 @@ class MyApp extends StatelessWidget {
                   ),
                   visualDensity: VisualDensity.defaultDensityForPlatform(
                       TargetPlatform.iOS)),
-              home: AuthScreen(),
+              home: MainNavigationScreen(),
             );
           }),
     );

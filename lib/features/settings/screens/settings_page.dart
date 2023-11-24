@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(
                   height: 5.h,
                 ),
-                if (Provider.of<SubscriptionProvider>(context, listen: false)
+                if (Provider.of<SubscriptionProvider>(context, listen: true)
                         .status ==
                     SubscriptionStatus.notSubscribed)
                   Container(
@@ -122,17 +122,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .status ==
                                 SubscriptionStatus.notSubscribed) {
                               try {
-                                await Purchases.purchasePackage(Package(
-                                    "one_time_subscription",
-                                    PackageType.lifetime,
-                                    StoreProduct(
-                                        "one_time_subscription",
-                                        "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                        'Speedometer GPS Premium',
-                                        4.99,
-                                        "\$4.99",
-                                        "USD"),
-                                    "one_time_subscription"));
+                                bool isConfigured =
+                                    await Purchases.isConfigured;
+                                String appUserID = await Purchases.appUserID;
+                                bool isAnonymous = await Purchases.isAnonymous;
+                                print('isConfigured:$isConfigured');
+                                print('appUserID:$appUserID');
+                                print('isAnonymous:$isAnonymous');
+                                await Purchases.purchaseProduct(
+                                        "onetimesubscription")
+                                    .then((value) {
+                                  Provider.of<SubscriptionProvider>(context,
+                                          listen: false)
+                                      .setSubscriptionStatus(
+                                          SubscriptionStatus.subscribed);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          "Congratulations. You are now a Premium user"),
+                                    ),
+                                  );
+                                });
+
+                                // await Purchases.purchasePackage(Package(
+                                //     "onetimesubscription",
+                                //     PackageType.lifetime,
+                                //     StoreProduct(
+                                //         "onetimesubscription",
+                                //         "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //         'Speedometer GPS Premium',
+                                //         4.99,
+                                //         "\$4.99",
+                                //         "USD"),
+                                //     "onetimesubscription"));
                                 // var user = Provider.of<UserProvider>(context,
                                 //         listen: false)
                                 //     .user;

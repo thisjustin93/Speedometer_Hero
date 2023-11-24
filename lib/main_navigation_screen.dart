@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
 import 'package:speedometer/core/providers/app_start_session_provider.dart';
@@ -52,10 +53,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   checkSubscription() async {
+    // SubscriptionStatus status =
+    //     Provider.of<UserProvider>(context, listen: false)
+    //             .user!
+    //             .isUserSubscribed!
+    //         ? SubscriptionStatus.subscribed
+    //         : SubscriptionStatus.notSubscribed;
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    print(customerInfo.toJson().toString());
     SubscriptionStatus status =
-        Provider.of<UserProvider>(context, listen: false)
-                .user!
-                .isUserSubscribed!
+        customerInfo.allPurchasedProductIdentifiers.isNotEmpty
             ? SubscriptionStatus.subscribed
             : SubscriptionStatus.notSubscribed;
     Future.delayed(
