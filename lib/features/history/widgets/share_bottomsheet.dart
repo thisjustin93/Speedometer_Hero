@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:davinci/core/davinci_capture.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'dart:typed_data';
@@ -103,9 +104,22 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                   ),
                   ElevatedButton(
                     onPressed: () async {
+                      BuildContext? progressDialogContext;
+
                       try {
-                        await Purchases.purchaseProduct("onetimesubscription")
+                        showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              progressDialogContext = context;
+                              return Center(
+                                child: CupertinoActivityIndicator(radius: 25),
+                              );
+                            });
+                        await Purchases.purchaseProduct("1timesubscription")
                             .then((value) {
+                          Navigator.of(progressDialogContext!).pop();
+
                           Provider.of<SubscriptionProvider>(context,
                                   listen: false)
                               .setSubscriptionStatus(
@@ -398,15 +412,21 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                             'Excel file with text and image created at: ${file.path}');
                         // }
                         ///
-                        Navigator.of(context).pop();
                         Share.shareXFiles([XFile(file.path)]);
+                        Navigator.of(context).pop();
                       } catch (e) {
-                        print("error payment:$e");
+                        Navigator.of(progressDialogContext!).pop();
+
+                        print("Speedometer Hero:$e");
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(e.toString()),
+                            content: Text(
+                              "Purchase Cancelled",
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         );
+                        Navigator.of(context).pop();
                       }
                     },
                     style: ElevatedButton.styleFrom(

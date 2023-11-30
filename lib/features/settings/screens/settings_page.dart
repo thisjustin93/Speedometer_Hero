@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Unit(key: 'm', value: 'Meters')
   ];
   List gaugeSpeeds = [10, 20, 50, 100, 200, 400, 800, 1600, 3200];
+  bool isPurchaseSheetLoading = false;
   @override
   Widget build(BuildContext context) {
     var settingProvider = Provider.of<UnitsProvider>(context);
@@ -106,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 10.h,
                         ),
                         Text(
-                          'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
+                          'Buy the premium version of Speedometer Heroto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                           textAlign: TextAlign.center,
                           style: context.textStyles
                               .mRegular()
@@ -117,21 +121,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         InkWell(
                           onTap: () async {
+                            BuildContext? progressDialogContext;
+
                             if (Provider.of<SubscriptionProvider>(context,
                                         listen: false)
                                     .status ==
                                 SubscriptionStatus.notSubscribed) {
                               try {
-                                bool isConfigured =
-                                    await Purchases.isConfigured;
-                                String appUserID = await Purchases.appUserID;
-                                bool isAnonymous = await Purchases.isAnonymous;
-                                print('isConfigured:$isConfigured');
-                                print('appUserID:$appUserID');
-                                print('isAnonymous:$isAnonymous');
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      progressDialogContext = context;
+                                      return Center(
+                                        child: CupertinoActivityIndicator(
+                                            radius: 25),
+                                      );
+                                    });
                                 await Purchases.purchaseProduct(
-                                        "onetimesubscription")
+                                        "1timesubscription")
                                     .then((value) {
+                                  Navigator.of(progressDialogContext!).pop();
+                                  setState(() {
+                                    isPurchaseSheetLoading = false;
+                                  });
                                   Provider.of<SubscriptionProvider>(context,
                                           listen: false)
                                       .setSubscriptionStatus(
@@ -143,18 +156,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ),
                                   );
                                 });
-
                                 // await Purchases.purchasePackage(Package(
-                                //     "onetimesubscription",
+                                //     "1timesubscription",
                                 //     PackageType.lifetime,
                                 //     StoreProduct(
-                                //         "onetimesubscription",
-                                //         "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //         'Speedometer GPS Premium',
+                                //         "1timesubscription",
+                                //         "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //         'Speedometer Hero Premium',
                                 //         4.99,
                                 //         "\$4.99",
                                 //         "USD"),
-                                //     "onetimesubscription"));
+                                //     "1timesubscription"));
                                 // var user = Provider.of<UserProvider>(context,
                                 //         listen: false)
                                 //     .user;
@@ -182,10 +194,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 //   );
                                 // }
                               } catch (e) {
+                                Navigator.of(progressDialogContext!).pop();
+
                                 print("error payment:$e");
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(e.toString()),
+                                    content: Text(
+                                      "Purchase Cancelled",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 );
                               }
@@ -638,7 +655,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           final Uri _emailLaunchUri = Uri(
                             scheme: 'mailto',
                             path: 'carpediem.bk@outlook.com',
-                            query: 'subject=Feedback on Speedometer GPS App',
+                            query: 'subject=Feedback on Speedometer Hero App',
                           );
 
                           if (await canLaunchUrl(_emailLaunchUri)) {
@@ -766,6 +783,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Center(
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          CustomerInfo customerInfo =
+                              await Purchases.restorePurchases();
+
+                          print(customerInfo.toJson().toString());
+
+                          SubscriptionStatus status = customerInfo
+                                  .allPurchasedProductIdentifiers.isNotEmpty
+                              ? SubscriptionStatus.subscribed
+                              : SubscriptionStatus.notSubscribed;
+                          Provider.of<SubscriptionProvider>(context,
+                                  listen: false)
+                              .setSubscriptionStatus(status);
+                          if (status == SubscriptionStatus.subscribed) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Payment Restored. Subscription Enabled"),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text("No subscription found to restore"),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          print(e.toString());
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary),
+                      child: Text(
+                        "Restore payments",
+                        style: context.textStyles.mRegular(),
+                      )),
                 ),
                 SizedBox(
                   height: 15.h,

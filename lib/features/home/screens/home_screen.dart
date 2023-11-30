@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:geocoding/geocoding.dart';
@@ -227,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
-
+    print(MediaQuery.sizeOf(context));
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
@@ -236,7 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
     var settings = Provider.of<UnitsProvider>(context).settings;
     bool isPortrait =
         MediaQuery.of(context).orientation == Orientation.portrait;
-
     List<Widget> fancyCards() {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
@@ -259,11 +259,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? height * 0.57
                         : width <= 380
                             ? height * 0.55
-                            : width <= 415
-                                ? height * 0.43
-                                : width <= 430
-                                    ? height * 0.47
-                                    : height * 0.57,
+                            : width <= 415 && height <= 740
+                                ? height * 0.5
+                                : width <= 415
+                                    ? height * 0.43
+                                    : width <= 430
+                                        ? height * 0.47
+                                        : height * 0.57,
             maxWidth: isPortrait
                 ? width * 1
                 : height <= 420
@@ -279,11 +281,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? height * 0.57
                         : width <= 380
                             ? height * 0.55
-                            : width <= 415
-                                ? height * 0.43
-                                : width <= 430
-                                    ? height * 0.47
-                                    : height * 0.57,
+                            : width <= 415 && height <= 740
+                                ? height * 0.5
+                                : width <= 415
+                                    ? height * 0.43
+                                    : width <= 430
+                                        ? height * 0.47
+                                        : height * 0.57,
             width: isPortrait
                 ? width * 1
                 : height <= 420
@@ -667,7 +671,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Buy the premium version of Speedometer GPSto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
+                            'Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
                             textAlign: TextAlign.center,
                             style: context.textStyles.mRegular(),
                           ),
@@ -676,10 +680,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           ElevatedButton(
                             onPressed: () async {
+                              BuildContext? progressDialogContext;
                               try {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      progressDialogContext = context;
+                                      return Center(
+                                        child: CupertinoActivityIndicator(
+                                            radius: 25),
+                                      );
+                                    });
                                 await Purchases.purchaseProduct(
-                                        "onetimesubscription")
+                                        "1timesubscription")
                                     .then((value) {
+                                  Navigator.of(progressDialogContext!).pop();
                                   Provider.of<SubscriptionProvider>(context,
                                           listen: false)
                                       .setSubscriptionStatus(
@@ -696,8 +712,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //     PackageType.lifetime,
                                 //     StoreProduct(
                                 //         "one_time_subscription",
-                                //         "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //         'Speedometer GPS Premium',
+                                //         "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //         'Speedometer Hero Premium',
                                 //         4.99,
                                 //         "\$4.99",
                                 //         "USD"),
@@ -707,8 +723,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //     "one_time_subscription");
                                 // await Purchases.purchaseStoreProduct(StoreProduct(
                                 //     "one_time_subscription",
-                                //     "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //     'Speedometer GPS Premium',
+                                //     "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                //     'Speedometer Hero Premium',
                                 //     4.99,
                                 //     "\$4.99",
                                 //     "USD"));
@@ -733,10 +749,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //     );
                                 //   }
                               } catch (e) {
+                                Navigator.of(progressDialogContext!).pop();
+
                                 print(e.toString());
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(e.toString()),
+                                    content: Text(
+                                      "Purchase Cancelled",
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 );
                               }

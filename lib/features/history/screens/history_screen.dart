@@ -720,7 +720,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           'Excel file with text and image created at: ${file.path}');
                                       // }
                                       ///
-                                      Navigator.of(context).pop();
                                       Share.shareXFiles([XFile(file.path)]);
                                     }
 
@@ -766,8 +765,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     //     PackageType.lifetime,
                                     //     StoreProduct(
                                     //         "one_time_subscription",
-                                    //         "Buy the premium version of Speedometer GPS to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                    //         'Speedometer GPS Premium',
+                                    //         "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
+                                    //         'Speedometer Hero Premium',
                                     //         4.99,
                                     //         "\$4.99",
                                     //         "USD"),

@@ -52,7 +52,7 @@ class _PausedTrackingScreenState extends State<PausedTrackingScreen> {
   // }
   BannerAd? _banner;
   void _createBannerAd(double screenWidth) {
-    AdSize adSize = AdSize(width: screenWidth.toInt(), height: 390);
+    AdSize adSize = AdSize(width: screenWidth.toInt(), height: 390.h.toInt());
     _banner = BannerAd(
         size: adSize,
         adUnitId: AdMobService.bannerAdUnitId!,

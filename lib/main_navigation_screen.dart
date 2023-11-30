@@ -30,13 +30,18 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int pageIndex = 0;
   bool recordingStarted = false;
   BannerAd? _banner;
-  void _createBannerAd(bool isLandscape) {
+  void _createBannerAd(bool isLandscape, Size size) {
     _banner = BannerAd(
-        size: isLandscape ? AdSize(width: 500, height: 60) : AdSize.fullBanner,
+        size: AdSize(width: size.width.toInt(), height: 60),
+        // size: AdSize.fluid,
         adUnitId: AdMobService.bannerAdUnitId!,
         listener: AdMobService.bannerAdListener,
         request: const AdRequest())
       ..load();
+    print(
+        "_banner!.responseInfo${_banner!.responseInfo}${_banner!.responseInfo.runtimeType}");
+    print(_banner!.responseInfo != null);
+    setState(() {});
   }
 
   getallsession() async {
@@ -82,8 +87,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     getallsession();
     checkSubscription();
     getSettings(isDarkTheme);
-    _createBannerAd(
-        MediaQuery.of(context).orientation == Orientation.landscape);
+    _createBannerAd(MediaQuery.of(context).orientation == Orientation.landscape,
+        MediaQuery.sizeOf(context));
   }
 
   static List<Widget> screens = [
@@ -110,28 +115,32 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
     recordingStarted =
         Provider.of<RecordingProvider>(context, listen: true).recordingStarted;
-
+    bool isUserSubscribed =
+        Provider.of<SubscriptionProvider>(context, listen: false).status ==
+            SubscriptionStatus.subscribed;
     return Scaffold(
       body: screens[pageIndex],
       bottomNavigationBar: MediaQuery.of(context).orientation ==
-              Orientation.landscape
+                  Orientation.landscape &&
+              !isUserSubscribed
           ? Container(
               height: 45.h,
               child: AdWidget(ad: _banner!),
             )
           : Container(
-              height: 120.h,
+              height: _banner == null || isUserSubscribed ? 50.h : 115.h,
               color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    height: 45.h,
-                    width: MediaQuery.of(context).size.width,
-                    child: AdWidget(ad: _banner!),
-                  ),
+                  if (!isUserSubscribed)
+                    Container(
+                      height: _banner == null ? 0 : 65.h,
+                      width: MediaQuery.of(context).size.width,
+                      child: _banner == null ? null : AdWidget(ad: _banner!),
+                    ),
                   Padding(
-                    padding: EdgeInsets.only(left: 35.w, right: 35.w, top: 3.h),
+                    padding: EdgeInsets.only(left: 35.w, right: 35.w),
                     child: CupertinoTabBar(
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,

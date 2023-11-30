@@ -1,0 +1,35 @@
+{
+  "identifier" : "EC18F0B6",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6473274019",
+      "localizations" : [
+        {
+          "description" : "Get access to premium features and no ads",
+          "displayName" : "GPS Speedometer Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "1timesubscription",
+      "referenceName" : "Speedometer Premium",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6470199870",
+    "_developerTeamID" : "S3AVSTF227",
+    "_lastSynchronizedDate" : 723038476.16284204
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

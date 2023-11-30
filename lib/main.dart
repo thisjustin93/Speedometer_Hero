@@ -22,15 +22,14 @@ import 'package:speedometer/core/services/auth_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/features/Auth/auth_screen.dart';
 import 'package:speedometer/main_navigation_screen.dart';
-// import 'package:firebase_core/firebase_core.dart';
 
 final _configuration =
-    PurchasesConfiguration("appl_SgQrZhZNqvduAiFlRmemlsIzffi");
+    PurchasesConfiguration("appl_sDdhLlXJTkAvLSEdUqSePzlkUjF");
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
   await Purchases.configure(_configuration);
-
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
 
@@ -40,9 +39,11 @@ void main() async {
     ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MobileAds.instance.initialize();
-  //   RequestConfiguration configuration =
-  //      RequestConfiguration(testDeviceIds: ['AD9AEB3A8102D4B5967050E524F217DE']);
-  // MobileAds.instance.updateRequestConfiguration(configuration);
+  RequestConfiguration configuration = RequestConfiguration(testDeviceIds: [
+    'AD9AEB3A8102D4B5967050E524F217DE',
+    "8273197a8c8172e4f599d2b54dc061467dfa87be"
+  ]);
+  MobileAds.instance.updateRequestConfiguration(configuration);
   runApp(MyApp());
 }
 

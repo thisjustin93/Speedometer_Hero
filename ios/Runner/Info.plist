@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Speedometer GPS</string>
+	<string>Speedometer Hero</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -26,6 +26,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9904898746688996~2969544196</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MKDirectionsApplicationSupportedModes</key>
@@ -33,11 +35,11 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera for profile picture and other usages.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
+	<string>This app needs access to location when open and in the background to show device speed, distance covered, altitude and device location on map.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
+	<string>This app needs access to location when in the background to show device speed, distance covered, altitude and device location on map.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location in the background.</string>
+	<string>This app needs access to location in the background to show device speed, distance covered, altitude and device location on map.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to upload pictures you select.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -63,7 +65,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-9904898746688996~2969544196</string>
+
+	<key>io.flutter.embedded_views_preview</key>
+    <true/>
 </dict>
 </plist>
