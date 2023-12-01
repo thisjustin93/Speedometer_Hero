@@ -38,7 +38,7 @@ void main() async {
     ..registerAdapter(PedometerSessionAdapter())
     ..registerAdapter(SettingsModelAdapter());
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
   RequestConfiguration configuration = RequestConfiguration(testDeviceIds: [
     'AD9AEB3A8102D4B5967050E524F217DE',
     "8273197a8c8172e4f599d2b54dc061467dfa87be"

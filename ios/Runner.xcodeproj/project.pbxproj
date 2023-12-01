@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03881D592B18B10700910BBE /* Speedometer Hero.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 03881D582B18B10700910BBE /* Speedometer Hero.storekit */; };
-		03881D5A2B18B10700910BBE /* Speedometer Hero.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 03881D582B18B10700910BBE /* Speedometer Hero.storekit */; };
-		03881D5C2B18B11500910BBE /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 03881D5B2B18B11500910BBE /* StoreKitTestCertificate.cer */; };
-		03881D5D2B18B11500910BBE /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 03881D5B2B18B11500910BBE /* StoreKitTestCertificate.cer */; };
 		03ACCAC92B10C87B000BE5E8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ACCAC82B10C87B000BE5E8 /* StoreKit.framework */; };
 		09FF5FC973531B14A4E14DF0 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 032F0FB0DE3B41AEB4AFF98C /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
@@ -49,8 +45,6 @@
 /* Begin PBXFileReference section */
 		032F0FB0DE3B41AEB4AFF98C /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0382CE882B08E5720043C8E3 /* RunnerRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunnerRelease.entitlements; sourceTree = "<group>"; };
-		03881D582B18B10700910BBE /* Speedometer Hero.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Speedometer Hero.storekit"; sourceTree = "<group>"; };
-		03881D5B2B18B11500910BBE /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		03ACCAC82B10C87B000BE5E8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0788A5892AF3E90100DA7404 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
@@ -130,8 +124,6 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
-				03881D582B18B10700910BBE /* Speedometer Hero.storekit */,
-				03881D5B2B18B11500910BBE /* StoreKitTestCertificate.cer */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -268,8 +260,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03881D5A2B18B10700910BBE /* Speedometer Hero.storekit in Resources */,
-				03881D5D2B18B11500910BBE /* StoreKitTestCertificate.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,9 +270,7 @@
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
-				03881D592B18B10700910BBE /* Speedometer Hero.storekit in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
-				03881D5C2B18B11500910BBE /* StoreKitTestCertificate.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,7 +496,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = S3AVSTF227;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -717,7 +705,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = S3AVSTF227;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -752,7 +740,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/RunnerRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = S3AVSTF227;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;

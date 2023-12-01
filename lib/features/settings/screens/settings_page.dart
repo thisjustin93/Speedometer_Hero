@@ -149,13 +149,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           listen: false)
                                       .setSubscriptionStatus(
                                           SubscriptionStatus.subscribed);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          "Congratulations. You are now a Premium user"),
-                                    ),
-                                  );
                                 });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        "Congratulations. You are now a Premium user"),
+                                  ),
+                                );
                                 // await Purchases.purchasePackage(Package(
                                 //     "1timesubscription",
                                 //     PackageType.lifetime,

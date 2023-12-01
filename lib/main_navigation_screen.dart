@@ -30,8 +30,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int pageIndex = 0;
   bool recordingStarted = false;
   BannerAd? _banner;
-  void _createBannerAd(bool isLandscape, Size size) {
-    _banner = BannerAd(
+  void _createBannerAd(bool isLandscape, Size size) async {
+    _banner = await BannerAd(
         size: AdSize(width: size.width.toInt(), height: 60),
         // size: AdSize.fluid,
         adUnitId: AdMobService.bannerAdUnitId!,
