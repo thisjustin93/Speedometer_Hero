@@ -743,10 +743,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          void shareApp() {
-                            Share.share(
-                                'Check out this amazing app! https://apps.apple.com/pk/app/speedometer-hero/id6470199870');
-                          }
+                          Share.share(
+                              'Check out this amazing app! https://apps.apple.com/pk/app/speedometer-hero/id6470199870');
                         },
                         child: Container(
                           height: 50.h,
