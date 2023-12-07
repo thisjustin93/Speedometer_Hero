@@ -162,12 +162,12 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                           ],
                           [
                             'Started',
-                            DateFormat('M/d/yy, h:mm:ss a')
+                            DateFormat('M-d-yy, h:mm:ss a')
                                 .format(session.startTime!)
                           ],
                           [
                             'Ended',
-                            DateFormat('M/d/yy, h:mm:ss a')
+                            DateFormat('M-d-yy, h:mm:ss a')
                                 .format(session.endTime!)
                           ],
                           [
@@ -285,7 +285,7 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                             ..cellStyle.fontName = "Arial"
                             ..cellStyle.fontSize = 11;
                           sheet.getRangeByName('B${i + 11}')
-                            ..setText(DateFormat('M/d/yy, h:mm:ss a')
+                            ..setText(DateFormat('M-d-yy, h:mm:ss a')
                                 .format(timeStamp))
                             ..cellStyle.hAlign = xl.HAlignType.center
                             ..cellStyle.fontName = "Arial"

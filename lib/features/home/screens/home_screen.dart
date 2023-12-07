@@ -92,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Provider.of<SubscriptionProvider>(context, listen: false).status;
       },
     );
+
     if (!Provider.of<PedoMeterSessionProvider>(context, listen: false)
         .isTracking) {
       Future.delayed(
@@ -102,6 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       );
     }
+    Geolocator.getCurrentPosition().then((value) {
+      getCityNameFromCoordinates(value);
+    });
     super.initState();
   }
 
@@ -150,9 +154,14 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         if (placemarks.isNotEmpty) {
           final placemark = placemarks.first;
-          final city = placemark.locality; // City name
+          var city = placemark.locality; // City name
+          print("City:$city");
+
           setState(() {
             cityName = placemark.locality!;
+            if (cityName.isEmpty) {
+              cityName = placemark.name!;
+            }
           });
           return city ?? "Unknown";
         } else {
@@ -162,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return "Unknown";
       }
     } catch (e) {
-      print(e);
+      print("CityNameError:$e");
       return "Unknown";
     }
   }
@@ -198,30 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
       totalDistance += distanceInMeters;
     }
     // assign city name
-    await getCityNameFromCoordinates(session.geoPositions!.last);
+    if (DateTime.now().second % 5 == 0) {
+      print('getcityname');
+      await getCityNameFromCoordinates(session.geoPositions!.last);
+    }
     // assign start and end time
     startTime = session.geoPositions!.first.timestamp;
     endTime = session.geoPositions!.last.timestamp;
-  }
-
-  Future fetchOffers() async {
-    final offerings = await PurchaseApi.fetchOffers();
-    if (offerings.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("No Plans Found"),
-        ),
-      );
-    } else {
-      // final packages = offerings
-      //     .map((offer) => offer.availablePackages)
-      //     .expand((pair) => pair)
-      //     .toList();
-      //     Utils.showSheet(context,(context)=>PaywallWidget(packages:packages,title:"Upgrade to Premium",description:"Upgrade to a new plan to "))
-      final offer = offerings.first;
-
-      print("offer: $offer");
-    }
   }
 
   @override
@@ -308,7 +300,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       cityName,
                       style: context.textStyles.mRegular().copyWith(
                             fontWeight: FontWeight.bold,
-                            fontSize: isPortrait ? 18.sp : 8.sp,
+                            fontSize: isPortrait
+                                ? cityName.characters.length > 15
+                                    ? 15.sp
+                                    : 18.sp
+                                : 8.sp,
                           ),
                       textAlign: TextAlign.center,
                     ),

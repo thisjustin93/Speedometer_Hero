@@ -390,14 +390,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         ],
                                         [
                                           'Started',
-                                          DateFormat('M/d/yy, h:mm:ss a')
+                                          DateFormat('M-d-yy, h:mm:ss a')
                                               .format(pedometerSessionProvider
                                                   .pedometerSessions[index]
                                                   .startTime!)
                                         ],
                                         [
                                           'Ended',
-                                          DateFormat('M/d/yy, h:mm:ss a')
+                                          DateFormat('M-d-yy, h:mm:ss a')
                                               .format(pedometerSessionProvider
                                                   .pedometerSessions[index]
                                                   .endTime!)
@@ -559,7 +559,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           ..cellStyle.fontSize = 11;
                                         sheet.getRangeByName('B${i + 11}')
                                           ..setText(
-                                              DateFormat('M/d/yy, h:mm:ss a')
+                                              DateFormat('M-d-yy, h:mm:ss a')
                                                   .format(timeStamp))
                                           ..cellStyle.hAlign =
                                               xl.HAlignType.center

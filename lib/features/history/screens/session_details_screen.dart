@@ -206,12 +206,12 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                   ],
                   [
                     'Started',
-                    DateFormat('M/d/yy, h:mm:ss a')
+                    DateFormat('M-d-yy, h:mm:ss a')
                         .format(widget.session.startTime!)
                   ],
                   [
                     'Ended',
-                    DateFormat('M/d/yy, h:mm:ss a')
+                    DateFormat('M-d-yy, h:mm:ss a')
                         .format(widget.session.endTime!)
                   ],
                   [
@@ -324,7 +324,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     ..cellStyle.fontName = "Arial"
                     ..cellStyle.fontSize = 11;
                   sheet.getRangeByName('B${i + 11}')
-                    ..setText(DateFormat('M/d/yy, h:mm:ss a').format(timeStamp))
+                    ..setText(DateFormat('M-d-yy, h:mm:ss a').format(timeStamp))
                     ..cellStyle.hAlign = xl.HAlignType.center
                     ..cellStyle.fontName = "Arial"
                     ..cellStyle.fontSize = 11;
@@ -541,7 +541,9 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                           ? widget.session.startPoint!.longitude
                                           : widget.session.path!.points.first
                                               .longitude),
-                                  zoom: 20),
+                                  zoom: widget.session.distanceInMeters <= 1400
+                                      ? 14
+                                      : 12),
                               zoomGesturesEnabled: true,
                               gestureRecognizers:
                                   <Factory<OneSequenceGestureRecognizer>>[
@@ -891,6 +893,48 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                               ),
                               Text(
                                 '  ${convertDistance(widget.session.altitude, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
+                                style: context.textStyles.sRegular(),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.w, top: 10.h, bottom: 10.h),
+                            child: Divider(
+                              height: 2.h,
+                              color: const Color(0xffB1B0B2),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Max Elevation',
+                                style: context.textStyles.mRegular(),
+                              ),
+                              Text(
+                                '  ${convertDistance(widget.session.geoPositions!.reduce((current, next) => current.altitude > next.altitude ? current : next).altitude - widget.session.geoPositions!.first.altitude, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
+                                style: context.textStyles.sRegular(),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.w, top: 10.h, bottom: 10.h),
+                            child: Divider(
+                              height: 2.h,
+                              color: const Color(0xffB1B0B2),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Avg Elevation',
+                                style: context.textStyles.mRegular(),
+                              ),
+                              Text(
+                                '  ${convertDistance(widget.session.geoPositions!.fold(0.0, (previousValue, element) => previousValue + (element.altitude - widget.session.geoPositions!.first.altitude)) / widget.session.geoPositions!.length, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
                                 style: context.textStyles.sRegular(),
                               )
                             ],

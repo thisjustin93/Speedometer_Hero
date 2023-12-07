@@ -228,7 +228,7 @@ class _FancyCardState extends State<FancyCard> {
                         top: (height * 0.1),
                         // left: width * 0.02,
                         right: width * 0.02,
-                        bottom: height * 0.06),
+                        bottom: height * 0.12),
                 height: 300.h,
                 // width: isPortrait ? 320.w : 180.w,
                 child: Container(
@@ -301,15 +301,15 @@ class _FancyCardState extends State<FancyCard> {
                         ),
                       ),
                       Positioned(
-                        bottom: 28.h,
+                        bottom: isPortrait ? 28.h : 45.h,
                         left: 5.w,
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: Colors.white.withOpacity(0.6),
                           ),
-                          height: 40.h,
-                          width: 80.w,
+                          height: isPortrait ? 40.h : 80.h,
+                          width: isPortrait ? 80.w : 60.w,
                           alignment: Alignment.center,
                           child: Text(
                             widget.speed,
@@ -317,7 +317,7 @@ class _FancyCardState extends State<FancyCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontStyle: FontStyle.normal,
-                              fontSize: 35.sp,
+                              fontSize: isPortrait ? 35.sp : 20.sp,
                               height: 1,
                               decoration: TextDecoration.none,
                               letterSpacing: 0,

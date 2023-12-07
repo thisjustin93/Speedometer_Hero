@@ -1,4 +1,6 @@
 PODS:
+  - app_tracking_transparency (0.0.1):
+    - Flutter
   - apple_maps_flutter (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -8,6 +10,9 @@ PODS:
     - Flutter
   - gallery_saver (0.0.1):
     - Flutter
+  - gdpr_dialog (0.0.1):
+    - Flutter
+    - Google-Mobile-Ads-SDK
   - geocoding_ios (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -99,11 +104,13 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - apple_maps_flutter (from `.symlinks/plugins/apple_maps_flutter/ios`)
   - Flutter (from `Flutter`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
+  - gdpr_dialog (from `.symlinks/plugins/gdpr_dialog/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
@@ -132,6 +139,8 @@ SPEC REPOS:
     - RevenueCat
 
 EXTERNAL SOURCES:
+  app_tracking_transparency:
+    :path: ".symlinks/plugins/app_tracking_transparency/ios"
   apple_maps_flutter:
     :path: ".symlinks/plugins/apple_maps_flutter/ios"
   Flutter:
@@ -142,6 +151,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   gallery_saver:
     :path: ".symlinks/plugins/gallery_saver/ios"
+  gdpr_dialog:
+    :path: ".symlinks/plugins/gdpr_dialog/ios"
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
@@ -172,11 +183,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  app_tracking_transparency: 5b1745ef9ade815f7455cb6a0848349589afb7c5
   apple_maps_flutter: c59725efea39e13e703cde52a1d2b14866ad68a8
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
+  gdpr_dialog: eec161d82025b055e87692e660697a4ea318acf5
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   Google-Mobile-Ads-SDK: e81e8b009a182dc8dd14951782efdbb30a5e4510
@@ -201,6 +214,6 @@ SPEC CHECKSUMS:
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
   webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
 
-PODFILE CHECKSUM: c1e2a3824ea60ad5642485c7d993f4a5660581fa
+PODFILE CHECKSUM: bd6909204524f9b23b16bcb62219964577d1c7c5
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

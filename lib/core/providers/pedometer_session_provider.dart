@@ -47,7 +47,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
         print('Service has not been enabled');
       }
     }
-
     if (currentPedometerSession == null) {
       currentPedometerSession = PedometerSession(
           sessionId: DateTime.now().toString(),
@@ -122,7 +121,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       var id = DateTime.now().toString();
       currentPedometerSession!.sessionId = id;
       currentPedometerSession!.sessionTitle =
-          DateFormat('MM/dd/yy HH:mm').format(DateTime.parse(id)).toString();
+          DateFormat('MM-dd-yy HH:mm').format(DateTime.parse(id)).toString();
       currentPedometerSession!.averageSpeedInMS = avgSpeed;
       currentPedometerSession!.distanceInMeters = distance;
       currentPedometerSession!.endPoint = LatLng(

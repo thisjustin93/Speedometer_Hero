@@ -50,6 +50,8 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
   @override
   Widget build(BuildContext context) {
     var settings = Provider.of<UnitsProvider>(context).settings;
+    print('/${!widget.pedometerSession.sessionTitle.contains('/')}');
+    print('-${!widget.pedometerSession.sessionTitle.contains('-')}');
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       decoration: BoxDecoration(
@@ -155,7 +157,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!widget.pedometerSession.sessionTitle.contains('/') ||
+                if (!widget.pedometerSession.sessionTitle.contains('-') ||
                     widget.pedometerSession.activityType!.isNotEmpty) ...[
                   Row(
                     children: [
@@ -179,7 +181,7 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                     ],
                   ),
                 ],
-                if (widget.pedometerSession.sessionTitle.contains('/') &&
+                if (widget.pedometerSession.sessionTitle.contains('-') &&
                     widget.pedometerSession.activityType!.isEmpty)
                   Text(
                     widget.pedometerSession.sessionTitle,

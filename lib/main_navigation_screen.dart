@@ -1,7 +1,9 @@
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gdpr_dialog/gdpr_dialog.dart' as gdpr;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -15,6 +17,7 @@ import 'package:speedometer/core/providers/user_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
+import 'package:speedometer/core/utils/extensions/context.dart';
 import 'package:speedometer/features/history/screens/history_screen.dart';
 import 'package:speedometer/features/home/screens/home_screen.dart';
 import 'package:speedometer/features/settings/screens/settings_page.dart';
@@ -27,6 +30,8 @@ class MainNavigationScreen extends StatefulWidget {
 }
 
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  String status = "none";
+  String _authStatus = 'Unknown';
   int pageIndex = 0;
   bool recordingStarted = false;
   BannerAd? _banner;
@@ -58,12 +63,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   }
 
   checkSubscription() async {
-    // SubscriptionStatus status =
-    //     Provider.of<UserProvider>(context, listen: false)
-    //             .user!
-    //             .isUserSubscribed!
-    //         ? SubscriptionStatus.subscribed
-    //         : SubscriptionStatus.notSubscribed;
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
     print(customerInfo.toJson().toString());
     SubscriptionStatus status =
@@ -79,14 +78,80 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     );
   }
 
+  checkConsent() async {
+    gdpr.ConsentStatus status =
+        await gdpr.GdprDialog.instance.getConsentStatus();
+    if (status == gdpr.ConsentStatus.notRequired ||
+        status == gdpr.ConsentStatus.obtained) {
+    } else {
+      await gdpr.GdprDialog.instance.resetDecision();
+      await gdpr.GdprDialog.instance.showDialog().then(
+        (value) {
+          setState(() {
+            // status = value;
+          });
+        },
+      );
+    }
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlugin() async {
+    print('called');
+    final TrackingStatus status =
+        await AppTrackingTransparency.trackingAuthorizationStatus;
+    print('status1:$status');
+    setState(() => _authStatus = '$status');
+    // If the system can show an authorization request dialog
+    if (status == TrackingStatus.notDetermined) {
+      // Show a custom explainer dialog before the system dialog
+      await showCustomTrackingDialog(context);
+      // Wait for dialog popping animation
+      await Future.delayed(const Duration(milliseconds: 200));
+      // Request system's tracking authorization dialog
+      final TrackingStatus status =
+          await AppTrackingTransparency.requestTrackingAuthorization();
+      setState(() => _authStatus = '$status');
+    }
+
+    final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+    print("UUID: $uuid");
+  }
+
+  Future<void> showCustomTrackingDialog(BuildContext context) async =>
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Dear User'),
+          content: const Text(
+            'We care about your privacy and data security. We keep this app free by showing ads. '
+            'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
+            'Our partners will collect data and use a unique identifier on your device to show you ads.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Continue',
+                style: context.textStyles.mRegular(),
+              ),
+            ),
+          ],
+        ),
+      );
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     bool isDarkTheme =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     getallsession();
     checkSubscription();
     getSettings(isDarkTheme);
+    checkConsent();
+    WidgetsFlutterBinding.ensureInitialized()
+        .addPostFrameCallback((_) => initPlugin());
     _createBannerAd(MediaQuery.of(context).orientation == Orientation.landscape,
         MediaQuery.sizeOf(context));
   }
@@ -124,11 +189,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   Orientation.landscape &&
               !isUserSubscribed
           ? Container(
-              height: 45.h,
-              child: AdWidget(ad: _banner!),
+              height: 0,
+              // height: 45.h,
+              // child: AdWidget(ad: _banner!),
             )
           : Container(
-              height: _banner == null || isUserSubscribed ? 50.h : 115.h,
+              height: _banner == null || isUserSubscribed ? 70.h : 146.h,
               color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -140,7 +206,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       child: _banner == null ? null : AdWidget(ad: _banner!),
                     ),
                   Padding(
-                    padding: EdgeInsets.only(left: 35.w, right: 35.w),
+                    padding:
+                        EdgeInsets.only(left: 35.w, right: 35.w, bottom: 10),
                     child: CupertinoTabBar(
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
