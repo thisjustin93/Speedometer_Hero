@@ -35,9 +35,10 @@ class SessionActivityTile extends StatefulWidget {
 
 class _SessionActivityTileState extends State<SessionActivityTile> {
   List<Map<String, IconData?>> activityIcons = [
-    {"Cycle": Icons.directions_bike},
     {"None": null},
     {"Run": Icons.directions_run},
+    {"Cycle": Icons.directions_bike},
+
     {"Motorcycle": Icons.two_wheeler},
     {"Car": Icons.directions_car},
     {"Train": Icons.directions_train},
@@ -171,7 +172,8 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                             : null,
                         color: Colors.red,
                       ),
-                      SizedBox(width: 4.w), // Adjust spacing as needed.
+                      if (widget.pedometerSession.activityType != 'None')
+                        SizedBox(width: 4.w), // Adjust spacing as needed.
                       Text(
                         widget.pedometerSession.sessionTitle,
                         style: context.textStyles

@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:geocoding/geocoding.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:location/location.dart';
+// import 'package:geocoding/geocoding.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart' as location;
@@ -146,34 +150,78 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<String> getCityNameFromCoordinates(Position position) async {
+    // final url =
+    //     'https://nominatim.openstreetmap.org/reverse?lat=${33.333057}&lon=${69.916946}&format=json';
+    final url =
+        'https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json';
     try {
-      final placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      if (mounted) {
-        if (placemarks.isNotEmpty) {
-          final placemark = placemarks.first;
-          var city = placemark.locality; // City name
-          print("City:$city");
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse.containsKey('address')) {
+          cityName = jsonResponse['address']['city']; // City name
+          print("City: $cityName");
+        }
+      }
+      if (cityName == "Unknown" || cityName.isEmpty) {
+        print('geocoding was called');
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (mounted) {
+          if (placemarks.isNotEmpty) {
+            final placemark = placemarks.first;
+            var city = placemark.locality; // City name
+            print("City:$city");
 
-          setState(() {
-            cityName = placemark.locality!;
-            if (cityName.isEmpty) {
-              cityName = placemark.name!;
-            }
-          });
-          return city ?? "Unknown";
+            setState(() {
+              cityName = placemark.locality!;
+              if (cityName.isEmpty) {
+                cityName = placemark.name!;
+              }
+            });
+            return city ?? "Unknown";
+          } else {
+            return "Unknown";
+          }
         } else {
           return "Unknown";
         }
-      } else {
-        return "Unknown";
       }
+      return cityName;
     } catch (e) {
-      print("CityNameError:$e");
+      print("CityNameError: $e");
       return "Unknown";
     }
+    // try {
+    //   final placemarks = await placemarkFromCoordinates(
+    //     position.latitude,
+    //     position.longitude,
+    //   );
+    //   if (mounted) {
+    //     if (placemarks.isNotEmpty) {
+    //       final placemark = placemarks.first;
+    //       var city = placemark.locality; // City name
+    //       print("City:$city");
+
+    //       setState(() {
+    //         cityName = placemark.locality!;
+    //         if (cityName.isEmpty) {
+    //           cityName = placemark.name!;
+    //         }
+    //       });
+    //       return city ?? "Unknown";
+    //     } else {
+    //       return "Unknown";
+    //     }
+    //   } else {
+    //     return "Unknown";
+    //   }
+    // } catch (e) {
+    //   print("CityNameError:$e");
+    //   return "Unknown";
+    // }
   }
 
 // Assign Data from provider to the variables. It's so that all calculations are in one place rather
@@ -220,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
-    print(MediaQuery.sizeOf(context));
+    print("Size:${MediaQuery.sizeOf(context)}");
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
@@ -243,21 +291,27 @@ class _HomeScreenState extends State<HomeScreen> {
             //               ? 1.35
 
             // maxHeight: height < 730 ? height * 0.55 : height * 0.43,
-            maxHeight: width <= 370 && height >= 820
-                ? height * 0.43
-                : width <= 360 && height >= 700
-                    ? height * 0.5
-                    : width <= 360 && height <= 700
-                        ? height * 0.57
-                        : width <= 380
-                            ? height * 0.55
-                            : width <= 415 && height <= 740
+            maxHeight: width == 414 && height == 896
+                ? height * 0.4
+                : width == 375 && height == 812
+                    ? height * 0.44
+                    : width == 375 && height == 667
+                        ? height * 0.52
+                        : width <= 370 && height >= 820
+                            ? height * 0.43
+                            : width <= 360 && height >= 700
                                 ? height * 0.5
-                                : width <= 415
-                                    ? height * 0.43
-                                    : width <= 430
-                                        ? height * 0.47
-                                        : height * 0.57,
+                                : width <= 360 && height <= 700
+                                    ? height * 0.57
+                                    : width <= 380
+                                        ? height * 0.55
+                                        : width <= 415 && height <= 740
+                                            ? height * 0.5
+                                            : width <= 415
+                                                ? height * 0.43
+                                                : width <= 430
+                                                    ? height * 0.47
+                                                    : height * 0.57,
             maxWidth: isPortrait
                 ? width * 1
                 : height <= 420
@@ -265,21 +319,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     : height * 1.2,
           );
           return Container(
-            height: width <= 370 && height >= 820
-                ? height * 0.43
-                : width <= 360 && height >= 700
-                    ? height * 0.5
-                    : width <= 360 && height <= 700
-                        ? height * 0.57
-                        : width <= 380
-                            ? height * 0.55
-                            : width <= 415 && height <= 740
+            height: width == 414 && height == 896
+                ? height * 0.4
+                : width == 375 && height == 812
+                    ? height * 0.44
+                    : width == 375 && height == 667
+                        ? height * 0.52
+                        : width <= 370 && height >= 820
+                            ? height * 0.43
+                            : width <= 360 && height >= 700
                                 ? height * 0.5
-                                : width <= 415
-                                    ? height * 0.43
-                                    : width <= 430
-                                        ? height * 0.47
-                                        : height * 0.57,
+                                : width <= 360 && height <= 700
+                                    ? height * 0.57
+                                    : width <= 380
+                                        ? height * 0.55
+                                        : width <= 415 && height <= 740
+                                            ? height * 0.5
+                                            : width <= 415
+                                                ? height * 0.43
+                                                : width <= 430
+                                                    ? height * 0.47
+                                                    : height * 0.57,
             width: isPortrait
                 ? width * 1
                 : height <= 420

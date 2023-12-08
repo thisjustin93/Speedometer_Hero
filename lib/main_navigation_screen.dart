@@ -174,6 +174,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     }
   }
 
+  PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     setOrientation(pageIndex);
@@ -184,7 +185,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         Provider.of<SubscriptionProvider>(context, listen: false).status ==
             SubscriptionStatus.subscribed;
     return Scaffold(
-      body: screens[pageIndex],
+      // body: screens[pageIndex],
+      body: PageView(
+        controller: _pageController,
+        children: screens,
+        onPageChanged: (value) {
+          setState(() {
+            pageIndex = value;
+            _pageController.jumpToPage(value);
+
+            if (value != 0) {
+              Provider.of<RecordingProvider>(context, listen: false)
+                  .stopRecording();
+            }
+          });
+        },
+      ),
       bottomNavigationBar: MediaQuery.of(context).orientation ==
                   Orientation.landscape &&
               !isUserSubscribed
@@ -194,7 +210,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               // child: AdWidget(ad: _banner!),
             )
           : Container(
-              height: _banner == null || isUserSubscribed ? 70.h : 146.h,
+              height: _banner == null || isUserSubscribed ? 71.h : 146.h,
               color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -206,8 +222,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       child: _banner == null ? null : AdWidget(ad: _banner!),
                     ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 35.w, right: 35.w, bottom: 10),
+                    padding: EdgeInsets.only(left: 35.w, right: 35.w),
                     child: CupertinoTabBar(
                       // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -215,9 +230,40 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                       border: Border.all(color: Colors.transparent),
                       // activeColor: recordingStarted ? Colors.grey : Colors.red,
                       currentIndex: pageIndex,
-                      onTap: (value) {
+                      onTap: (value) async {
+                        print("value$value");
+                        // _pageController.animateToPage(value,
+                        //     duration: Duration(seconds: 1),
+                        //     curve: Curves.linear);
+                        if (value == 0) {
+                          while (_pageController.page != 0) {
+                            print('page1');
+                            await _pageController.animateToPage(0,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.linear);
+                          }
+                        } else if (value == 1) {
+                          while (_pageController.page != 1) {
+                            print('page2');
+
+                            await _pageController.animateToPage(1,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.linear);
+                          }
+                        } else {
+                          while (_pageController.page != 2) {
+                            print('page3');
+
+                            await _pageController.animateToPage(2,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.linear);
+                          }
+                        }
+
                         setState(() {
                           pageIndex = value;
+
+                          // _pageController.jumpToPage(value);
                           if (value != 0) {
                             Provider.of<RecordingProvider>(context,
                                     listen: false)

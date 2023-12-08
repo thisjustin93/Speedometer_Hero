@@ -35,17 +35,18 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
           size: 0,
         )),
     ActionType(
-        "Cycle",
-        const Icon(
-          Icons.directions_bike,
-          color: Colors.red,
-        )),
-    ActionType(
         "Run",
         const Icon(
           Icons.directions_run,
           color: Colors.red,
         )),
+    ActionType(
+        "Cycle",
+        const Icon(
+          Icons.directions_bike,
+          color: Colors.red,
+        )),
+
     ActionType(
         "Motorcycle",
         const Icon(
@@ -225,23 +226,43 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                       child: Column(
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextField(
-                            controller: titleController,
-                            style: context.textStyles.mRegular(),
-                            decoration: InputDecoration(
-                                hintText:
-                                    pedometerSession.sessionTitle.contains('/')
-                                        ? "Title"
-                                        : '',
-                                hintStyle: context.textStyles.mRegular()),
-                            onSubmitted: (value) {
-                              pedometerSession.sessionTitle = value;
-                            },
+                          SizedBox(
+                            child: TextField(
+                              autofocus: true,
+                              controller: titleController,
+                              style: context.textStyles.mRegular(),
+                              maxLength: 30,
+                              cursorColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  counter: SizedBox.shrink(),
+                                  hintText: pedometerSession.sessionTitle
+                                          .contains('/')
+                                      ? "Title"
+                                      : '',
+                                  hintStyle: context.textStyles.mRegular()),
+                              onSubmitted: (value) {
+                                pedometerSession.sessionTitle = value;
+                              },
+                              onChanged: (value) {
+                                setState(
+                                  () {},
+                                );
+                              },
+                            ),
                           ),
                           Container(
                             height: 1.h,
                             color: Colors.grey,
-                            margin: EdgeInsets.only(bottom: 10.h),
+                            // margin: EdgeInsets.only(bottom: 10.h),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              '${titleController.text.length}/30',
+                              style: context.textStyles.sRegular(),
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,7 +353,8 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                       child: TextField(
                         controller: noteController,
                         maxLines: 7,
-                        maxLength: 200 ,
+                        maxLength: 200,
+                        cursorColor: Theme.of(context).colorScheme.onPrimary,
                         style: context.textStyles.mRegular(),
                         onChanged: (value) {
                           setState(
@@ -352,14 +374,14 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                     SizedBox(
                       height: 10.h,
                     ),
-                   
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '${200 - noteController.text.length} characters left',
-                          style: context.textStyles.sRegular(),
-                        ),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${200 - noteController.text.length} characters left',
+                        style: context.textStyles.sRegular(),
                       ),
+                    ),
                     // SizedBox(
                     //   height: 200.h,
                     // ),

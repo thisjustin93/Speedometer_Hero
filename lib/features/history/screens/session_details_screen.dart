@@ -888,27 +888,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Climb',
-                                style: context.textStyles.mRegular(),
-                              ),
-                              Text(
-                                '  ${convertDistance(widget.session.altitude, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
-                                style: context.textStyles.sRegular(),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 30.w, top: 10.h, bottom: 10.h),
-                            child: Divider(
-                              height: 2.h,
-                              color: const Color(0xffB1B0B2),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
                                 'Max Elevation',
                                 style: context.textStyles.mRegular(),
                               ),
@@ -934,7 +913,28 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                 style: context.textStyles.mRegular(),
                               ),
                               Text(
-                                '  ${convertDistance(widget.session.geoPositions!.fold(0.0, (previousValue, element) => previousValue + (element.altitude - widget.session.geoPositions!.first.altitude)) / widget.session.geoPositions!.length, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
+                                '  ${convertDistance(widget.session.geoPositions!.fold(0.0, (previousValue, element) => previousValue + (element.altitude - widget.session.geoPositions!.first.altitude)) / widget.session.geoPositions!.length, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}',
+                                style: context.textStyles.sRegular(),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 30.w, top: 10.h, bottom: 10.h),
+                            child: Divider(
+                              height: 2.h,
+                              color: const Color(0xffB1B0B2),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Climb',
+                                style: context.textStyles.mRegular(),
+                              ),
+                              Text(
+                                '  ${convertDistance(widget.session.altitude, settings.elevationUnit).toStringAsFixed(1)} ${settings.elevationUnit == 'ft' ? 'feet' : "meters"}', // Top Average Speed
                                 style: context.textStyles.sRegular(),
                               )
                             ],

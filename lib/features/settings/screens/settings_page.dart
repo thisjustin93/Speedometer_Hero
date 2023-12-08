@@ -110,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 10.h,
                         ),
                         Text(
-                          'Buy the premium version of Speedometer Heroto unlock the full experienceincl. no ads, unlimited activity history & ability to exp data',
+                          'Buy the premium version of Speedometer Hero\nto unlock unlimited access\n Incl. no ads, unlimited recordings, & ability to exp. speed data.',
                           textAlign: TextAlign.center,
                           style: context.textStyles
                               .mRegular()
@@ -661,7 +661,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (await canLaunchUrl(_emailLaunchUri)) {
                             await launchUrl(_emailLaunchUri);
                           } else {
-                            throw 'Could not launch email';
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                              "Could not launce email",
+                              textAlign: TextAlign.center,
+                            )));
                           }
                         },
                         child: Container(
@@ -700,12 +704,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       InkWell(
                         onTap: () async {
                           final Uri _emailLaunchUri = Uri.parse(
-                              "https://gist.github.com/thisjustin93/5dba4ba4df80ad4999da751cef10ad95");
+                              "https://docs.google.com/document/d/1JLFl8yNMRgm3rAIuEXe48QIWzFxRZHnH7gX_TTe8AA0/edit?usp");
 
                           if (await canLaunchUrl(_emailLaunchUri)) {
                             await launchUrl(_emailLaunchUri);
                           } else {
-                            throw 'Could not launch email';
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                              "Could not launce url",
+                              textAlign: TextAlign.center,
+                            )));
                           }
                         },
                         child: Container(
