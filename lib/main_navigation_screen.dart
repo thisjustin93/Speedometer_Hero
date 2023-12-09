@@ -13,7 +13,6 @@ import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/providers/user_provider.dart';
 import 'package:speedometer/core/services/ad_mob_service.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
@@ -45,7 +44,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       ..load();
     print(
         "_banner!.responseInfo${_banner!.responseInfo}${_banner!.responseInfo.runtimeType}");
-    print(_banner!.responseInfo != null);
     setState(() {});
   }
 
@@ -87,9 +85,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       await gdpr.GdprDialog.instance.resetDecision();
       await gdpr.GdprDialog.instance.showDialog().then(
         (value) {
-          setState(() {
-            // status = value;
-          });
+          setState(() {});
         },
       );
     }
@@ -97,10 +93,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlugin() async {
-    print('called');
     final TrackingStatus status =
         await AppTrackingTransparency.trackingAuthorizationStatus;
-    print('status1:$status');
     setState(() => _authStatus = '$status');
     // If the system can show an authorization request dialog
     if (status == TrackingStatus.notDetermined) {
@@ -122,11 +116,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       await showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Dear User'),
-          content: const Text(
+          title: Text(
+            'Dear User',
+            style: context.textStyles.mRegular(),
+          ),
+          content: Text(
             'We care about your privacy and data security. We keep this app free by showing ads. '
             'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
             'Our partners will collect data and use a unique identifier on your device to show you ads.',
+            style: context.textStyles.mRegular(),
           ),
           actions: [
             TextButton(
@@ -206,8 +204,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               !isUserSubscribed
           ? Container(
               height: 0,
-              // height: 45.h,
-              // child: AdWidget(ad: _banner!),
             )
           : Container(
               height: _banner == null || isUserSubscribed ? 71.h : 146.h,
@@ -224,68 +220,36 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 35.w, right: 35.w),
                     child: CupertinoTabBar(
-                      // backgroundColor: Color(0xFFF6F6F6),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       activeColor: Colors.red,
                       border: Border.all(color: Colors.transparent),
-                      // activeColor: recordingStarted ? Colors.grey : Colors.red,
                       currentIndex: pageIndex,
                       onTap: (value) async {
                         print("value$value");
-                        // _pageController.animateToPage(value,
-                        //     duration: Duration(seconds: 1),
-                        //     curve: Curves.linear);
-                        if (value == 0) {
-                          while (_pageController.page != 0) {
-                            print('page1');
-                            await _pageController.animateToPage(0,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.linear);
-                          }
-                        } else if (value == 1) {
-                          while (_pageController.page != 1) {
-                            print('page2');
+                        if (mounted) {
+                          setState(() {
+                            pageIndex = value;
 
-                            await _pageController.animateToPage(1,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.linear);
-                          }
-                        } else {
-                          while (_pageController.page != 2) {
-                            print('page3');
-
-                            await _pageController.animateToPage(2,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.linear);
-                          }
+                            if (value != 0) {
+                              Provider.of<RecordingProvider>(context,
+                                      listen: false)
+                                  .stopRecording();
+                            }
+                          });
                         }
-
-                        setState(() {
-                          pageIndex = value;
-
-                          // _pageController.jumpToPage(value);
-                          if (value != 0) {
-                            Provider.of<RecordingProvider>(context,
-                                    listen: false)
-                                .stopRecording();
+                        Future.delayed(Duration.zero, () {
+                          if (mounted) {
+                            _pageController.jumpToPage(value);
                           }
                         });
                       },
                       iconSize: 35.sp,
                       items: [
+                        BottomNavigationBarItem(icon: Icon(Icons.home)),
                         BottomNavigationBarItem(
-                            // label: 'Home',
-                            icon: Icon(Icons.home)
-                            // icon: !recordingStarted
-                            //     ? Icon(Icons.home)
-                            //     : Icon(Icons.assistant_navigation),
-                            ),
-                        BottomNavigationBarItem(
-                          // label: "Data",
                           icon: Icon(Icons.article),
                         ),
                         BottomNavigationBarItem(
-                          // label: 'Settings',
                           icon: Icon(Icons.settings),
                         ),
                       ],

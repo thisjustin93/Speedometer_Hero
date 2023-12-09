@@ -11,16 +11,11 @@ import 'package:purchases_flutter/models/purchases_configuration.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/models/SettingsModel.dart';
-import 'package:speedometer/core/models/UserModel.dart';
 import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/providers/user_provider.dart';
-import 'package:speedometer/core/services/auth_services.dart';
-import 'package:speedometer/core/services/hive_database_services.dart';
-import 'package:speedometer/features/Auth/auth_screen.dart';
 import 'package:speedometer/main_navigation_screen.dart';
 
 final _configuration =
@@ -28,7 +23,6 @@ final _configuration =
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
   await Purchases.configure(_configuration);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
@@ -52,13 +46,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // StreamProvider<UserModel>.value(
-        //   initialData: UserModel(userId: '0'),
-        //   value: AuthService().user,
-        // ),
-        // ChangeNotifierProvider(
-        //   create: (context) => UserProvider(),
-        // ),
         ChangeNotifierProvider(
           create: (context) => PedoMeterSessionProvider(),
         ),
@@ -81,9 +68,6 @@ class MyApp extends StatelessWidget {
                 DefaultMaterialLocalizations.delegate,
                 DefaultWidgetsLocalizations.delegate,
                 DefaultCupertinoLocalizations.delegate,
-                // GlobalMaterialLocalizations.delegate,
-                // GlobalWidgetsLocalizations.delegate,
-                // GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: [
                 Locale('en', 'US'),

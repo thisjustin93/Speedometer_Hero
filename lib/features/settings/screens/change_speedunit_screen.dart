@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
@@ -46,7 +45,7 @@ class _ChangeSpeedUnitScreenState extends State<ChangeSpeedUnitScreen> {
               settingsProvider.settings.speedUnit =
                   value ?? settingsProvider.settings.speedUnit;
               settingsProvider.setAllUnits(settingsProvider.settings);
-              await HiveSettingsDB().updateSettings(settingsProvider.settings); 
+              await HiveSettingsDB().updateSettings(settingsProvider.settings);
             }),
         RadioListTile.adaptive(
             toggleable: true,

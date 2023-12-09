@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -11,14 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as googlemaps;
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/components/measurement_box.dart';
-import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/styling/sizes.dart';
-import 'package:speedometer/core/styling/text_styles.dart';
-import 'package:speedometer/core/utils/convert_distance.dart';
-import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
-import 'package:speedometer/features/home/widgets/duration_counter.dart';
 
 class FancyCard extends StatefulWidget {
   FancyCard(
@@ -176,12 +168,6 @@ class _FancyCardState extends State<FancyCard> {
                     MeasurementBox(
                         boxType: 'Avg Speed',
                         measurement: widget.avgSpeed,
-                        // measurement: distanceCovered == 0 ||
-                        //         duration == Duration.zero
-                        //     ? 0
-                        //     : distanceCovered /
-                        //         (duration.inSeconds /
-                        //             (settings.speedUnit == 'mps' ? 1 : 3600)),
                         measurementUnit: widget.maxSpeed == '--'
                             ? ''
                             : settings.speedUnit == "mph"
@@ -271,21 +257,6 @@ class _FancyCardState extends State<FancyCard> {
                             zoomGesturesEnabled: true,
                             mapType: MapType.standard,
                             scrollGesturesEnabled: true,
-
-                            // onCameraMove: (position) async {
-                            //   cameraPosition = position;
-                            //   print("Position: $position");
-                            //   if (mapController != null) {
-                            //     await mapController!.animateCamera(
-                            //         CameraUpdate.newCameraPosition(position));
-                            //   }
-                            // },
-                            // onLongPress: (argument) async {
-                            //   if (mapController != null) {
-                            //     await mapController!
-                            //         .moveCamera(CameraUpdate.newLatLng(argument));
-                            //   }
-                            // },
                             polylines: Set<Polyline>.of([
                               Polyline(
                                 polylineId: PolylineId(
@@ -341,20 +312,6 @@ class _FancyCardState extends State<FancyCard> {
                               right: width * 0.02),
                       // height: 300.h,
                       width: isPortrait ? width : width * 0.43,
-                      // decoration: BoxDecoration(
-                      //   color: Theme.of(context).primaryColor,
-                      //   borderRadius: BorderRadius.circular(8.r),
-                      //   border: Border.all(
-                      //       color: settings.darkTheme == null
-                      //           ? MediaQuery.of(context).platformBrightness ==
-                      //                   Brightness.dark
-                      //               ? Color(0xff1c1c1e)
-                      //               : Color(0xffc6c6c6)
-                      //           : settings.darkTheme!
-                      //               ? Color(0xff1c1c1e)
-                      //               : Color(0xffc6c6c6),
-                      //       width: isPortrait ? 2.sp : 1.sp),
-                      // ),
                       child: Image.asset(
                         widget.googleMapAPI,
                         fit: BoxFit.cover,

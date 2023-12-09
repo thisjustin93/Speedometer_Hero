@@ -9,7 +9,6 @@ import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 
 class MatchingActivityTile extends StatefulWidget {
-  // List<double> matchingActivityValues;
   int tileIndex;
   int tilesLength;
   IconData icon;
@@ -20,7 +19,6 @@ class MatchingActivityTile extends StatefulWidget {
       {super.key,
       required this.activityType,
       required this.icon,
-      // required this.matchingActivityValues,
       required this.tileIndex,
       required this.tilesLength,
       required this.session,

@@ -25,22 +25,7 @@ class CompassWidget extends StatelessWidget {
             maximum: 360,
             interval: 45,
             labelOffset: 5,
-            // isPortrait
-            //     ? height < 700
-            //         ? height * 0.35
-            //         : height * 0.35
-            //     : height < 400
-            //         ? height * 0.0027
-            //         : height * 0.0024,
-            // radiusFactor: isPortrait
-            //     ? height > 400
-            //         ? height * 0.0005
-            //         : height * 0.0004
-            //     : height <= 400
-            //         ? height * 0.001
-            //         : height * 0.0008,
             radiusFactor: 0.4,
-
             onLabelCreated: (value) {
               value.labelStyle = GaugeTextStyle(
                   fontWeight: FontWeight.bold,
@@ -80,11 +65,6 @@ class CompassWidget extends StatelessWidget {
           ),
         ],
       ),
-      // child: Image.asset(
-      //   'assets/images/compass2.png',
-      //   height: 150,
-      //   width: 150,
-      // ),
     );
   }
 }

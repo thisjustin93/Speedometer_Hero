@@ -13,10 +13,7 @@ import 'package:speedometer/core/models/PedometerSessionModel.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/providers/user_provider.dart';
-import 'package:speedometer/core/services/firebase_services.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
-import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:intl/intl.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
@@ -52,9 +49,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
     {"Train": Icons.directions_train},
     {"Plane": Icons.flight},
     {"Ship": Icons.sailing},
-    // {"Ski": Icons.downhill_skiing},
-    // {"Crosscountry Ski": Icons.downhill_skiing},
-    // {"Ship": Icons.sailing_outlined},
   ];
   double durationInMinutes(Duration? duration) {
     if (duration == null) {
@@ -131,10 +125,6 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        // backgroundColor: const Color(0xFFF7F7F7),
-        // backgroundColor: Theme.of(context).colorScheme.primary,
-        // backgroundColor: Colors.white,
-        // surfaceTintColor: Colors.white,
         backgroundColor: Theme.of(context).colorScheme.background,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -445,8 +435,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                 File(file.path).writeAsBytesSync(newbytes);
                 print(
                     'Excel file with text and image created at: ${file.path}');
-                // }
-                ///
+
                 Share.shareXFiles([XFile(file.path)]);
               }
             },

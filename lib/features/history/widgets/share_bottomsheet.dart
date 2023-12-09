@@ -410,14 +410,12 @@ shareBottomSheet(BuildContext context, PedometerSession session) async {
                         File(file.path).writeAsBytesSync(newbytes);
                         print(
                             'Excel file with text and image created at: ${file.path}');
-                        // }
-                        ///
+
                         Share.shareXFiles([XFile(file.path)]);
                         Navigator.of(context).pop();
                       } catch (e) {
                         Navigator.of(progressDialogContext!).pop();
 
-                        print("Speedometer Hero:$e");
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(

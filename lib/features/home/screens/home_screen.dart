@@ -1,15 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:location/location.dart';
-// import 'package:geocoding/geocoding.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart' as location;
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
@@ -22,12 +16,6 @@ import 'package:speedometer/core/providers/app_start_session_provider.dart';
 import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/providers/user_provider.dart';
-import 'package:speedometer/core/services/ad_mob_service.dart';
-import 'package:speedometer/core/services/firebase_services.dart';
-import 'package:speedometer/core/services/payment_services.dart';
-import 'package:speedometer/core/services/purchase_api.dart';
-import 'package:speedometer/core/styling/text_styles.dart';
 import 'package:speedometer/core/utils/convert_distance.dart';
 import 'package:speedometer/core/utils/convert_speed.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
@@ -72,44 +60,51 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     FlutterNativeSplash.remove();
     // checkAndRequestLocationPermission();
-    startTime = DateTime.now();
-    speed = 0;
-    maxSpeed = 0;
-    totalDistance = 0;
-    // currentPosition = null;
-    pauseTime = null;
-    endTime = null;
-    startingAltitude = 0;
-    endingAltitude = 0;
-    // _startTracking();
-    compassSubscription = FlutterCompass.events?.listen((CompassEvent event) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       if (mounted) {
-        setState(() {
-          direction = event.heading ?? 0;
+        startTime = DateTime.now();
+        speed = 0;
+        maxSpeed = 0;
+        totalDistance = 0;
+        // currentPosition = null;
+        pauseTime = null;
+        endTime = null;
+        startingAltitude = 0;
+        endingAltitude = 0;
+        // _startTracking();
+        compassSubscription =
+            FlutterCompass.events?.listen((CompassEvent event) {
+          if (mounted) {
+            setState(() {
+              direction = event.heading ?? 0;
+            });
+          }
+        });
+        Future.delayed(
+          Duration(milliseconds: 100),
+          () {
+            subscriptionStatus =
+                Provider.of<SubscriptionProvider>(context, listen: false)
+                    .status;
+          },
+        );
+
+        if (!Provider.of<PedoMeterSessionProvider>(context, listen: false)
+            .isTracking) {
+          Future.delayed(
+            Duration(seconds: 0),
+            () async {
+              Provider.of<PedoMeterSessionProvider>(context, listen: false)
+                  .startTracking();
+            },
+          );
+        }
+        Geolocator.getCurrentPosition().then((value) {
+          getCityNameFromCoordinates(value);
         });
       }
     });
-    Future.delayed(
-      Duration(milliseconds: 100),
-      () {
-        subscriptionStatus =
-            Provider.of<SubscriptionProvider>(context, listen: false).status;
-      },
-    );
 
-    if (!Provider.of<PedoMeterSessionProvider>(context, listen: false)
-        .isTracking) {
-      Future.delayed(
-        Duration(seconds: 0),
-        () async {
-          Provider.of<PedoMeterSessionProvider>(context, listen: false)
-              .startTracking();
-        },
-      );
-    }
-    Geolocator.getCurrentPosition().then((value) {
-      getCityNameFromCoordinates(value);
-    });
     super.initState();
   }
 
@@ -149,13 +144,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+// Create a variable to store the last executed time of the function
+  DateTime? _lastExecution;
+
+// Debounce delay duration
+  Duration debounceDuration = Duration(seconds: 5);
   Future<String> getCityNameFromCoordinates(Position position) async {
+    if (_lastExecution != null &&
+        DateTime.now().difference(_lastExecution!) < debounceDuration) {
+      // If the function has been called within the debounce duration, return immediately
+      return 'Debounced';
+    }
+
+    _lastExecution = DateTime.now(); // Update the last execution time
     // final url =
-    //     'https://nominatim.openstreetmap.org/reverse?lat=${33.333057}&lon=${69.916946}&format=json';
+    //     'https://nominatim.openstreetmap.org/reverse?lat=33.333057&lon=69.916946&format=json';
     final url =
         'https://nominatim.openstreetmap.org/reverse?lat=${position.latitude}&lon=${position.longitude}&format=json';
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'accept-language': 'en'},
+      );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse.containsKey('address')) {
@@ -164,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
       if (cityName == "Unknown" || cityName.isEmpty) {
-        print('geocoding was called');
+        print('geocoding was called because api didn\'t responded.');
         final placemarks = await placemarkFromCoordinates(
           position.latitude,
           position.longitude,
@@ -192,36 +202,36 @@ class _HomeScreenState extends State<HomeScreen> {
       return cityName;
     } catch (e) {
       print("CityNameError: $e");
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (mounted) {
+          if (placemarks.isNotEmpty) {
+            final placemark = placemarks.first;
+            var city = placemark.locality; // City name
+            print("City:$city");
+
+            setState(() {
+              cityName = placemark.locality!;
+              // if (cityName.isEmpty) {
+              //   cityName = placemark.locality!;
+              // }
+            });
+            return cityName;
+          } else {
+            return "Unknown";
+          }
+        } else {
+          return "Unknown";
+        }
+      } catch (e) {
+        print("CityNameError:$e");
+        // return "Unknown";
+      }
       return "Unknown";
     }
-    // try {
-    //   final placemarks = await placemarkFromCoordinates(
-    //     position.latitude,
-    //     position.longitude,
-    //   );
-    //   if (mounted) {
-    //     if (placemarks.isNotEmpty) {
-    //       final placemark = placemarks.first;
-    //       var city = placemark.locality; // City name
-    //       print("City:$city");
-
-    //       setState(() {
-    //         cityName = placemark.locality!;
-    //         if (cityName.isEmpty) {
-    //           cityName = placemark.name!;
-    //         }
-    //       });
-    //       return city ?? "Unknown";
-    //     } else {
-    //       return "Unknown";
-    //     }
-    //   } else {
-    //     return "Unknown";
-    //   }
-    // } catch (e) {
-    //   print("CityNameError:$e");
-    //   return "Unknown";
-    // }
   }
 
 // Assign Data from provider to the variables. It's so that all calculations are in one place rather
@@ -256,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     // assign city name
     if (DateTime.now().second % 5 == 0) {
-      print('getcityname');
       await getCityNameFromCoordinates(session.geoPositions!.last);
     }
     // assign start and end time
@@ -268,7 +277,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.sizeOf(context).width;
     var height = MediaQuery.sizeOf(context).height;
-    print("Size:${MediaQuery.sizeOf(context)}");
     var pedometerSessionProvider =
         Provider.of<PedoMeterSessionProvider>(context);
     if (pedometerSessionProvider.currentPedometerSession != null) {
@@ -281,16 +289,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return <Widget>[
         LayoutBuilder(builder: (context, constraints) {
           constraints = BoxConstraints(
-            //  width <= 380
-            //   ? 1
-            //   : width > 380 && width <= 415
-            //       ? 1.15
-            //       : width > 415 && width <= 445
-            //           ? 1.2
-            //           : width > 445 && width <= 490
-            //               ? 1.35
-
-            // maxHeight: height < 730 ? height * 0.55 : height * 0.43,
             maxHeight: width == 414 && height == 896
                 ? height * 0.4
                 : width == 375 && height == 812
@@ -437,28 +435,11 @@ class _HomeScreenState extends State<HomeScreen> {
           maxSpeed: maxSpeed == -99
               ? '--'
               : convertSpeed(maxSpeed, settings.speedUnit).toStringAsFixed(1),
-          // duration: startTime == DateTime(30000)
-          //     ? Duration(seconds: -99)
-          //     : startTime != null
-          //         ? pedometerSessionProvider.currentPedometerSession != null
-          //             ? endTime!
-          //                 .subtract(pedometerSessionProvider
-          //                     .currentPedometerSession!.pauseDuration)
-          //                 .difference(startTime!)
-          //             : DateTime.now().difference(startTime!)
-          //         : Duration.zero,
           duration: startTime == DateTime(30000)
               ? Duration(seconds: -99)
               : pedometerSessionProvider.currentPedometerSession != null &&
                       pedometerSessionProvider.startTime != null
-                  ?
-                  // endTime != null
-                  //     ? endTime!
-                  //         .subtract(pedometerSessionProvider
-                  //             .currentPedometerSession!.pauseDuration)
-                  //         .difference(startTime!)
-                  //     :
-                  DateTime.now()
+                  ? DateTime.now()
                       .subtract(pedometerSessionProvider
                           .currentPedometerSession!.pauseDuration)
                       .difference(pedometerSessionProvider.startTime!)
@@ -576,19 +557,7 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: BouncingScrollPhysics(),
           itemCount: fancyCards().length,
           itemBuilder: (context, index) {
-            return
-                // index == 2
-                //     ? isPortrait
-                //         ? GestureDetector(
-                //             onVerticalDragUpdate: (detail) {},
-                //             child: fancyCards()[index],
-                //           )
-                //         : GestureDetector(
-                //             onHorizontalDragUpdate: (detail) {},
-                //             child: fancyCards()[index],
-                //           )
-                //     :
-                fancyCards()[index];
+            return fancyCards()[index];
           },
         ),
       ),
@@ -621,8 +590,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if (pedometerSessionProvider.geolocatorStream != null &&
               !(pedometerSessionProvider.geolocatorStream!.isPaused) &&
               pedometerSessionProvider.isTracking) {
-            // currentPosition = await Geolocator.getCurrentPosition();
-
             pedometerSessionProvider.isTracking = false;
             await Wakelock.disable();
 
@@ -664,11 +631,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 pedometerSessionProvider.isTracking = true;
                 Provider.of<PedoMeterSessionProvider>(context, listen: false)
                     .startTracking();
-                // endTime = null;
-                // pauseTime = null;
+
                 startTracking = true;
-                // _startTracking();
-                // geolocatorStream!.resume();
                 setState(() {});
               } else {
                 startingAltitude = 0;
@@ -688,8 +652,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 avgSpeed = 0;
                 speed = 0;
                 maxSpeed = 0;
-                // pathPoints.clear();
-                // currentPosition = null;
                 pauseTime = null;
                 startTracking = false;
                 setState(() {});
@@ -763,47 +725,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   );
                                 });
-                                // await Purchases.purchasePackage(Package(
-                                //     "one_time_subscription",
-                                //     PackageType.lifetime,
-                                //     StoreProduct(
-                                //         "one_time_subscription",
-                                //         "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //         'Speedometer Hero Premium',
-                                //         4.99,
-                                //         "\$4.99",
-                                //         "USD"),
-                                //     "one_time_subscription"));
-                                // print(abc);
-                                // await Purchases.purchaseProduct(
-                                //     "one_time_subscription");
-                                // await Purchases.purchaseStoreProduct(StoreProduct(
-                                //     "one_time_subscription",
-                                //     "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //     'Speedometer Hero Premium',
-                                //     4.99,
-                                //     "\$4.99",
-                                //     "USD"));
-                                //   var user = Provider.of<UserProvider>(context,
-                                //           listen: false)
-                                //       .user;
-                                //   final paymentDone = await StripePayment()
-                                //       .makePayment("499"); //4.99
-                                //   if (paymentDone) {
-                                //     user!.isUserSubscribed = true;
-                                //     await FirebaseServices().updateUser(user);
-                                //     Provider.of<SubscriptionProvider>(context,
-                                //             listen: false)
-                                //         .setSubscriptionStatus(
-                                //             SubscriptionStatus.subscribed);
-                                //   } else {
-                                //     ScaffoldMessenger.of(context).showSnackBar(
-                                //       SnackBar(
-                                //         content:
-                                //             Text("Payment could not be proceed"),
-                                //       ),
-                                //     );
-                                //   }
                               } catch (e) {
                                 Navigator.of(progressDialogContext!).pop();
 
@@ -848,10 +769,6 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             // When Subscribed, the start recording
             else {
-              // maxSpeed = 0;
-              // totalDistance = 0;
-              // currentPosition = null;
-
               pauseTime = null;
               startTracking = true;
               endTime = null;

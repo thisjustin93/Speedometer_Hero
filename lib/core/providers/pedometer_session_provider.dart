@@ -80,7 +80,6 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       if (geolocatorStream!.isPaused) {
         return;
       }
-      print(position.speed);
       if (currentPedometerSession == null) {
         currentPedometerSession = PedometerSession(
           sessionId: DateTime.now().toString(),
@@ -143,9 +142,7 @@ class PedoMeterSessionProvider extends ChangeNotifier {
       currentPedometerSession!.sessionDuration =
           DateTime.now().difference(startTime!) -
               currentPedometerSession!.pauseDuration;
-      // currentPedometerSession!.geoPositions!.last.timestamp!.difference(
-      //         currentPedometerSession!.geoPositions!.first.timestamp!) -
-      //     currentPedometerSession!.pauseDuration;
+
       currentPedometerSession!.speedInMS = speed;
       currentPedometerSession!.path = Polyline(
         polylineId: PolylineId(id), // Provide a unique ID

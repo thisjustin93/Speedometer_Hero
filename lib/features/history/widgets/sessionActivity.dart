@@ -38,21 +38,15 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
     {"None": null},
     {"Run": Icons.directions_run},
     {"Cycle": Icons.directions_bike},
-
     {"Motorcycle": Icons.two_wheeler},
     {"Car": Icons.directions_car},
     {"Train": Icons.directions_train},
     {"Plane": Icons.flight},
     {"Ship": Icons.sailing},
-    // {"Ski": Icons.downhill_skiing},
-    // {"Crosscountry Ski": Icons.downhill_skiing},
-    // {"Ship": Icons.sailing_outlined},
   ];
   @override
   Widget build(BuildContext context) {
     var settings = Provider.of<UnitsProvider>(context).settings;
-    print('/${!widget.pedometerSession.sessionTitle.contains('/')}');
-    print('-${!widget.pedometerSession.sessionTitle.contains('-')}');
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       decoration: BoxDecoration(

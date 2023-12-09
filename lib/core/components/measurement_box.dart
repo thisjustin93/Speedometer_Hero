@@ -30,7 +30,6 @@ class MeasurementBox extends StatelessWidget {
       width: isPortrait ? 173.w : width * 0.207,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        // color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           color: settings.darkTheme == null
@@ -40,7 +39,6 @@ class MeasurementBox extends StatelessWidget {
               : settings.darkTheme!
                   ? Color(0xff1c1c1e)
                   : Color(0xffc6c6c6),
-          // color: Colors.white,
           width: isPortrait ? 2.sp : 1.sp,
         ),
       ),
@@ -53,7 +51,7 @@ class MeasurementBox extends StatelessWidget {
                   )),
           Text(
             boxType == 'Duration'
-                ? measurement=='-99'
+                ? measurement == '-99'
                     ? "--"
                     : '${Duration(seconds: int.parse(measurement)).inMinutes.remainder(60)}:${Duration(seconds: int.parse(measurement)).inSeconds.remainder(60)} $measurementUnit'
                 : '${measurement} $measurementUnit',

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,12 +6,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:speedometer/core/providers/subscription_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
-import 'package:speedometer/core/providers/user_provider.dart';
-import 'package:speedometer/core/services/firebase_services.dart';
-import 'package:speedometer/core/services/payment_services.dart';
 import 'package:speedometer/core/services/settigns_db_services.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
-import 'package:speedometer/features/history/widgets/share_bottomsheet.dart';
 import 'package:speedometer/features/settings/screens/change_elevationunit_screen.dart';
 import 'package:speedometer/features/settings/screens/change_speedunit_screen.dart';
 import 'package:speedometer/features/settings/screens/change_theme_screen.dart';
@@ -156,43 +150,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         "Congratulations. You are now a Premium user"),
                                   ),
                                 );
-                                // await Purchases.purchasePackage(Package(
-                                //     "1timesubscription",
-                                //     PackageType.lifetime,
-                                //     StoreProduct(
-                                //         "1timesubscription",
-                                //         "Buy the premium version of Speedometer Hero to unlock the full experienceincl. no ads, unlimited activity history & ability to exp data",
-                                //         'Speedometer Hero Premium',
-                                //         4.99,
-                                //         "\$4.99",
-                                //         "USD"),
-                                //     "1timesubscription"));
-                                // var user = Provider.of<UserProvider>(context,
-                                //         listen: false)
-                                //     .user;
-                                // final paymentDone = await StripePayment()
-                                //     .makePayment("499"); //4.99
-                                // if (paymentDone) {
-                                //   user!.isUserSubscribed = true;
-                                //   await FirebaseServices().updateUser(user);
-                                //   Provider.of<SubscriptionProvider>(context,
-                                //           listen: false)
-                                //       .setSubscriptionStatus(
-                                //           SubscriptionStatus.subscribed);
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     SnackBar(
-                                //       content: Text(
-                                //           "Congratulations. You are now a Premium user"),
-                                //     ),
-                                //   );
-                                // } else {
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     SnackBar(
-                                //       content:
-                                //           Text("Payment could not be proceed"),
-                                //     ),
-                                //   );
-                                // }
                               } catch (e) {
                                 Navigator.of(progressDialogContext!).pop();
 
@@ -276,7 +233,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
                                 child: Column(
@@ -312,30 +268,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              // DropdownButton(
-                              //   value: settingProvider.settings.speedUnit,
-                              //   items: speedUnits
-                              //       .map(
-                              //         (unit) => DropdownMenuItem(
-                              //           value: unit.key,
-                              //           child: Text(
-                              //             unit.key,
-                              //             style: context.textStyles
-                              //                 .sThick()
-                              //                 .copyWith(color: Colors.red),
-                              //           ),
-                              //         ),
-                              //       )
-                              //       .toList(),
-                              //   onChanged: (value) {
-                              //     // settingProvider.settings.setSpeedUnit(value!);
-                              //     settingProvider.settings.speedUnit = value!;
-                              //     settingProvider
-                              //         .setAllUnits(settingProvider.settings);
-                              //     HiveSettingsDB()
-                              //         .updateSettings(settingProvider.settings);
-                              //   },
-                              // ),
                             ],
                           ),
                         ),
@@ -368,7 +300,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey))),
                           child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
                                 child: Column(
@@ -393,31 +324,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              // DropdownButton(
-                              //   value: settingProvider.settings.elevationUnit,
-                              //   items: elevationUnits
-                              //       .map(
-                              //         (unit) => DropdownMenuItem(
-                              //           value: unit.key,
-                              //           child: Text(
-                              //             unit.key,
-                              //             style: context.textStyles
-                              //                 .sThick()
-                              //                 .copyWith(color: Colors.red),
-                              //           ),
-                              //         ),
-                              //       )
-                              //       .toList(),
-                              //   onChanged: (value) {
-                              //     settingProvider.settings.elevationUnit = value!;
-                              //     settingProvider
-                              //         .setAllUnits(settingProvider.settings);
-                              //     HiveSettingsDB()
-                              //         .updateSettings(settingProvider.settings);
-                              //     // settingProvider.settings
-                              //     //     .setElevationUnit(value!);
-                              //   },
-                              // ),
                             ],
                           ),
                         ),
@@ -459,8 +365,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     .setAllUnits(settingProvider.settings);
                                 HiveSettingsDB()
                                     .updateSettings(settingProvider.settings);
-                                // settingProvider.settings
-                                //     .changeMaximumGaugeSpeed(false);
                               },
                               child: Icon(
                                 Icons.remove_circle_outline,
@@ -480,13 +384,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   settingProvider.settings.maximumGaugeSpeed =
                                       gaugeSpeeds[index + 1];
                                 }
-                                // settingProvider.settings.maximumGaugeSpeed += 1;
                                 settingProvider
                                     .setAllUnits(settingProvider.settings);
                                 HiveSettingsDB()
                                     .updateSettings(settingProvider.settings);
-                                // settingProvider.settings
-                                //     .changeMaximumGaugeSpeed(true);
                               },
                               child: Icon(
                                 Icons.add_circle_outline_sharp,
@@ -544,7 +445,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           width: 2.sp),
                     ),
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Column(
@@ -577,60 +477,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                     ),
-                    // child: SwithListTile(
-                    //   type: 'Dark Theme',
-                    // ),
                   ),
                 ),
                 SizedBox(
                   height: 10.h,
                 ),
-                // Container(
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(
-                //       8.h,
-                //     ),
-                //     border: Border.all(
-                //       color: const Color(0xffc6c6c6),
-                //       width: 2,
-                //     ),
-                //     color: const Color(0xFFF6F6F6),
-                //   ),
-                //   height: 50.h,
-                //   width: double.maxFinite,
-                //   alignment: Alignment.center,
-                //   padding: EdgeInsets.only(left: 15.w),
-                //   child: Row(
-                //     children: [
-                //       const Icon(
-                //         Icons.router_outlined,
-                //         color: Colors.red,
-                //       ),
-                //       SizedBox(
-                //         width: 10.w,
-                //       ),
-                //       Expanded(
-                //         child: Text(
-                //           'Live Activity',
-                //           style: AppTextStyles().mRegular(),
-                //         ),
-                //       ),
-                //       CupertinoSwitch(
-                //         value: settingProvider.settings.liveActivity,
-                //         onChanged: (value) {
-                //           settingProvider.settings.liveActivity = value;
-                //           settingProvider.setAllUnits(settingProvider.settings);
-                //            HiveSettingsDB()
-                //                     .updateSettings(settingProvider.settings);
-                //           // settingProvider.settings.setLiveActivity(value);
-                //         },
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(
-                //   height: 15.h,
-                // ),
                 Container(
                   width: double.maxFinite,
                   padding: EdgeInsets.only(left: 20.w),
@@ -757,9 +608,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Container(
                           height: 50.h,
                           padding: EdgeInsets.only(top: 5.h),
-                          // decoration: const BoxDecoration(
-                          //     border:
-                          //         Border(bottom: BorderSide(color: Colors.grey))),
                           child: Row(
                             children: [
                               const Icon(

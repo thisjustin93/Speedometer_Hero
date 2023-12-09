@@ -13,7 +13,6 @@ import 'package:speedometer/core/providers/pedometer_session_provider.dart';
 import 'package:speedometer/core/providers/unit_settings_provider.dart';
 import 'package:speedometer/core/services/hive_database_services.dart';
 import 'package:speedometer/core/styling/text_styles.dart';
-// import 'package:clipboard/clipboard.dart';
 import 'package:speedometer/core/utils/app_snackbar.dart';
 import 'package:speedometer/core/utils/extensions/context.dart';
 
@@ -46,7 +45,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
           Icons.directions_bike,
           color: Colors.red,
         )),
-
     ActionType(
         "Motorcycle",
         const Icon(
@@ -77,55 +75,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
           Icons.sailing,
           color: Colors.red,
         )),
-    // ActionType(
-    //   "Hike",
-    //   const Icon(
-    //     Icons.hiking_rounded,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Walk",
-    //   const Icon(
-    //     Icons.directions_walk,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Snowboard",
-    //   const Icon(
-    //     Icons.snowboarding,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Sail",
-    //   const Icon(
-    //     Icons.sailing_outlined,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Skateboard",
-    //   const Icon(
-    //     Icons.skateboarding,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Ski",
-    //   const Icon(
-    //     Icons.downhill_skiing,
-    //     color: Colors.red,
-    //   ),
-    // ),
-    // ActionType(
-    //   "Crosscountry ski",
-    //   const Icon(
-    //     Icons.downhill_skiing,
-    //     color: Colors.red,
-    //   ),
-    // ),
   ];
   ActionType selectedActionType = pedometerSession.activityType!.isEmpty
       ? items[0]
@@ -224,7 +173,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                                       ? Color(0xff1c1c1e)
                                       : Color(0xffc6c6c6))),
                       child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
                             child: TextField(
@@ -255,7 +203,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                           Container(
                             height: 1.h,
                             color: Colors.grey,
-                            // margin: EdgeInsets.only(bottom: 10.h),
                           ),
                           Align(
                             alignment: Alignment.centerRight,
@@ -269,7 +216,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                             children: [
                               Text("Activity Type",
                                   style: context.textStyles.mRegular()),
-
                               PullDownButton(
                                 itemBuilder: (context) => items
                                     .map((e) => PullDownMenuItem(
@@ -307,9 +253,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                                   ),
                                 ),
                               ),
-                              // SizedBox(
-                              //   width: 1.w,
-                              // ),
                             ],
                           ),
                         ],
@@ -374,7 +317,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                     SizedBox(
                       height: 10.h,
                     ),
-
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
@@ -382,9 +324,6 @@ editBottomSheet(BuildContext context, PedometerSession pedometerSession,
                         style: context.textStyles.sRegular(),
                       ),
                     ),
-                    // SizedBox(
-                    //   height: 200.h,
-                    // ),
                   ],
                 ),
               ),
