@@ -144,19 +144,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-// Create a variable to store the last executed time of the function
-  DateTime? _lastExecution;
-
-// Debounce delay duration
-  Duration debounceDuration = Duration(seconds: 5);
   Future<String> getCityNameFromCoordinates(Position position) async {
-    if (_lastExecution != null &&
-        DateTime.now().difference(_lastExecution!) < debounceDuration) {
+    if (!DebounceService.shouldExecute()) {
       // If the function has been called within the debounce duration, return immediately
+      setState(() {
+        cityName = DebounceService.cityName;
+      });
       return 'Debounced';
     }
-
-    _lastExecution = DateTime.now(); // Update the last execution time
     // final url =
     //     'https://nominatim.openstreetmap.org/reverse?lat=33.333057&lon=69.916946&format=json';
     final url =
@@ -170,6 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
         final jsonResponse = json.decode(response.body);
         if (jsonResponse.containsKey('address')) {
           cityName = jsonResponse['address']['city']; // City name
+          DebounceService.updateCityName(cityName);
+
           print("City: $cityName");
         }
       }
@@ -188,7 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               cityName = placemark.locality!;
               if (cityName.isEmpty) {
-                cityName = placemark.name!;
+                cityName = placemark.locality!;
+                DebounceService.updateCityName(cityName);
               }
             });
             return city ?? "Unknown";
@@ -215,6 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             setState(() {
               cityName = placemark.locality!;
+              DebounceService.updateCityName(cityName);
               // if (cityName.isEmpty) {
               //   cityName = placemark.locality!;
               // }
@@ -265,9 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
       totalDistance += distanceInMeters;
     }
     // assign city name
-    if (DateTime.now().second % 5 == 0) {
-      await getCityNameFromCoordinates(session.geoPositions!.last);
-    }
+    await getCityNameFromCoordinates(session.geoPositions!.last);
     // assign start and end time
     startTime = session.geoPositions!.first.timestamp;
     endTime = session.geoPositions!.last.timestamp;
@@ -846,5 +843,23 @@ class _HomeScreenState extends State<HomeScreen> {
             )),
       ),
     );
+  }
+}
+
+class DebounceService {
+  static DateTime? _lastExecution;
+  static Duration debounceDuration = const Duration(seconds: 5);
+  static String cityName = "Unknown"; // Store city name in the debounce service
+  static bool shouldExecute() {
+    if (_lastExecution != null &&
+        DateTime.now().difference(_lastExecution!) < debounceDuration) {
+      return false;
+    }
+    _lastExecution = DateTime.now();
+    return true;
+  }
+
+  static void updateCityName(String name) {
+    cityName = name;
   }
 }

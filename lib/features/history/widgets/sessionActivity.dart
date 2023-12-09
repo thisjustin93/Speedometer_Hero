@@ -170,9 +170,8 @@ class _SessionActivityTileState extends State<SessionActivityTile> {
                         SizedBox(width: 4.w), // Adjust spacing as needed.
                       Text(
                         widget.pedometerSession.sessionTitle,
-                        style: context.textStyles
-                            .mThick()
-                            .copyWith(overflow: TextOverflow.fade),
+                        style: context.textStyles.mThick().copyWith(
+                            overflow: TextOverflow.fade, fontSize: 15.sp),
                       ),
                     ],
                   ),

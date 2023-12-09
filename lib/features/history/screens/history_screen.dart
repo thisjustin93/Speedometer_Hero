@@ -209,7 +209,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               Container(
                 width: double.maxFinite,
-                padding: EdgeInsets.only(left: 15.w),
+                padding: EdgeInsets.only(left: 10.w),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(8.r),
@@ -235,29 +235,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           return;
                         }
                         Navigator.of(context)
-                            .push(PageRouteBuilder(
-                          pageBuilder: (context, animation,
-                                  secondaryAnimation) =>
-                              SessionDetailsScreen(
-                                  session: matchingActivity[index]['session']),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                            var begin = Offset(1.0, 0.0);
-                            var end = Offset.zero;
-                            var curve = Curves.ease;
-                            var tween = Tween(begin: begin, end: end)
-                                .chain(CurveTween(curve: curve));
-
-                            return SlideTransition(
-                              position: animation.drive(tween),
-                              child: child,
-                            );
-                          },
+                            .push(CupertinoPageRoute(
+                          builder: (context) => SessionDetailsScreen(
+                              session: matchingActivity[index]['session']),
                         ))
                             .then((value) {
                           assignData();
                           setState(() {});
                         });
+                        // Navigator.of(context)
+                        //     .push(PageRouteBuilder(
+                        //   pageBuilder: (context, animation,
+                        //           secondaryAnimation) =>
+                        //       SessionDetailsScreen(
+                        //           session: matchingActivity[index]['session']),
+                        //   transitionsBuilder:
+                        //       (context, animation, secondaryAnimation, child) {
+                        //     var begin = Offset(1.0, 0.0);
+                        //     var end = Offset.zero;
+                        //     var curve = Curves.ease;
+                        //     var tween = Tween(begin: begin, end: end)
+                        //         .chain(CurveTween(curve: curve));
+
+                        //     return SlideTransition(
+                        //       position: animation.drive(tween),
+                        //       child: child,
+                        //     );
+                        //   },
+                        // ))
+                        //     .then((value) {
+                        //   assignData();
+                        //   setState(() {});
+                        // });
                       },
                       child: MatchingActivityTile(
                         activityType: matchingActivity[index]['activityType'],
@@ -292,7 +301,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   : Container(
                       // height: 290.h,
                       width: double.maxFinite,
-                      padding: EdgeInsets.only(left: 15.w),
+                      padding: EdgeInsets.only(left: 10.w),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.all(Radius.circular(8.r)),
@@ -757,30 +766,40 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             child: InkWell(
                               onTap: () {
                                 Navigator.of(context)
-                                    .push(PageRouteBuilder(
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      SessionDetailsScreen(
-                                          session: pedometerSessionProvider
-                                              .pedometerSessions[index]),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    var begin = Offset(1.0, 0.0);
-                                    var end = Offset.zero;
-                                    var curve = Curves.ease;
-                                    var tween = Tween(begin: begin, end: end)
-                                        .chain(CurveTween(curve: curve));
-
-                                    return SlideTransition(
-                                      position: animation.drive(tween),
-                                      child: child,
-                                    );
-                                  },
+                                    .push(CupertinoPageRoute(
+                                  builder: (context) => SessionDetailsScreen(
+                                      session: matchingActivity[index]
+                                          ['session']),
                                 ))
                                     .then((value) {
                                   assignData();
                                   setState(() {});
                                 });
+                                // Navigator.of(context)
+                                //     .push(PageRouteBuilder(
+                                //   pageBuilder: (context, animation,
+                                //           secondaryAnimation) =>
+                                //       SessionDetailsScreen(
+                                //           session: pedometerSessionProvider
+                                //               .pedometerSessions[index]),
+                                //   transitionsBuilder: (context, animation,
+                                //       secondaryAnimation, child) {
+                                //     var begin = Offset(1.0, 0.0);
+                                //     var end = Offset.zero;
+                                //     var curve = Curves.ease;
+                                //     var tween = Tween(begin: begin, end: end)
+                                //         .chain(CurveTween(curve: curve));
+
+                                //     return SlideTransition(
+                                //       position: animation.drive(tween),
+                                //       child: child,
+                                //     );
+                                //   },
+                                // ))
+                                //     .then((value) {
+                                //   assignData();
+                                //   setState(() {});
+                                // });
                               },
                               // child: widget,
                               child: SessionActivityTile(

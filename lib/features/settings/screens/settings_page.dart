@@ -207,24 +207,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    ChangeSpeedUnitScreen(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              var begin = Offset(1.0, 0.0);
-                              var end = Offset.zero;
-                              var curve = Curves.ease;
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-
-                              return SlideTransition(
-                                position: animation.drive(tween),
-                                child: child,
-                              );
-                            },
+                          Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => ChangeSpeedUnitScreen(),
                           ));
+                          // Navigator.of(context).push(PageRouteBuilder(
+                          //   pageBuilder:
+                          //       (context, animation, secondaryAnimation) =>
+                          //           ChangeSpeedUnitScreen(),
+                          //   transitionsBuilder: (context, animation,
+                          //       secondaryAnimation, child) {
+                          //     var begin = Offset(1.0, 0.0);
+                          //     var end = Offset.zero;
+                          //     var curve = Curves.ease;
+                          //     var tween = Tween(begin: begin, end: end)
+                          //         .chain(CurveTween(curve: curve));
+
+                          //     return SlideTransition(
+                          //       position: animation.drive(tween),
+                          //       child: child,
+                          //     );
+                          //   },
+                          // ));
                         },
                         child: Container(
                           height: 50.h,
@@ -274,24 +277,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    ChangeElevationUnitScreen(),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              var begin = Offset(1.0, 0.0);
-                              var end = Offset.zero;
-                              var curve = Curves.ease;
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-
-                              return SlideTransition(
-                                position: animation.drive(tween),
-                                child: child,
-                              );
-                            },
+                          Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => ChangeSpeedUnitScreen(),
                           ));
+                          // Navigator.of(context).push(PageRouteBuilder(
+                          //   pageBuilder:
+                          //       (context, animation, secondaryAnimation) =>
+                          //           ChangeElevationUnitScreen(),
+                          //   transitionsBuilder: (context, animation,
+                          //       secondaryAnimation, child) {
+                          //     var begin = Offset(1.0, 0.0);
+                          //     var end = Offset.zero;
+                          //     var curve = Curves.ease;
+                          //     var tween = Tween(begin: begin, end: end)
+                          //         .chain(CurveTween(curve: curve));
+
+                          //     return SlideTransition(
+                          //       position: animation.drive(tween),
+                          //       child: child,
+                          //     );
+                          //   },
+                          // ));
                         },
                         child: Container(
                           height: 50.h,
@@ -409,23 +415,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).push(PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          ChangeAppThemeScreen(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        var begin = Offset(1.0, 0.0);
-                        var end = Offset.zero;
-                        var curve = Curves.ease;
-                        var tween = Tween(begin: begin, end: end)
-                            .chain(CurveTween(curve: curve));
-
-                        return SlideTransition(
-                          position: animation.drive(tween),
-                          child: child,
-                        );
-                      },
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => ChangeSpeedUnitScreen(),
                     ));
+                    // Navigator.of(context).push(PageRouteBuilder(
+                    //   pageBuilder: (context, animation, secondaryAnimation) =>
+                    //       ChangeAppThemeScreen(),
+                    //   transitionsBuilder:
+                    //       (context, animation, secondaryAnimation, child) {
+                    //     var begin = Offset(1.0, 0.0);
+                    //     var end = Offset.zero;
+                    //     var curve = Curves.ease;
+                    //     var tween = Tween(begin: begin, end: end)
+                    //         .chain(CurveTween(curve: curve));
+
+                    //     return SlideTransition(
+                    //       position: animation.drive(tween),
+                    //       child: child,
+                    //     );
+                    //   },
+                    // ));
                   },
                   child: Container(
                     width: double.maxFinite,

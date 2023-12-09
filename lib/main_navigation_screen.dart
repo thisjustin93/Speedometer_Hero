@@ -172,7 +172,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     }
   }
 
-  PageController _pageController = PageController();
+  // PageController _pageController = PageController();
   @override
   Widget build(BuildContext context) {
     setOrientation(pageIndex);
@@ -183,22 +183,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         Provider.of<SubscriptionProvider>(context, listen: false).status ==
             SubscriptionStatus.subscribed;
     return Scaffold(
-      // body: screens[pageIndex],
-      body: PageView(
-        controller: _pageController,
-        children: screens,
-        onPageChanged: (value) {
-          setState(() {
-            pageIndex = value;
-            _pageController.jumpToPage(value);
+      body: screens[pageIndex],
+      // body: PageView(
+      //   controller: _pageController,
+      //   children: screens,
+      //   onPageChanged: (value) {
+      //     setState(() {
+      //       pageIndex = value;
+      //       _pageController.jumpToPage(value);
 
-            if (value != 0) {
-              Provider.of<RecordingProvider>(context, listen: false)
-                  .stopRecording();
-            }
-          });
-        },
-      ),
+      //       if (value != 0) {
+      //         Provider.of<RecordingProvider>(context, listen: false)
+      //             .stopRecording();
+      //       }
+      //     });
+      //   },
+      // ),
       bottomNavigationBar: MediaQuery.of(context).orientation ==
                   Orientation.landscape &&
               !isUserSubscribed
@@ -206,7 +206,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               height: 0,
             )
           : Container(
-              height: _banner == null || isUserSubscribed ? 71.h : 146.h,
+              height: _banner == null || isUserSubscribed ? 55.h : 130.h,
               color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -237,11 +237,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                             }
                           });
                         }
-                        Future.delayed(Duration.zero, () {
-                          if (mounted) {
-                            _pageController.jumpToPage(value);
-                          }
-                        });
+                        // Future.delayed(Duration.zero, () {
+                        //   if (mounted) {
+                        //     _pageController.jumpToPage(value);
+                        //   }
+                        // });
                       },
                       iconSize: 35.sp,
                       items: [
