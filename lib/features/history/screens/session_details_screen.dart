@@ -776,7 +776,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                         itemBuilder: (context, index) {
                           return Container(
                             padding: EdgeInsets.symmetric(
-                                vertical: 6.h, horizontal: 15.w),
+                                vertical: 6.h, horizontal: 30.w),
                             child: Column(
                               children: [
                                 Row(
@@ -795,7 +795,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                                 ),
                                 Padding(
                                   padding:
-                                      EdgeInsets.only(left: 30.w, top: 10.h),
+                                      EdgeInsets.only(left: 0.w, top: 10.h),
                                   child: index < 1
                                       ? Divider(
                                           height: 2.h,
@@ -870,7 +870,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                     ),
                     Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 6.h, horizontal: 15.w),
+                          EdgeInsets.symmetric(vertical: 6.h, horizontal: 30.w),
                       child: Column(
                         children: [
                           Row(
@@ -888,7 +888,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: 30.w, top: 10.h, bottom: 10.h),
+                                left: 0.w, top: 10.h, bottom: 10.h),
                             child: Divider(
                               height: 2.h,
                               color: const Color(0xffB1B0B2),
@@ -909,7 +909,7 @@ class _SessionDetailsScreenState extends State<SessionDetailsScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(
-                                left: 30.w, top: 10.h, bottom: 10.h),
+                                left: 00.w, top: 10.h, bottom: 10.h),
                             child: Divider(
                               height: 2.h,
                               color: const Color(0xffB1B0B2),

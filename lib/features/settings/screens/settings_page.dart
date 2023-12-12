@@ -278,7 +278,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       InkWell(
                         onTap: () {
                           Navigator.of(context).push(CupertinoPageRoute(
-                            builder: (context) => ChangeSpeedUnitScreen(),
+                            builder: (context) => ChangeElevationUnitScreen(),
                           ));
                           // Navigator.of(context).push(PageRouteBuilder(
                           //   pageBuilder:
@@ -416,7 +416,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => ChangeSpeedUnitScreen(),
+                      builder: (context) => ChangeAppThemeScreen(),
                     ));
                     // Navigator.of(context).push(PageRouteBuilder(
                     //   pageBuilder: (context, animation, secondaryAnimation) =>

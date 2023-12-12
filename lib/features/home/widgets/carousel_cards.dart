@@ -246,17 +246,17 @@ class _FancyCardState extends State<FancyCard> {
                                   widget.position!.longitude),
                               zoom: 25,
                             ),
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
-                              ),
-                            ].toSet(),
+                            // gestureRecognizers:
+                            //     <Factory<OneSequenceGestureRecognizer>>[
+                            //   new Factory<OneSequenceGestureRecognizer>(
+                            //     () => new EagerGestureRecognizer(),
+                            //   ),
+                            // ].toSet(),
                             trafficEnabled: true,
                             trackingMode: TrackingMode.followWithHeading,
                             zoomGesturesEnabled: true,
                             mapType: MapType.standard,
-                            scrollGesturesEnabled: true,
+                            scrollGesturesEnabled: false,
                             polylines: Set<Polyline>.of([
                               Polyline(
                                 polylineId: PolylineId(

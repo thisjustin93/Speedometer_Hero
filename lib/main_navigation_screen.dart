@@ -206,7 +206,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               height: 0,
             )
           : Container(
-              height: _banner == null || isUserSubscribed ? 55.h : 130.h,
+              height: _banner == null || isUserSubscribed ? 55.h : 133.h,
               color: Theme.of(context).colorScheme.primary,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
